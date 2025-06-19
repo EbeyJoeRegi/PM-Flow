@@ -5,7 +5,13 @@ const Login = () => {
   return (
     <div className="login-container">
       <form className="login-form">
-        <h2 className="login-title">PM Flow - Login</h2>
+        <img 
+          src="/logo/PM Flow.png" 
+          alt="PM Flow Logo" 
+          className="login-logo"
+        />
+
+        <h2 className="login-title">Login</h2>
 
         <div className="form-group">
           <label htmlFor="email">Email</label>

@@ -20,6 +20,10 @@ const Register = () => {
     return regex.test(password);
   };
 
+  const validateEmail = (email) => {
+    return email.endsWith("@incture.com");
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError("");
@@ -27,8 +31,12 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const { email, password, confirmPassword } = formData;
 
-    const { password, confirmPassword } = formData;
+    if (!validateEmail(email)) {
+      setError("Invalid Email address.");
+      return;
+    }
 
     if (!validatePassword(password)) {
       setError(
@@ -49,7 +57,13 @@ const Register = () => {
   return (
     <div className="register-container">
       <form className="register-form" onSubmit={handleSubmit}>
-        <h2 className="register-title">PM Flow - Register</h2>
+        <img 
+          src="/logo/PM Flow.png" 
+          alt="PM Flow Logo" 
+          className="register-logo" 
+        />
+
+        <h2 className="register-title">Register</h2>
 
         <div className="form-group">
           <label>Name</label>
