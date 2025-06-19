@@ -1,25 +1,10 @@
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body, html {
-  height: 100%;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #e0e7ff, #f8fafc);
-
-}
-
 .register-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 60px);
-  padding: 4px 20px 20px 20px;
+  min-height: 100vh;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .register-logo {
@@ -36,12 +21,15 @@ body, html {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 600px;
+  box-sizing: border-box;
 }
 
 .register-title {
   text-align: center;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
   color: #222;
+  font-size: 28px;
+  font-weight: 600;
 }
 
 .form-group {
@@ -50,18 +38,21 @@ body, html {
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   font-weight: 500;
-  color: #555;
+  color: #444;
+  font-size: 15px;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 10px;
+  padding: 10px 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
   transition: border-color 0.3s ease;
+  font-size: 15px;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -78,8 +69,9 @@ body, html {
   border: none;
   border-radius: 8px;
   font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
-  margin-top: 5px;
+  margin-top: 8px;
   transition: background-color 0.3s ease;
 }
 
@@ -111,28 +103,54 @@ body, html {
 }
 
 /* Responsive styles */
+@media (max-width: 1024px) {
+  .register-form {
+    padding: 24px;
+    max-width: 85%;
+  }
+}
+
 @media (max-width: 768px) {
   .register-form {
     padding: 20px;
     max-width: 90%;
   }
+
+  .register-title {
+    font-size: 24px;
+  }
+
+  .register-btn {
+    font-size: 15px;
+  }
 }
 
 @media (max-width: 480px) {
-    .register-logo {
-    max-width: 130px;
+  .register-logo {
+    max-width: 120px;
   }
 
   .register-title {
     font-size: 20px;
   }
 
-  .register-btn {
+  .form-group label,
+  .form-group input,
+  .form-group select {
     font-size: 14px;
   }
 
   .form-group input,
   .form-group select {
-    padding: 8px;
+    padding: 8px 10px;
+  }
+
+  .register-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .login-link {
+    font-size: 13px;
   }
 }
