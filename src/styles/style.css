@@ -5,10 +5,6 @@
 }
 
 body {
-  height: 100%;
-  margin-top: 10px;
-  margin-bottom: 10px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #e0e7ff, #158991);
-
 }

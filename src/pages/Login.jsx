@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from 'react-redux';
 import { setUser } from '../redux/userSlice';
-
 import { loginUser } from '../api/commonApi';
 
 const Login = () => {
@@ -22,12 +21,14 @@ const Login = () => {
       const { name, id, role } = result;
 
       dispatch(setUser({ id, name, role }));
+      localStorage.setItem("user", JSON.stringify({ id, name, role }));
+
 
     if (role === "admin") {
       navigate("/admin-dashboard");
     } 
     else if (role === "manager") {
-      navigate("/manager-dashboard");
+      navigate("/manager");
     } 
     else if(role === "member"){
       navigate("/member-dashboard");

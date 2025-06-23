@@ -1,0 +1,144 @@
+/* Navbar */
+.manager-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #a4bac3, #7fc8e7);
+  color: #fff;
+  padding: 10px 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.manager-navbar-left .manager-navbar-title {
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+.manager-navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.manager-welcome {
+  font-size: 1.1rem;
+  color: #e0eaf1;
+}
+
+.manager-profile {
+  position: relative;
+  cursor: pointer;
+}
+
+.manager-profile svg {
+  color: #ffffff;
+  transition: color 0.3s ease;
+}
+
+.manager-profile svg:hover {
+  color: #cce6ff;
+}
+
+.manager-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  min-width: 120px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.manager-dropdown button {
+  background: none;
+  border: none;
+  color: #333;
+  padding: 15px 16px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-radius: 6px;
+}
+
+.manager-dropdown button:hover {
+  background-color: #f2f7fb;
+}
+
+/* Layout */
+.manager-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.manager-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.manager-sidebar {
+  width: 240px;
+  background: linear-gradient(180deg, #a4bac3, #7fc8e7);
+  color: #ffffff;
+  min-height: 100vh;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.manager-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.manager-sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.manager-sidebar a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #cce6ff;
+}
+
+.manager-active {
+  background-color: #84b2da;
+  color: #ffffff;
+  font-weight: 600;
+  border-left: 4px solid #6bb9f0;
+  border-radius: 4px 0 0 4px;
+}
+
+/* Main content */
+.manager-main {
+  flex-grow: 1;
+  background-color: #f0f4f8;
+  padding: 30px;
+  overflow-y: auto;
+}
