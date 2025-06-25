@@ -1,22 +1,22 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { FaUserCircle, FaTachometerAlt, FaUsers, FaBars } from 'react-icons/fa';
-import { NavLink, Outlet } from 'react-router-dom';
-import '../../styles/MemberNavbar.css';
+import React, { useRef, useState, useEffect } from 'react'
+import { FaUserCircle, FaTachometerAlt, FaUsers, FaBars } from 'react-icons/fa'
+import { NavLink, Outlet } from 'react-router-dom'
+import '../../styles/MemberNavbar.css'
 
 export default function MemberNavbar({ name, onLogout }) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const dropdownRef = useRef();
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const dropdownRef = useRef()
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
+        setDropdownOpen(false)
       }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <div className="member-wrapper">
@@ -30,7 +30,8 @@ export default function MemberNavbar({ name, onLogout }) {
           />
           <h4 className="m-0 text-white">PM Flow</h4>
         </div>
-        <div className="d-flex align-items-center gap-3">
+
+        <div className="navbar-user d-flex align-items-center gap-3">
           <span className="text-white fw-semibold">Welcome, {name}</span>
           <div className="position-relative" ref={dropdownRef}>
             <FaUserCircle
@@ -78,5 +79,5 @@ export default function MemberNavbar({ name, onLogout }) {
         </main>
       </div>
     </div>
-  );
+  )
 }

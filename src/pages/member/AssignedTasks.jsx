@@ -29,7 +29,6 @@ export default function AssignedTasks() {
     const order = key === sortKey && sortOrder === 'asc' ? 'desc' : 'asc';
     setSortKey(key);
     setSortOrder(order);
-
     const sorted = [...tasks].sort((a, b) => {
       if (key === 'dueDate') {
         const dateA = new Date(a.dueDate);
@@ -40,7 +39,6 @@ export default function AssignedTasks() {
       if (a[key] > b[key]) return order === 'asc' ? 1 : -1;
       return 0;
     });
-
     setTasks(sorted);
   };
 
@@ -98,7 +96,7 @@ export default function AssignedTasks() {
                     key={index}
                     style={{ cursor: 'pointer' }}
                     onClick={() =>
-                      navigate(`/project/${task.project}/collaboration`, { state: { taskDetails: task } })
+                      navigate(`/member/project/${task.project}/collaboration`, { state: { taskDetails: task } })
                     }
                   >
                     <td>{task.name}</td>
@@ -115,7 +113,7 @@ export default function AssignedTasks() {
           <div className="d-flex justify-content-between mt-3 flex-wrap">
             <button
               className="btn btn-outline-secondary btn-sm"
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/member')}
             >
               ← Go Back
             </button>

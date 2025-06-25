@@ -31,7 +31,7 @@ const Login = () => {
       navigate("/manager");
     } 
     else if(role === "member"){
-      navigate("/member-dashboard");
+      navigate("/member");
     }
 
     } catch (error) {

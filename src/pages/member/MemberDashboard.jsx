@@ -46,7 +46,7 @@ export default function MemberDashboard() {
   }, []);
 
   const handleAssignedTaskClick = () => {
-    navigate('/assigned-tasks', { state: { tasks } });
+    navigate('/member/assigned-tasks', { state: { tasks, previewOnly: false } });
   };
 
   const countByStatus = (status) => tasks.filter((task) => task.status === status).length;
@@ -57,6 +57,13 @@ export default function MemberDashboard() {
     inProgress: (countByStatus('In Progress') / total) * 100,
     completed: (countByStatus('Completed') / total) * 100,
     onHold: (countByStatus('On Hold') / total) * 100
+  };
+
+  const statusColors = {
+    'Not Started': 'primary',
+    'In Progress': 'warning',
+    'Completed': 'success',
+    'On Hold': 'secondary'
   };
 
   return (
@@ -81,7 +88,7 @@ export default function MemberDashboard() {
                       <td>{task.name}</td>
                       <td>{task.priority}</td>
                       <td>
-                        <span className={`status-${task.status.toLowerCase().replace(' ', '-')}`}>
+                        <span className={`badge bg-${statusColors[task.status]} text-white`}>
                           {task.status}
                         </span>
                       </td>

@@ -12,7 +12,7 @@ import ManagerProjectDetail from "../pages/manager/managerProjectDetail.jsx"
 import ProjectChatPage from "../pages/manager/ProjectChatPage.jsx";
 import CollaborationProjects from "../pages/manager/CollaborationProjects.jsx";
 
-import MemberLayout from '../pages/member/MemberLayout';
+import MemberLayout from '../pages/member/MemberLayout.jsx';
 import MemberDashboard from '../pages/member/MemberDashboard';
 import AssignedTasks from '../pages/member/AssignedTasks';
 import ProjectCollaboration from '../pages/member/ProjectCollaboration';
@@ -50,20 +50,22 @@ const AppRoutes = () => {
 
       </Route>
 
-      <Route
-          path="/member"
-          element={
-            <ProtectedRoute allowedRoles={['member']}>
-              <MemberLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<MemberDashboard />} />
-          <Route path="assigned-tasks" element={<AssignedTasks />} />
-          <Route path="collaboration" element={<MemberCollaborationProjects />} />
-          <Route path="collaboration/:projectId" element={<MemberCollaboration />} />
-          <Route path="project/:projectId/collaboration" element={<ProjectCollaboration />} />
-        </Route>
+<Route
+  path="/member"
+  element={
+    <ProtectedRoute allowedRoles={['member']}>
+      <MemberLayout />
+    </ProtectedRoute>
+  }
+>
+  <Route index element={<MemberDashboard />} />
+  <Route path="assigned-tasks" element={<AssignedTasks />} />
+  <Route path="collaboration" element={<MemberCollaborationProjects />} />
+  <Route path="collaboration/:projectId" element={<MemberCollaboration />} />
+  <Route path="project/:projectId/collaboration" element={<ProjectCollaboration />} />
+</Route>
+
+
 
       <Route path="*" element={<NotFound />} />
     </Routes>
