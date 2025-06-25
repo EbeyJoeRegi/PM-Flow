@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/managerProjects.css';
 
@@ -95,12 +95,15 @@ const ManagerProjects = () => {
 
   const goToDetail = (name) => navigate(`${name}`);
 
+  useEffect(() => {
+  setPage(1);
+}, [statusFilter, searchQuery, sortField]);
 
-  return (
+    return (
     <div className="manager-projects-container">
-      <div className="projects-header">
+      <div className="manager-projects-header">
         <h2>Projects Management</h2>
-        <div className="filters">
+        <div className="manager-projects-filters">
           <select onChange={(e) => setStatusFilter(e.target.value)} value={statusFilter}>
             <option value="">All</option>
             <option value="In Progress">In Progress</option>
@@ -116,15 +119,16 @@ const ManagerProjects = () => {
           />
         </div>
       </div>
-      <div className="projects-table-wrapper">
-        <table className="projects-table">
+
+      <div className="manager-projects-table-wrapper">
+        <table className="manager-projects-table">
           <thead>
             <tr>
               <th>Name</th>
               <th>Description</th>
               <th>Status</th>
-              <th onClick={() => setSortField('start')} className="sortable">Start Date ⬍</th>
-              <th onClick={() => setSortField('end')} className="sortable">End Date ⬍</th>
+              <th onClick={() => setSortField('start')} className="manager-sortable">Start Date ⬍</th>
+              <th onClick={() => setSortField('end')} className="manager-sortable">End Date ⬍</th>
             </tr>
           </thead>
           <tbody>
@@ -132,7 +136,7 @@ const ManagerProjects = () => {
               <tr><td colSpan="5">No projects found.</td></tr>
             ) : (
               paginated.map(p => (
-                <tr key={p.id} onClick={() => goToDetail(p.name)} className="clickable-row">
+                <tr key={p.id} onClick={() => goToDetail(p.name)} className="manager-clickable-row">
                   <td>{p.name}</td>
                   <td>{p.description}</td>
                   <td>{p.status}</td>
@@ -145,7 +149,7 @@ const ManagerProjects = () => {
         </table>
       </div>
 
-      <div className="pagination">
+      <div className="manager-pagination">
         <button disabled={page === 1} onClick={() => setPage(page - 1)}>← Prev</button>
         <span>Page {page} of {totalPages}</span>
         <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>Next →</button>

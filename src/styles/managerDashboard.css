@@ -99,6 +99,14 @@
   background-color: #28a745;
 }
 
+.progress-fill.empty-bar {
+  background: transparent;
+  color: #999;
+  text-align: left;
+  color: #000;
+  padding-left: 6px;
+}
+
 /* Projects Managed Section */
 .dashboard-bottom {
   background: #fff;

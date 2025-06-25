@@ -4,8 +4,7 @@
   justify-content: flex-start;
 }
 
-/* Header and Filters */
-.projects-header {
+.manager-projects-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -13,20 +12,20 @@
   margin-bottom: 1.5rem;
 }
 
-.projects-header h2 {
+.manager-projects-header h2 {
   font-size: 2rem;
   color: #2c3e50;
   font-weight: bold;
 }
 
-.filters {
+.manager-projects-filters {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
 }
 
-.filters select,
-.filters input {
+.manager-projects-filters select,
+.manager-projects-filters input {
   padding: 0.6rem 1rem;
   font-size: 1rem;
   border: 1px solid #ccc;
@@ -35,39 +34,38 @@
   transition: border 0.3s;
 }
 
-.filters input:focus,
-.filters select:focus {
+.manager-projects-filters input:focus,
+.manager-projects-filters select:focus {
   border-color: #007bff;
   outline: none;
 }
 
-/* Table Styling */
-.projects-table-wrapper {
+.manager-projects-table-wrapper {
   overflow-x: auto;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.projects-table {
+.manager-projects-table {
   width: 100%;
   border-collapse: collapse;
   min-width: 900px;
 }
 
-.projects-table thead {
-  background-color: #d6e4f5; /* Light header background */
+.manager-projects-table thead {
+  background-color: #d6e4f5;
 }
 
-.projects-table th {
+.manager-projects-table th {
   font-weight: bold;
-  color: #000; /* Black text for table headers */
+  color: #000;
   vertical-align: middle;
   text-align: left;
   padding: 1rem;
 }
 
-.projects-table td {
+.manager-projects-table td {
   color: #333;
   vertical-align: middle;
   text-align: justify;
@@ -76,29 +74,26 @@
   max-width: 300px;
 }
 
-/* Sortable Headers */
-.projects-table th.sortable {
+.manager-sortable {
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s;
 }
 
-.projects-table th.sortable:hover {
+.manager-sortable:hover {
   background-color: #c0d4eb;
 }
 
-/* Clickable Row */
-.clickable-row {
+.manager-clickable-row {
   transition: background-color 0.2s;
   cursor: pointer;
 }
 
-.clickable-row:hover {
+.manager-clickable-row:hover {
   background-color: #f1f5f9;
 }
 
-/* Pagination (normal flow) */
-.pagination {
+.manager-pagination {
   margin-top: 1.5rem;
   display: flex;
   justify-content: center;
@@ -107,7 +102,7 @@
   font-size: 1rem;
 }
 
-.pagination button {
+.manager-pagination button {
   padding: 0.5rem 1.2rem;
   background-color: #007bff;
   border: none;
@@ -118,33 +113,83 @@
   transition: background-color 0.2s;
 }
 
-.pagination button:disabled {
+.manager-pagination button:disabled {
   background-color: #a2c0e3;
   cursor: not-allowed;
 }
 
-.pagination button:not(:disabled):hover {
+.manager-pagination button:not(:disabled):hover {
   background-color: #0056b3;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .projects-header {
+@media (max-width: 950px) {
+  .manager-projects-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 1rem;
   }
 
-  .filters {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .projects-header h2 {
+  .manager-projects-header h2 {
     font-size: 1.5rem;
   }
 
-  .projects-table {
+  .manager-projects-filters {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .manager-projects-filters select,
+  .manager-projects-filters input {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .manager-projects-table {
     font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 300px) {
+  .manager-projects-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .manager-projects-filters select,
+  .manager-projects-filters input {
+    width: 100%;
+  }
+
+  .manager-pagination {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .manager-pagination button {
+    width: 100%;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .manager-pagination {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .manager-pagination button {
+    flex-shrink: 0;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
   }
 }

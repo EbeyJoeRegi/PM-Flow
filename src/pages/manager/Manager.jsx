@@ -2,20 +2,21 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../redux/userSlice";
 import { useEffect, useRef, useState } from "react";
-import {
-  FaTachometerAlt,
-  FaProjectDiagram,
-  FaUsers,
-  FaUserCircle
-} from "react-icons/fa";
+import { TbLayoutDashboardFilled } from "react-icons/tb";
+import { FaProjectDiagram, FaUsers, FaUserCircle } from "react-icons/fa";
+import { GiHamburgerMenu } from "react-icons/gi";
 import "../../styles/manager.css";
 
 const Manager = () => {
   const { name } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const dropdownRef = useRef(null);
+  const sidebarRef = useRef(null);
 
   const handleLogout = () => {
     dispatch(logoutUser());
@@ -24,10 +25,22 @@ const Manager = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
         setDropdownOpen(false);
       }
+
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        !event.target.closest(".hamburger-icon")
+      ) {
+        setSidebarOpen(false);
+      }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -38,6 +51,11 @@ const Manager = () => {
     <div className="manager-wrapper">
       <nav className="manager-navbar">
         <div className="manager-navbar-left">
+          <GiHamburgerMenu
+            size={24}
+            className="hamburger-icon"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          />
           <span className="manager-navbar-title">PM Flow</span>
         </div>
         <div className="manager-navbar-right">
@@ -53,23 +71,39 @@ const Manager = () => {
         </div>
       </nav>
 
+      {/* Optional overlay when sidebar is open on small screens */}
+      {sidebarOpen && <div className="sidebar-overlay" />}
+
       <div className="manager-body">
-        <aside className="manager-sidebar">
+        <aside
+          className={`manager-sidebar ${sidebarOpen ? "sidebar-open" : ""}`}
+          ref={sidebarRef}
+        >
           <ul>
             <li>
-              <NavLink to="" end className={({ isActive }) => isActive ? 'manager-active' : ''}>
-                <FaTachometerAlt /> Dashboard
+              <NavLink
+                to=""
+                end
+                onClick={() => setSidebarOpen(false)}
+                className={({ isActive }) => (isActive ? "manager-active" : "")}
+              >
+                <TbLayoutDashboardFilled /> Dashboard
               </NavLink>
-            </li>
-            <li>
-              <NavLink to="projects" className={({ isActive }) => isActive ? 'manager-active' : ''}>
+              <NavLink
+                to="projects"
+                onClick={() => setSidebarOpen(false)}
+                className={({ isActive }) => (isActive ? "manager-active" : "")}
+              >
                 <FaProjectDiagram /> Projects
               </NavLink>
-            </li>
-            <li>
-              <NavLink to="collaboration" className={({ isActive }) => isActive ? 'manager-active' : ''}>
+              <NavLink
+                to="collaboration"
+                onClick={() => setSidebarOpen(false)}
+                className={({ isActive }) => (isActive ? "manager-active" : "")}
+              >
                 <FaUsers /> Collaboration
               </NavLink>
+
             </li>
           </ul>
         </aside>

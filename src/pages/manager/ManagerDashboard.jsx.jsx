@@ -7,23 +7,34 @@ const ManagerDashboard = () => {
   const projects = useMemo(() => [
     { name: "Website Redesign", status: "In Progress", start: "2024-12-01", end: "2026-03-01" },
     { name: "Mobile App Launch", status: "Not Started", start: "2025-06-01", end: "2025-09-01" },
-    { name: "Cloud Migration", status: "On Hold", start: "2024-11-15", end: "2025-05-30" },
+    { name: "Cloud Migration", status: "On Hold", start: "2024-11-15", end: "2026-05-30" },
     { name: "Marketing Campaign", status: "Completed", start: "2024-10-01", end: "2025-01-10" },
     { name: "UI Overhaul", status: "In Progress", start: "2025-02-10", end: "2025-08-01" },
     { name: "SEO Optimization", status: "On Hold", start: "2025-03-01", end: "2025-10-10" },
   ], []);
 
   const totalProjects = projects.length;
-
+  const defaultStatuses = ["Not Started", "In Progress", "On Hold", "Completed"];
   const statusCount = useMemo(() => {
-    return projects.reduce((acc, curr) => {
-      acc[curr.status] = (acc[curr.status] || 0) + 1;
+    const countMap = projects.reduce((acc, curr) => {
+      if (defaultStatuses.includes(curr.status)) {
+        acc[curr.status] = (acc[curr.status] || 0) + 1;
+      }
       return acc;
     }, {});
+
+    // Ensure all default statuses are present
+    defaultStatuses.forEach(status => {
+      if (!countMap[status]) countMap[status] = 0;
+    });
+
+    return countMap;
   }, [projects]);
 
+
+
   const closestProjects = useMemo(() => {
-      const today = new Date();
+    const today = new Date();
     return [...projects]
       .filter(project => new Date(project.end) >= today)
       .sort((a, b) =>
@@ -31,20 +42,33 @@ const ManagerDashboard = () => {
       )
       .slice(0, 5);
   }, [projects]);
-
+  
+  const [statusSortActive, setStatusSortActive] = useState(false);
   const sortedProjects = useMemo(() => {
-    const sorted = [...closestProjects];
-    sorted.sort((a, b) =>
+  const sortedByEndDate = [...closestProjects].sort((a, b) =>
+    new Date(a.end) - new Date(b.end)
+  );
+
+  if (statusSortActive) {
+    sortedByEndDate.sort((a, b) =>
       statusAsc
         ? a.status.localeCompare(b.status)
         : b.status.localeCompare(a.status)
     );
-    return sorted;
-  }, [closestProjects, statusAsc]);
+  }
 
-  const handleStatusSort = () => {
-    setStatusAsc(prev => !prev);
-  };
+  return sortedByEndDate;
+}, [closestProjects, statusAsc, statusSortActive]);
+
+
+const handleStatusSort = () => {
+  setStatusSortActive(true);
+  setStatusAsc(prev => !prev);
+};
+
+const handleEndDateSort = () => {
+  setStatusSortActive(false); 
+};
 
   return (
     <div className="dashboard-wrapper">
@@ -60,22 +84,33 @@ const ManagerDashboard = () => {
 
         <div className="status-box">
           <h3>Project Status</h3>
-          {Object.entries(statusCount).map(([status, count]) => {
-            const percent = (count / totalProjects) * 100;
+          {defaultStatuses.map(status => {
+            const count = statusCount[status];
+            const percent = (count / totalProjects) * 100 || 0;
             return (
               <div className="status-bar" key={status}>
                 <label>{status}</label>
                 <div className="progress-container">
-                  <div
-                    className={`progress-fill ${status.toLowerCase().replace(' ', '-')}`}
-                    style={{ width: `${percent}%` }}
-                  >
-                    {count}
-                  </div>
+                  {count > 0 ? (
+                    <div
+                      className={`progress-fill ${status.toLowerCase().replace(' ', '-')}`}
+                      style={{ width: `${percent}%` }}
+                    >
+                      {count}
+                    </div>
+                  ) : (
+                    <div
+                      className="progress-fill empty-bar"
+                      style={{ width: `0%` }}
+                    >
+                      0
+                    </div>
+                  )}
                 </div>
               </div>
             );
           })}
+
         </div>
       </div>
 
@@ -91,19 +126,28 @@ const ManagerDashboard = () => {
                 <th>Project</th>
                 <th onClick={handleStatusSort} className="clickable">Status ⬍</th>
                 <th>Start Date</th>
-                <th>End Date</th>
+                <th onClick={handleEndDateSort} className="clickable">End Date</th>
               </tr>
             </thead>
             <tbody>
-              {sortedProjects.map((proj, idx) => (
-                <tr key={idx}>
-                  <td>{proj.name}</td>
-                  <td>{proj.status}</td>
-                  <td>{proj.start}</td>
-                  <td>{proj.end}</td>
+              {sortedProjects.length === 0 ? (
+                <tr>
+                  <td colSpan="4" style={{ textAlign: 'center', padding: '16px', color: '#999' }}>
+                    No projects currently managed.
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                sortedProjects.map((proj, idx) => (
+                  <tr key={idx}>
+                    <td>{proj.name}</td>
+                    <td>{proj.status}</td>
+                    <td>{proj.start}</td>
+                    <td>{proj.end}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
+
           </table>
         </div>
       </div>
