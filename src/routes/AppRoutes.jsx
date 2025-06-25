@@ -3,7 +3,6 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import Manager from "../pages/manager/Manager";
-import MemberDashboard from "../pages/member/MemberDashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import NotFound from "../pages/NotFound";
 import ManagerDashboard from "../pages/manager/ManagerDashboard.jsx";
@@ -13,6 +12,12 @@ import ManagerProjectDetail from "../pages/manager/managerProjectDetail.jsx"
 import ProjectChatPage from "../pages/manager/ProjectChatPage.jsx";
 import CollaborationProjects from "../pages/manager/CollaborationProjects.jsx";
 
+import MemberLayout from '../pages/member/MemberLayout';
+import MemberDashboard from '../pages/member/MemberDashboard';
+import AssignedTasks from '../pages/member/AssignedTasks';
+import ProjectCollaboration from '../pages/member/ProjectCollaboration';
+import MemberCollaboration from '../pages/member/MemberCollaboration';
+import MemberCollaborationProjects from '../pages/member/MemberCollaborationProjects';
 const AppRoutes = () => {
   return (
     <Routes>
@@ -46,13 +51,19 @@ const AppRoutes = () => {
       </Route>
 
       <Route
-        path="/member-dashboard"
-        element={
-          <ProtectedRoute allowedRoles={['member']}>
-            <MemberDashboard />
-          </ProtectedRoute>
-        }
-      />
+          path="/member"
+          element={
+            <ProtectedRoute allowedRoles={['member']}>
+              <MemberLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<MemberDashboard />} />
+          <Route path="assigned-tasks" element={<AssignedTasks />} />
+          <Route path="collaboration" element={<MemberCollaborationProjects />} />
+          <Route path="collaboration/:projectId" element={<MemberCollaboration />} />
+          <Route path="project/:projectId/collaboration" element={<ProjectCollaboration />} />
+        </Route>
 
       <Route path="*" element={<NotFound />} />
     </Routes>
