@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import AdminDashboard from "../pages/admin/AdminDashboard";
 import Manager from "../pages/manager/Manager";
 import ProtectedRoute from "./ProtectedRoute";
 import NotFound from "../pages/NotFound";
@@ -11,13 +10,18 @@ import ManagerTaskDetail from "../pages/manager/managerTaskDetail.jsx";
 import ManagerProjectDetail from "../pages/manager/managerProjectDetail.jsx"
 import ProjectChatPage from "../pages/manager/ProjectChatPage.jsx";
 import CollaborationProjects from "../pages/manager/CollaborationProjects.jsx";
-
 import MemberLayout from '../pages/member/MemberLayout.jsx';
 import MemberDashboard from '../pages/member/MemberDashboard';
 import AssignedTasks from '../pages/member/AssignedTasks';
 import ProjectCollaboration from '../pages/member/ProjectCollaboration';
 import MemberCollaboration from '../pages/member/MemberCollaboration';
 import MemberCollaborationProjects from '../pages/member/MemberCollaborationProjects';
+
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import AdminNavbar from '../pages/admin/AdminNavbar';
+import Users from '../pages/admin/Users';
+import Projects from '../pages/admin/Projects';
+import ProjectDetails from '../pages/admin/ProjectDetails'
 const AppRoutes = () => {
   return (
     <Routes>
@@ -25,13 +29,19 @@ const AppRoutes = () => {
       <Route path="/register" element={<Register />} />
 
       <Route
-        path="/admin-dashboard"
-        element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
+    path="/admin"
+    element={
+      <ProtectedRoute allowedRoles={['admin']}>
+        <AdminNavbar />
+      </ProtectedRoute>
+    }
+  >
+    <Route index element={<AdminDashboard />} />
+    <Route path="projects" element={<Projects />} />
+    <Route path="users" element={<Users />} />
+   <Route path="project/:id" element={<ProjectDetails />} />
+
+  </Route>
 
       <Route
         path="/manager"
