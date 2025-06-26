@@ -50,7 +50,7 @@
 .manager-projects-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 600px;
 }
 
 .manager-projects-table thead {
@@ -60,18 +60,15 @@
 .manager-projects-table th {
   font-weight: bold;
   color: #000;
-  vertical-align: middle;
   text-align: left;
   padding: 1rem;
 }
 
 .manager-projects-table td {
   color: #333;
-  vertical-align: middle;
-  text-align: justify;
+  text-align: left;
   padding: 1rem;
   word-wrap: break-word;
-  max-width: 300px;
 }
 
 .manager-sortable {
@@ -122,6 +119,7 @@
   background-color: #0056b3;
 }
 
+/* Responsive styles */
 @media (max-width: 950px) {
   .manager-projects-header {
     flex-direction: column;
@@ -153,6 +151,24 @@
   }
 }
 
+@media (max-width: 768px) {
+  .manager-pagination {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .manager-pagination button {
+    flex-shrink: 0;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
 @media (max-width: 300px) {
   .manager-projects-filters {
     flex-direction: column;
@@ -173,23 +189,5 @@
   .manager-pagination button {
     width: 100%;
     font-size: 1rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .manager-pagination {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    gap: 0.5rem;
-    width: 100%;
-  }
-
-  .manager-pagination button {
-    flex-shrink: 0;
-    padding: 0.6rem 1rem;
-    font-size: 0.95rem;
   }
 }
