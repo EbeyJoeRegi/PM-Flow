@@ -18,19 +18,20 @@ const Login = () => {
 
     try {
       const result = await loginUser(email, password);
-      const { name, id, role } = result;
+      const { token, user: { id, firstName, lastName, role } } = result;
+      const name = `${firstName} ${lastName}`;
+      dispatch(setUser({ id, name, role, token }));
+      console.log(id);
+      // localStorage.setItem("user", JSON.stringify({ id, name, role }));
 
-      dispatch(setUser({ id, name, role }));
-      localStorage.setItem("user", JSON.stringify({ id, name, role }));
 
-
-    if (role === "admin") {
+    if (role === "ADMIN") {
       navigate("/admin");
     } 
-    else if (role === "manager") {
+    else if (role === "PROJECT_MANAGER") {
       navigate("/manager");
     } 
-    else if(role === "member"){
+    else if(role === "MEMBER"){
       navigate("/member");
     }
 

@@ -1,6 +1,4 @@
-/* managerProjectDetail.css */
-
-.project-detail-container {
+.manager-project-container {
   padding: 24px;
   max-width: 1200px;
   margin: auto;
@@ -8,8 +6,8 @@
   background: #f0f2f5;
 }
 
-.project-details-section,
-.task-list-section {
+.manager-project-details-section,
+.manager-project-task-section {
   background: #fff;
   padding: 24px;
   border-radius: 12px;
@@ -17,50 +15,50 @@
   margin-bottom: 24px;
 }
 
-.project-title-bar {
+.manager-project-title-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
 
-.project-title-bar h2 {
+.manager-project-title-bar h2 {
   margin: 0;
   font-size: 24px;
   color: #333;
 }
 
-.project-title-bar select {
+.manager-project-title-bar select {
   padding: 6px 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
 }
 
-.description-date-wrapper {
+.manager-project-description-date {
   display: flex;
   gap: 24px;
   flex-wrap: wrap;
 }
 
-.description-block {
+.manager-project-description-block {
   flex: 2;
   min-width: 300px;
 }
 
-.description-block p {
+.manager-project-description-block p {
   line-height: 1.6;
   color: #444;
   margin-bottom: 12px;
 }
 
-.description-block ul {
+.manager-project-description-block ul {
   padding-left: 20px;
   margin: 0;
   list-style: disc;
   color: #555;
 }
 
-.date-block {
+.manager-project-date-block {
   flex: 1;
   min-width: 250px;
   display: flex;
@@ -70,28 +68,22 @@
   color: #444;
 }
 
-.date-display label {
+.manager-project-date-display label {
   margin-right: 8px;
 }
 
-.date-display span,
-.date-display input {
+.manager-project-date-display span,
+.manager-project-date-display input {
   font-size: 15px;
 }
 
-.calendar-icon {
+.manager-project-calendar-icon {
   color: #007bff;
   margin-left: 6px;
   cursor: pointer;
 }
 
-.task-section-title {
-  font-size: 22px;
-  margin-bottom: 16px;
-  color: #222;
-}
-
-.task-header {
+.manager-project-task-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -99,31 +91,31 @@
   margin-bottom: 20px;
 }
 
-.task-header h3 {
+.manager-project-task-header h3 {
   font-size: 20px;
   font-weight: 600;
   color: #333;
   margin: 0;
 }
 
-.task-filters-right {
+.manager-project-task-filters {
   display: flex;
   gap: 12px;
   align-items: center;
 }
 
-.task-filters-right input {
+.manager-project-task-filters input {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 6px;
 }
 
-.checkbox-dropdown {
+.manager-project-checkbox-dropdown {
   position: relative;
   display: inline-block;
 }
 
-.checkbox-dropdown > button {
+.manager-project-checkbox-dropdown > button {
   padding: 8px;
   background: #eee;
   border: 1px solid #ccc;
@@ -131,7 +123,7 @@
   cursor: pointer;
 }
 
-.checkbox-dropdown .dropdown-content {
+.manager-project-dropdown-content {
   display: none;
   position: absolute;
   background-color: #fff;
@@ -145,18 +137,18 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-.checkbox-dropdown.open .dropdown-content {
+.manager-project-checkbox-dropdown.open .manager-project-dropdown-content {
   display: block;
 }
 
-.checkbox-dropdown label {
+.manager-project-checkbox-dropdown label {
   display: block;
   margin-bottom: 6px;
   font-weight: 500;
   font-size: 14px;
 }
 
-.task-header button {
+.manager-project-task-header button {
   background-color: #007bff;
   border: none;
   color: white;
@@ -166,48 +158,48 @@
   font-weight: 500;
 }
 
-.task-table {
+.manager-project-task-table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
   margin-bottom: 20px;
 }
 
-.task-table th,
-.task-table td {
+.manager-project-task-table th,
+.manager-project-task-table td {
   padding: 14px;
   border: 1px solid #ddd;
   text-align: left;
   font-size: 14px;
 }
 
-.task-table th {
+.manager-project-task-table th {
   background-color: #f8f9fa;
   font-weight: bold;
 }
 
-.task-table th.sortable {
+.manager-project-task-table th.sortable {
   cursor: pointer;
   user-select: none;
 }
 
-.clickable-task {
+.manager-project-task-row {
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.clickable-task:hover {
+.manager-project-task-row:hover {
   background-color: #f1f1f1;
 }
 
-.pagination {
+.manager-project-pagination {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
 }
 
-.pagination button {
+.manager-project-pagination button {
   padding: 6px 12px;
   border: none;
   border-radius: 6px;
@@ -216,12 +208,12 @@
   cursor: pointer;
 }
 
-.pagination button:disabled {
+.manager-project-pagination button:disabled {
   background-color: #aaa;
   cursor: not-allowed;
 }
 
-.modal-overlay {
+.manager-project-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -234,7 +226,7 @@
   z-index: 10;
 }
 
-.modal {
+.manager-project-modal {
   background: #fff;
   padding: 24px;
   border-radius: 10px;
@@ -246,59 +238,59 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 
-.modal input,
-.modal select {
+.manager-project-modal input,
+.manager-project-modal select {
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #ccc;
   width: 100%;
 }
 
-.modal-actions {
+.manager-project-modal-actions {
   display: flex;
   justify-content: space-between;
   margin-top: 12px;
 }
 
-.modal-actions .cancel-btn {
+.manager-project-modal-actions .cancel-btn {
   background: #ccc;
 }
 
-.modal-actions button {
+.manager-project-modal-actions button {
   padding: 8px 14px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.modal-actions button:not(.cancel-btn) {
+.manager-project-modal-actions button:not(.cancel-btn) {
   background: #007bff;
   color: #fff;
 }
 
-.error-message {
+.manager-project-error {
   color: red;
   font-size: 14px;
   margin-top: -6px;
 }
 
 @media (max-width: 768px) {
-  .description-date-wrapper {
+  .manager-project-description-date {
     flex-direction: column;
   }
 
-  .task-header {
+  .manager-project-task-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
 
-  .task-filters-right {
+  .manager-project-task-filters {
     flex-direction: column;
     width: 100%;
   }
 
-  .pagination {
+  .manager-project-pagination {
     flex-direction: column;
     gap: 8px;
     align-items: flex-start;

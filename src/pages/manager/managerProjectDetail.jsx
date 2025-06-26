@@ -80,9 +80,9 @@ const ManagerProjectDetail = () => {
   };
 
   return (
-    <div className="project-detail-container">
-      <div className="project-details-section">
-        <div className="project-title-bar">
+    <div className="manager-project-container">
+      <div className="manager-project-details-section">
+        <div className="manager-project-title-bar">
           <h2>{decodedName}</h2>
           <select value={status} onChange={(e) => setStatus(e.target.value)}>
             <option>Not Started</option>
@@ -92,19 +92,19 @@ const ManagerProjectDetail = () => {
           </select>
         </div>
 
-        <div className="description-date-wrapper">
-          <div className="description-block">
-            <p><strong>Description:</strong> This project involves redesigning and refactoring several key components. It will follow an agile workflow with multiple sprints including design, backend, testing, and deployment phases. Timely collaboration is expected from all members to meet the deliverables.</p>
+        <div className="manager-project-description-date">
+          <div className="manager-project-description-block">
+            <p><strong>Description:</strong> This project involves redesigning and refactoring several key components...</p>
             <p><strong>Team Members:</strong></p>
             <ul>{members.map(m => <li key={m}>{m}</li>)}</ul>
           </div>
 
-          <div className="date-block">
-            <div className="date-display">
+          <div className="manager-project-date-block">
+            <div className="manager-project-date-display">
               <label>Start Date:</label>
               <span>{startDate}</span>
             </div>
-            <div className="date-display">
+            <div className="manager-project-date-display">
               <label>End Date:</label>
               {isEditingDate ? (
                 <input
@@ -115,17 +115,17 @@ const ManagerProjectDetail = () => {
                   autoFocus
                 />
               ) : (
-                <span>{endDate} <FaRegCalendarAlt className="calendar-icon" onClick={() => setIsEditingDate(true)} /></span>
+                <span>{endDate} <FaRegCalendarAlt className="manager-project-calendar-icon" onClick={() => setIsEditingDate(true)} /></span>
               )}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="task-list-section">
-        <div className="task-header">
+      <div className="manager-project-task-section">
+        <div className="manager-project-task-header">
           <h3>Tasks</h3>
-          <div className="task-filters-right">
+          <div className="manager-project-task-filters">
             <input
               placeholder="Search by Task Name"
               value={searchTask}
@@ -134,9 +134,9 @@ const ManagerProjectDetail = () => {
                 setPage(1);
               }}
             />
-            <div className={`checkbox-dropdown ${showDropdown ? 'open' : ''}`}>
+            <div className={`manager-project-checkbox-dropdown ${showDropdown ? 'open' : ''}`}>
               <button onClick={() => setShowDropdown(!showDropdown)}>Filter Assignees</button>
-              <div className="dropdown-content">
+              <div className="manager-project-dropdown-content">
                 {members.map(m => (
                   <label key={m}>
                     <input
@@ -153,7 +153,7 @@ const ManagerProjectDetail = () => {
           </div>
         </div>
 
-        <table className="task-table">
+        <table className="manager-project-task-table">
           <thead>
             <tr>
               <th>Task Name</th>
@@ -168,7 +168,7 @@ const ManagerProjectDetail = () => {
               <tr><td colSpan="5">No tasks found.</td></tr>
             ) : (
               paginatedTasks.map(t => (
-                <tr key={t.id} onClick={() => navigate(`tasks/${t.name}`)} className="clickable-task">
+                <tr key={t.id} onClick={() => navigate(`tasks/${t.name}`)} className="manager-project-task-row">
                   <td>{t.name}</td>
                   <td>{t.dueDate}</td>
                   <td>{t.priority}</td>
@@ -180,7 +180,7 @@ const ManagerProjectDetail = () => {
           </tbody>
         </table>
 
-        <div className="pagination">
+        <div className="manager-project-pagination">
           <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Prev</button>
           <span>Page {page} of {totalPages}</span>
           <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>Next →</button>
@@ -188,8 +188,8 @@ const ManagerProjectDetail = () => {
       </div>
 
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="manager-project-modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="manager-project-modal" onClick={(e) => e.stopPropagation()}>
             <h4>Create New Task</h4>
             <input
               placeholder="Task Name"
@@ -215,8 +215,8 @@ const ManagerProjectDetail = () => {
             >
               {members.map(m => <option key={m}>{m}</option>)}
             </select>
-            {taskError && <div className="error-message">{taskError}</div>}
-            <div className="modal-actions">
+            {taskError && <div className="manager-project-error">{taskError}</div>}
+            <div className="manager-project-modal-actions">
               <button onClick={handleTaskCreate}>Add Task</button>
               <button className="cancel-btn" onClick={() => setShowModal(false)}>Cancel</button>
             </div>

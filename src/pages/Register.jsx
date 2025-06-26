@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import "../styles/Register.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { registerUser } from '../api/commonApi';
 
 const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,6 +16,7 @@ const Register = () => {
   });
 
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const validatePassword = (password) => {
     const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -29,7 +32,7 @@ const Register = () => {
     setError("");
   };
 
-  const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     const { email, password, confirmPassword } = formData;
 
@@ -50,24 +53,35 @@ const Register = () => {
       return;
     }
 
-    // Proceed with API submission here
-    console.log("Registration Data:", formData);
+    try {
+      const { username, firstName, lastName } = formData;
+      await registerUser({ username, email, password, firstName, lastName });
+      setSuccess("Registration successful! Redirecting to login...");
+      setTimeout(() => navigate("/"), 2000);
+    } catch (err) {
+      setError(err || "Registration failed.");
+    }
   };
 
   return (
     <div className="register-container">
       <form className="register-form" onSubmit={handleSubmit}>
-        <img 
-          src="/logo/PM Flow.png" 
-          alt="PM Flow Logo" 
-          className="register-logo" 
-        />
-
+        <img src="/logo/PM Flow.png" alt="PM Flow Logo" className="register-logo" />
         <h2 className="register-title">Register</h2>
 
         <div className="form-group">
-          <label>Name</label>
-          <input type="text" name="name" required onChange={handleChange} />
+          <label>First Name</label>
+          <input type="text" name="firstName" required onChange={handleChange} />
+        </div>
+
+        <div className="form-group">
+          <label>Last Name</label>
+          <input type="text" name="lastName" required onChange={handleChange} />
+        </div>
+
+        <div className="form-group">
+          <label>Username</label>
+          <input type="text" name="username" required onChange={handleChange} />
         </div>
 
         <div className="form-group">
@@ -85,27 +99,8 @@ const Register = () => {
           <input type="password" name="confirmPassword" required onChange={handleChange} />
         </div>
 
-        <div className="form-group">
-          <label>Age</label>
-          <input type="number" name="age" required onChange={handleChange} />
-        </div>
-
-        <div className="form-group">
-          <label>Gender</label>
-          <select name="gender" required onChange={handleChange}>
-            <option value="">Select</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label>Location</label>
-          <input type="text" name="location" required onChange={handleChange} />
-        </div>
-
         {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
 
         <button type="submit" className="register-btn">Register</button>
 

@@ -8,6 +8,7 @@ const initialState = savedUser
       id: null,
       name: "",
       role: "",
+      token: ""
     };
 
 const userSlice = createSlice({
@@ -15,11 +16,13 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      return { ...action.payload };
+    const newUser = { ...action.payload };
+      localStorage.setItem("user", JSON.stringify(newUser)); 
+      return newUser;
     },
     logoutUser: () => {
       localStorage.removeItem("user");
-      return { id: null, name: "", role: "" };
+      return { id: null, name: "", role: "", token: "" };
     },
   },
 });
