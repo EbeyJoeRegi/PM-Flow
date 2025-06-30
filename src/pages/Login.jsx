@@ -21,7 +21,6 @@ const Login = () => {
       const { token, user: { id, firstName, lastName, role } } = result;
       const name = `${firstName} ${lastName}`;
       dispatch(setUser({ id, name, role, token }));
-      console.log(id);
       // localStorage.setItem("user", JSON.stringify({ id, name, role }));
 
 

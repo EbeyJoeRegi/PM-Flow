@@ -24,6 +24,9 @@
   font-weight: 500;
   color: #ffffff;
   letter-spacing: 1px;
+  color: inherit;            
+  text-decoration: none;     
+  cursor: pointer;  
 }
 
 .manager-navbar-right {

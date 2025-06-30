@@ -56,7 +56,7 @@ const Manager = () => {
             className="hamburger-icon"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           />
-          <span className="manager-navbar-title">PM Flow</span>
+          <NavLink to="/manager" className="manager-navbar-title">PM Flow</NavLink>
         </div>
         <div className="manager-navbar-right">
           <span className="manager-welcome">Welcome, {name}</span>

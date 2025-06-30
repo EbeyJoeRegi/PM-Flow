@@ -1,41 +1,46 @@
-import React, { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../../redux/userSlice";
+import { TbLayoutDashboardFilled } from "react-icons/tb";
+import { HiMiniUsers } from "react-icons/hi2";
 import {
   FaUserCircle,
-  FaTachometerAlt,
-  FaUsers,
   FaProjectDiagram,
   FaBars
-} from 'react-icons/fa'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import '../../styles/AdminNavbar.css'
+} from 'react-icons/fa';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import '../../styles/AdminNavbar.css';
 
-export default function Navbar({ name = 'Admin', onLogout }) {
-  const [dropdownOpen, setDropdownOpen] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
-  const dropdownRef = useRef()
-  const navigate = useNavigate()
+export default function Navbar() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { name } = useSelector((state) => state.user);
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const dropdownRef = useRef();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false)
+        setDropdownOpen(false);
       }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
-    if (onLogout) onLogout()
-    else navigate('/')
-  }
+    dispatch(logoutUser());
+    navigate('/');
+  };
 
   return (
     <div className="navbar-wrapper">
       <nav className="navbar-header">
         <div className="navbar-left">
           <FaBars className="menu-icon" onClick={() => setSidebarOpen(!sidebarOpen)} />
-          <h4 className="navbar-title">PM Flow</h4>
+          <NavLink to="/admin" className="navbar-title">PM Flow</NavLink>
         </div>
         <div className="navbar-right" ref={dropdownRef}>
           <span className="navbar-welcome">Welcome, {name}</span>
@@ -53,12 +58,12 @@ export default function Navbar({ name = 'Admin', onLogout }) {
           <ul>
             <li>
               <NavLink to="." end className={({ isActive }) => isActive ? 'active' : ''}>
-                <FaTachometerAlt /> <span className="link-text">Dashboard</span>
+                <TbLayoutDashboardFilled /> <span className="link-text">Dashboard</span>
               </NavLink>
             </li>
             <li>
               <NavLink to="users" className={({ isActive }) => isActive ? 'active' : ''}>
-                <FaUsers /> <span className="link-text">Users</span>
+                <HiMiniUsers /> <span className="link-text">Users</span>
               </NavLink>
             </li>
             <li>
@@ -73,5 +78,5 @@ export default function Navbar({ name = 'Admin', onLogout }) {
         </main>
       </div>
     </div>
-  )
+  );
 }

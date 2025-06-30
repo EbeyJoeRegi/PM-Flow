@@ -1,22 +1,34 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { FaUserCircle, FaTachometerAlt, FaUsers, FaBars } from 'react-icons/fa'
-import { NavLink, Outlet } from 'react-router-dom'
-import '../../styles/MemberNavbar.css'
+import React, { useRef, useState, useEffect } from 'react';
+import { FaUserCircle, FaUsers, FaBars } from 'react-icons/fa';
+import { TbLayoutDashboardFilled } from "react-icons/tb";
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser } from '../../redux/userSlice';
+import '../../styles/MemberNavbar.css';
 
-export default function MemberNavbar({ name, onLogout }) {
-  const [dropdownOpen, setDropdownOpen] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const dropdownRef = useRef()
+export default function MemberNavbar() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { name } = useSelector((state) => state.user);
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const dropdownRef = useRef();
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    navigate('/');
+  };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false)
+        setDropdownOpen(false);
       }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <div className="member-wrapper">
@@ -28,7 +40,7 @@ export default function MemberNavbar({ name, onLogout }) {
             style={{ cursor: 'pointer' }}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           />
-          <h4 className="m-0 text-white">PM Flow</h4>
+          <NavLink to="/member" className="m-0 navbar-title">PM Flow</NavLink>
         </div>
 
         <div className="navbar-user d-flex align-items-center gap-3">
@@ -42,7 +54,7 @@ export default function MemberNavbar({ name, onLogout }) {
             />
             {dropdownOpen && (
               <div className="dropdown-menu show position-absolute end-0 mt-2 p-2 shadow" style={{ minWidth: '120px' }}>
-                <button className="dropdown-item" onClick={onLogout}>Logout</button>
+                <button className="dropdown-item" onClick={handleLogout}>Logout</button>
               </div>
             )}
           </div>
@@ -59,7 +71,7 @@ export default function MemberNavbar({ name, onLogout }) {
                 className={({ isActive }) => isActive ? 'member-active' : ''}
                 onClick={() => setSidebarOpen(false)}
               >
-                <FaTachometerAlt /> <span className="link-text">Dashboard</span>
+                <TbLayoutDashboardFilled /> <span className="link-text">Dashboard</span>
               </NavLink>
             </li>
             <li>
@@ -79,5 +91,5 @@ export default function MemberNavbar({ name, onLogout }) {
         </main>
       </div>
     </div>
-  )
+  );
 }
