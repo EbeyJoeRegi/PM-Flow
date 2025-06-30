@@ -1,0 +1,193 @@
+.manager-projects-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.manager-projects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.manager-projects-header h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+.manager-projects-filters {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.manager-projects-filters select,
+.manager-projects-filters input {
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: border 0.3s;
+}
+
+.manager-projects-filters input:focus,
+.manager-projects-filters select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.manager-projects-table-wrapper {
+  overflow-x: auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.manager-projects-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.manager-projects-table thead {
+  background-color: #d6e4f5;
+}
+
+.manager-projects-table th {
+  font-weight: bold;
+  color: #000;
+  text-align: left;
+  padding: 1rem;
+}
+
+.manager-projects-table td {
+  color: #333;
+  text-align: left;
+  padding: 1rem;
+  word-wrap: break-word;
+}
+
+.manager-sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.manager-sortable:hover {
+  background-color: #c0d4eb;
+}
+
+.manager-clickable-row {
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.manager-clickable-row:hover {
+  background-color: #f1f5f9;
+}
+
+.manager-pagination {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1rem;
+}
+
+.manager-pagination button {
+  padding: 0.5rem 1.2rem;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.manager-pagination button:disabled {
+  background-color: #a2c0e3;
+  cursor: not-allowed;
+}
+
+.manager-pagination button:not(:disabled):hover {
+  background-color: #0056b3;
+}
+
+/* Responsive styles */
+@media (max-width: 950px) {
+  .manager-projects-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .manager-projects-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .manager-projects-filters {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .manager-projects-filters select,
+  .manager-projects-filters input {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .manager-projects-table {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .manager-pagination {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .manager-pagination button {
+    flex-shrink: 0;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 300px) {
+  .manager-projects-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .manager-projects-filters select,
+  .manager-projects-filters input {
+    width: 100%;
+  }
+
+  .manager-pagination {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .manager-pagination button {
+    width: 100%;
+    font-size: 1rem;
+  }
+}

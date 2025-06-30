@@ -1,0 +1,188 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.register-logo {
+  display: block;
+  margin: auto;
+  max-width: 150px;
+  height: auto;
+  grid-column: span 2;
+}
+
+.register-form {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+
+  /* Grid layout for two columns */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.register-title {
+  text-align: center;
+  margin-bottom: 16px;
+  color: #222;
+  font-size: 28px;
+  font-weight: 600;
+  grid-column: span 2;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #444;
+  font-size: 15px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Span elements across full width */
+.register-btn,
+.login-link,
+.error,
+.success {
+  grid-column: span 2;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.register-btn:hover {
+  background-color: #0056b3;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.login-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+.error {
+  color: #e63946;
+  font-size: 14px;
+  margin-top: -4px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.success {
+  color: #2ecc71;
+  font-size: 14px;
+  margin-top: -4px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+/* Responsive: stack form fields in single column */
+@media (max-width: 1024px) {
+  .register-form {
+    padding: 24px;
+    max-width: 85%;
+  }
+}
+
+@media (max-width: 768px) {
+  .register-form {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  .register-title {
+    font-size: 24px;
+    grid-column: span 1;
+  }
+
+  .register-btn,
+  .login-link,
+  .error,
+  .success,
+  .register-logo {
+    grid-column: span 1;
+  }
+
+  .register-btn {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-logo {
+    max-width: 120px;
+  }
+
+  .register-title {
+    font-size: 20px;
+  }
+
+  .form-group label,
+  .form-group input,
+  .form-group select {
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 8px 10px;
+  }
+
+  .register-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .login-link {
+    font-size: 13px;
+  }
+}

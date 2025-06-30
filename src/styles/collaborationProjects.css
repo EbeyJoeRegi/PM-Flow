@@ -1,0 +1,65 @@
+/* Page Layout */
+.collab-projects-page {
+  height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+}
+
+.collab-header {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.collab-project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Project Card */
+.collab-project-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.collab-project-card:hover {
+  transform: translateY(-2px);
+  background-color: #f0f0f0;
+}
+
+.collab-project-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.collab-project-status {
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* Status Colors */
+.collab-status-completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.collab-status-inprogress {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.collab-status-notstarted {
+  background-color: #f8d7da;
+  color: #721c24;
+}
