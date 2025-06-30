@@ -1,7 +1,6 @@
 import axios from 'axios';
 import BASE_URL from '../config';
 
-// ✅ Define this at the top so all functions can use it
 const getAuthHeader = () => {
   const userString = localStorage.getItem('user');
   if (!userString) return {};
