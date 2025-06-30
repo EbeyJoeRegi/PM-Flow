@@ -104,30 +104,39 @@ export default function Projects() {
   };
 
   const handleSaveEdit = async (projectId) => {
-    try {
-      const original = projects.find(p => p.id === projectId);
+  try {
+    const original = projects.find(p => p.id === projectId);
 
-      const updatedPayload = {
-        name: editedProject.name,
-        description: original.description || 'Updated project',
-        status: original.status || 'NOT_STARTED',
-        managerId: Number(editedProject.managerId),
-        teamMemberIds: original.teamMembers?.map(m => m.id) || [],
-        endDate: formatDateMMDDYYYY(editedProject.endDate)
-      };
+    const updatedPayload = {
+      name: editedProject.name,
+      description: original.description || 'Updated project',
+      status: original.status || 'NOT_STARTED',
+      managerId: Number(editedProject.managerId),
+      teamMemberIds: original.teamMembers?.map(m => m.id) || [],
+      endDate: formatDateMMDDYYYY(editedProject.endDate)
+    };
 
-      const updated = await updateProjectById(projectId, updatedPayload);
-      const updatedManagerName = managerOptions.find(m => String(m.id) === String(updated.managerId))?.name || 'N/A';
+    const updated = await updateProjectById(projectId, updatedPayload);
 
-      setProjects(prev => prev.map(p =>
-        p.id === projectId ? { ...p, ...updated, managerName: updatedManagerName } : p
-      ));
-      setEditProjectId(null);
-    } catch (error) {
-      console.error('Error updating project:', error);
-      alert('Failed to update project.');
-    }
-  };
+    const updatedManagerName = managerOptions.find(m => String(m.id) === String(updated.managerId))?.name || 'N/A';
+
+    setProjects(prev => prev.map(p =>
+      p.id === projectId
+        ? {
+            ...p,
+            ...updated,
+            managerId: updated.managerId,
+            managerName: updatedManagerName
+          }
+        : p
+    ));
+    setEditProjectId(null);
+  } catch (error) {
+    console.error('Error updating project:', error);
+    alert('Failed to update project.');
+  }
+};
+
 
   const handleDeleteProject = async (projectId) => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getAllUsers } from '../../api/adminApi';
+import { FaPen, FaTrash } from 'react-icons/fa';
 import '../../styles/Admin.css';
 
 export default function Users() {
@@ -119,8 +120,12 @@ export default function Users() {
                 <td>
                   {editId === user.id ? (
                     <>
-                      <button className="btn btn-success btn-sm me-2" onClick={handleSave}>Save</button>
-                      <button className="btn btn-secondary btn-sm" onClick={handleCancelEdit}>Cancel</button>
+                      <button className="btn btn-success btn-sm me-2" onClick={handleSave}>
+                        Save
+                      </button>
+                      <button className="btn btn-secondary btn-sm" onClick={handleCancelEdit}>
+                        Cancel
+                      </button>
                     </>
                   ) : (
                     <>
@@ -128,13 +133,13 @@ export default function Users() {
                         className="btn btn-outline-primary btn-sm me-2"
                         onClick={() => handleStartEdit(user)}
                       >
-                        Edit
+                        <FaPen />
                       </button>
                       <button
                         className="btn btn-outline-danger btn-sm"
                         onClick={() => handleDelete(user.id)}
                       >
-                        Delete
+                        <FaTrash />
                       </button>
                     </>
                   )}
