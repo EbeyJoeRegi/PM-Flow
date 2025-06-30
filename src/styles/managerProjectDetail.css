@@ -1,11 +1,3 @@
-.manager-project-container {
-  padding: 24px;
-  max-width: 1200px;
-  margin: auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f0f2f5;
-}
-
 .manager-project-details-section,
 .manager-project-task-section {
   background: #fff;
@@ -158,38 +150,73 @@
   font-weight: 500;
 }
 
-.manager-project-task-table {
+/* Table Wrapper for responsiveness */
+.manager-project-task-table-wrapper {
   width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  margin-bottom: 20px;
+  overflow-x: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: #fff;
 }
 
-.manager-project-task-table th,
-.manager-project-task-table td {
-  padding: 14px;
-  border: 1px solid #ddd;
-  text-align: left;
+/* Main Table Styling */
+.manager-project-task-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
   font-size: 14px;
 }
 
-.manager-project-task-table th {
-  background-color: #f8f9fa;
-  font-weight: bold;
+/* Header Cells */
+.manager-project-task-table thead th {
+  background-color: #f1f5f9;
+  color: #333;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 2px solid #ddd;
+  white-space: nowrap;
+  position: relative;
 }
 
-.manager-project-task-table th.sortable {
+/* Sortable Column Header */
+.manager-project-task-table th.sortable:hover {
+  background-color: #e2e8f0;
   cursor: pointer;
-  user-select: none;
 }
 
+.manager-project-task-table th.sortable::after {
+  font-size: 10px;
+  margin-left: 6px;
+  color: #666;
+}
+
+/* Data Cells */
+.manager-project-task-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  color: #444;
+  white-space: nowrap;
+  background-color: #fff;
+}
+
+/* Row Hover */
+.manager-project-task-row:hover {
+  background-color: #f9fafb;
+  transition: background 0.2s ease;
+}
+
+/* Clickable row cursor */
 .manager-project-task-row {
   cursor: pointer;
-  transition: background 0.2s;
 }
 
-.manager-project-task-row:hover {
-  background-color: #f1f1f1;
+/* No tasks row */
+.manager-project-task-table td[colspan] {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  font-style: italic;
 }
 
 .manager-project-pagination {
@@ -275,6 +302,14 @@
 }
 
 @media (max-width: 768px) {
+    .manager-project-task-table-wrapper {
+    overflow-x: auto;
+  }
+
+    .manager-project-task-table {
+    min-width: 700px; 
+  }
+
   .manager-project-description-date {
     flex-direction: column;
   }

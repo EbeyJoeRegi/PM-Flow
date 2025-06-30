@@ -1,11 +1,5 @@
-/* Page Layout */
-.collab-projects-page {
-  height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  box-sizing: border-box;
-}
-
 .collab-header {
+  font-weight: bold;
   font-size: 2rem;
   margin-bottom: 1.5rem;
   color: #333;

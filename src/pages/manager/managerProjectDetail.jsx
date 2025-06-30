@@ -11,7 +11,7 @@ const ManagerProjectDetail = () => {
   const members = ['Alice', 'Bob', 'Charlie'];
   const [status, setStatus] = useState('In Progress');
   // const [startDate, setStartDate] = useState('2025-01-01');
-   const startDate = '2025-01-01';
+  const startDate = '2025-01-01';
   const [endDate, setEndDate] = useState('2025-06-30');
   const [isEditingDate, setIsEditingDate] = useState(false);
 
@@ -152,34 +152,34 @@ const ManagerProjectDetail = () => {
             <button onClick={() => setShowModal(true)}>Create Task</button>
           </div>
         </div>
-
-        <table className="manager-project-task-table">
-          <thead>
-            <tr>
-              <th>Task Name</th>
-              <th onClick={() => setSortField('dueDate')} className="sortable">Due Date ⬍</th>
-              <th onClick={() => setSortField('priority')} className="sortable">Priority ⬍</th>
-              <th onClick={() => setSortField('status')} className="sortable">Status ⬍</th>
-              <th>Assignee</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedTasks.length === 0 ? (
-              <tr><td colSpan="5">No tasks found.</td></tr>
-            ) : (
-              paginatedTasks.map(t => (
-                <tr key={t.id} onClick={() => navigate(`tasks/${t.name}`)} className="manager-project-task-row">
-                  <td>{t.name}</td>
-                  <td>{t.dueDate}</td>
-                  <td>{t.priority}</td>
-                  <td>{t.status}</td>
-                  <td>{t.assignee}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-
+        <div className="manager-project-task-table-wrapper">
+          <table className="manager-project-task-table">
+            <thead>
+              <tr>
+                <th>Task Name</th>
+                <th onClick={() => setSortField('dueDate')} className="sortable">Due Date</th>
+                <th onClick={() => setSortField('priority')} className="sortable">Priority</th>
+                <th onClick={() => setSortField('status')} className="sortable">Status</th>
+                <th>Assignee</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedTasks.length === 0 ? (
+                <tr><td colSpan="5">No tasks found.</td></tr>
+              ) : (
+                paginatedTasks.map(t => (
+                  <tr key={t.id} onClick={() => navigate(`tasks/${t.name}`)} className="manager-project-task-row">
+                    <td>{t.name}</td>
+                    <td>{t.dueDate}</td>
+                    <td>{t.priority}</td>
+                    <td>{t.status}</td>
+                    <td>{t.assignee}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
         <div className="manager-project-pagination">
           <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Prev</button>
           <span>Page {page} of {totalPages}</span>

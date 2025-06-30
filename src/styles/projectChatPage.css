@@ -1,23 +1,23 @@
-/* Root layout */
+/* Main wrapper for the chat page */
 .collab-chat-full-page {
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f2f3f5;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100%;
+  max-height: 100%;
   box-sizing: border-box;
 }
 
 /* Chat header */
 .collab-chat-header {
-  font-size: 1.6rem;
+  font-size: 2rem;
   margin-bottom: 1rem;
   color: #333;
+  flex-shrink: 0;
 }
 
 /* Scrollable chat box */
 .collab-chat-box {
-  flex: 1;
+  flex-grow: 1;
   overflow-y: auto;
   background-color: #ffffff;
   border-radius: 8px;
@@ -26,6 +26,7 @@
   flex-direction: column;
   gap: 12px;
   box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.03);
+  min-height: 0; /* Important for flexbox to allow scrolling */
 }
 
 /* Date label */
@@ -55,7 +56,6 @@
 
 /* Message bubble */
 .collab-chat-message {
-  /* min-width: 20%; */
   max-width: 75%;
   padding: 10px 14px;
   border-radius: 10px;
@@ -91,6 +91,7 @@
 
 /* Chat input area */
 .collab-chat-input {
+  flex-shrink: 0;
   display: flex;
   gap: 0.75rem;
   padding-top: 1rem;
@@ -135,7 +136,7 @@
   }
 
   .collab-chat-message {
-    max-width: 75%; /* more width on small screens */
+    max-width: 75%;
     font-size: 0.95rem;
   }
 
