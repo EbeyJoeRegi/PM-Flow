@@ -1,33 +1,33 @@
 import { useState, useEffect } from 'react';
+import { getAllUsers } from '../../api/adminApi';
 import '../../styles/Admin.css';
 
 export default function Users() {
-  const [users, setUsers] = useState(() => {
-    const stored = localStorage.getItem('users');
-    return stored ? JSON.parse(stored) : [
-      { id: 1, name: 'John Smith', email: 'john.incture@gmail.com', role: 'Admin' },
-      { id: 2, name: 'Emily Johnson', email: 'emily.incture@gmail.com', role: 'Manager' }
-    ];
-  });
-
+  const [users, setUsers] = useState([]);
   const [editId, setEditId] = useState(null);
-  const [selectedName, setSelectedName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    localStorage.setItem('users', JSON.stringify(users));
-  }, [users]);
+    getAllUsers()
+      .then(data => setUsers(data))
+      .catch(() => setUsers([]));
+  }, []);
 
-  const handleStartEdit = (id, currentName, currentRole) => {
-    setEditId(id);
-    setSelectedName(currentName);
-    setSelectedRole(currentRole);
+  const handleStartEdit = (user) => {
+    setEditId(user.id);
+    setFirstName(user.firstName);
+    setLastName(user.lastName);
+    setSelectedRole(user.role);
   };
 
   const handleSave = () => {
     const updated = users.map(user =>
-      user.id === editId ? { ...user, name: selectedName, role: selectedRole } : user
+      user.id === editId
+        ? { ...user, firstName, lastName, role: selectedRole }
+        : user
     );
     setUsers(updated);
     setEditId(null);
@@ -35,7 +35,8 @@ export default function Users() {
 
   const handleCancelEdit = () => {
     setEditId(null);
-    setSelectedName('');
+    setFirstName('');
+    setLastName('');
     setSelectedRole('');
   };
 
@@ -45,7 +46,7 @@ export default function Users() {
   };
 
   const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -61,12 +62,12 @@ export default function Users() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
-
       <div className="table-container">
         <table className="table table-bordered table-hover bg-white">
           <thead>
             <tr>
-              <th>Name</th>
+              <th>First Name</th>
+              <th>Last Name</th>
               <th>Email</th>
               <th>Role</th>
               <th>Actions</th>
@@ -80,10 +81,24 @@ export default function Users() {
                     <input
                       type="text"
                       className="form-control"
-                      value={selectedName}
-                      onChange={(e) => setSelectedName(e.target.value)}
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
                     />
-                  ) : user.name}
+                  ) : (
+                    user.firstName
+                  )}
+                </td>
+                <td>
+                  {editId === user.id ? (
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                  ) : (
+                    user.lastName
+                  )}
                 </td>
                 <td>{user.email}</td>
                 <td>
@@ -93,11 +108,13 @@ export default function Users() {
                       value={selectedRole}
                       onChange={(e) => setSelectedRole(e.target.value)}
                     >
-                      <option>Admin</option>
-                      <option>Manager</option>
-                      <option>Member</option>
+                      <option value="ADMIN">Admin</option>
+                      <option value="PROJECT_MANAGER">Manager</option>
+                      <option value="MEMBER">Member</option>
                     </select>
-                  ) : user.role}
+                  ) : (
+                    user.role
+                  )}
                 </td>
                 <td>
                   {editId === user.id ? (
@@ -109,7 +126,7 @@ export default function Users() {
                     <>
                       <button
                         className="btn btn-outline-primary btn-sm me-2"
-                        onClick={() => handleStartEdit(user.id, user.name, user.role)}
+                        onClick={() => handleStartEdit(user)}
                       >
                         Edit
                       </button>
