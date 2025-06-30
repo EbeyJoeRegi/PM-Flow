@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../styles//MemberCollaborationProjects.css';
+import '../../styles/collaborationProjects.css';
 
 export default function MemberCollaborationProjects() {
   const navigate = useNavigate();
