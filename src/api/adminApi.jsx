@@ -79,3 +79,15 @@ export const getProjectById = async (id) => {
     throw error;
   }
 };
+
+export const deleteProjectById = async (id) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/api/projects/${id}`, {
+      headers: getAuthHeader()
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to delete project ${id}:`, error.response?.status, error.message);
+    throw error;
+  }
+};
