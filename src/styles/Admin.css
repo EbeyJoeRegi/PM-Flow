@@ -16,9 +16,21 @@
   table-layout: fixed;
 }
 .project-table tbody tr {
-  height: 60px; 
+  height: auto; 
   vertical-align: middle;
 }
+.project-table table {
+  font-size: 14px;     
+  padding: 4px;
+}
+
+.project-table th,
+.project-table td {
+  padding: 8px 10px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
 .project-view th,
 .project-view td {
   white-space: nowrap;

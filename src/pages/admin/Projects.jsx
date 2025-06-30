@@ -1,220 +1,184 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import '../../styles/Admin.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../../styles/Admin.css';
+import {
+  getAllProjects,
+  createProject,
+  getAllUsers,
+  getProjectById
+} from '../../api/adminApi';
 
 export default function Projects() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [showModal, setShowModal] = useState(false)
-  const [editId, setEditId] = useState(null)
-  const [editedProject, setEditedProject] = useState(null)
-  const [isLoaded, setIsLoaded] = useState(false)
-  const navigate = useNavigate()
-
-  const managerOptions = ['Abhishek Kumar Jah', 'Moushmi', 'Aishwarya']
-  const progressOptions = ['Not Started', 'In Progress', 'Completed', 'On Hold']
-
-  const [newProject, setNewProject] = useState({
-    name: '',
-    manager: '',
-    members: '',
-    progress: 'Not Started',
-    endDate: ''
-  })
-
-  const [projects, setProjects] = useState([])
-
-  const statusColors = {
-    'Not Started': 'primary',
-    'In Progress': 'warning',
-    'Completed': 'success',
-    'On Hold': 'secondary'
-  }
+  const [projects, setProjects] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [managerOptions, setManagerOptions] = useState([]);
+  const [memberOptions, setMemberOptions] = useState([]);
+  const [teamSize, setTeamSize] = useState(0);
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [newProject, setNewProject] = useState({ name: '', manager: '', endDate: '' });
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const stored = localStorage.getItem('projects')
-    if (stored) {
-      const parsed = JSON.parse(stored).map(p => ({
-        ...p,
-        members: Array.isArray(p.members)
-          ? p.members
-          : p.members.split(',').map(m => m.trim())
-      }))
-      setProjects(parsed)
-    }
-    setIsLoaded(true)
-  }, [])
+    async function fetchData() {
+      try {
+        const [projectList, users] = await Promise.all([
+          getAllProjects(),
+          getAllUsers()
+        ]);
 
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem('projects', JSON.stringify(projects))
+        const managers = users.filter(u => (u.role || '').toLowerCase().includes('manager'));
+        const members = users.filter(u => (u.role || '').toLowerCase().includes('member'));
+
+        const mgrOptions = managers.map(u => ({
+          id: String(u.id),
+          name: `${u.firstName || ''} ${u.lastName || ''}`.trim()
+        }));
+        const memOptions = members.map(u => ({
+          id: String(u.id),
+          name: `${u.firstName || ''} ${u.lastName || ''}`.trim()
+        }));
+
+        setManagerOptions(mgrOptions);
+        setMemberOptions(memOptions);
+
+        const detailedProjects = await Promise.all(
+          projectList.map(p => getProjectById(p.id))
+        );
+
+        setProjects(detailedProjects || []);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [projects, isLoaded])
+
+    fetchData();
+  }, []);
+
+  const formatDateDDMMYYYY = (str) => {
+    if (!str) return 'N/A';
+    const date = new Date(str);
+    const dd = date.getDate().toString().padStart(2, '0');
+    const mm = (date.getMonth() + 1).toString().padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${dd}-${mm}-${yyyy}`;
+  };
+
+  const formatDateMMDDYYYY = (str) => {
+    if (!str) return '';
+    const date = new Date(str);
+    const mm = (date.getMonth() + 1).toString().padStart(2, '0');
+    const dd = date.getDate().toString().padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${mm}/${dd}/${yyyy}`;
+  };
+
+  const handleAddProject = async () => {
+    if (!newProject.name || !newProject.manager) return;
+
+    const payload = {
+      name: newProject.name,
+      description: 'N/A',
+      managerId: Number(newProject.manager),
+      teamMemberIds: teamMembers.filter(id => id !== '').map(id => Number(id)),
+      endDate: formatDateMMDDYYYY(newProject.endDate)
+    };
+
+    try {
+      const added = await createProject(payload);
+
+      const managerName = managerOptions.find(m => String(m.id) === String(added.managerId))?.name || 'N/A';
+      const memberNames = (added.teamMemberIds || []).map(id =>
+        memberOptions.find(m => String(m.id) === String(id))?.name || 'Unknown'
+      );
+
+      const enrichedProject = { ...added, managerName, memberNames };
+      setProjects(prevProjects => [...prevProjects, enrichedProject]);
+
+      setNewProject({ name: '', manager: '', endDate: '' });
+      setTeamSize(0);
+      setTeamMembers([]);
+      setShowModal(false);
+    } catch (error) {
+      console.error("Failed to add project:", error);
+      alert('Failed to add project. Check console for details.');
+    }
+  };
 
   const filtered = projects.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const formatDate = (dateStr) => {
-    if (!dateStr) return 'N/A'
-    const [year, month, day] = dateStr.split('-')
-    return `${day}/${month}/${year}`
-  }
-
-  const handleAddProject = () => {
-    if (!newProject.name || !newProject.manager) return
-
-    const newEntry = {
-      id: Date.now(),
-      name: newProject.name,
-      manager: newProject.manager,
-      members: newProject.members.split(',').map(m => m.trim()),
-      progress: newProject.progress,
-      endDate: newProject.endDate,
-      startDate: new Date().toISOString().split('T')[0]
-    }
-
-    setProjects([...projects, newEntry])
-    setShowModal(false)
-    setNewProject({
-      name: '',
-      manager: '',
-      members: '',
-      progress: 'Not Started',
-      endDate: ''
-    })
-  }
-
-  const handleDelete = (id) => {
-    setProjects(projects.filter(p => p.id !== id))
-  }
-
-  const handleFieldChange = (field, value) => {
-    setEditedProject({
-      ...editedProject,
-      [field]: field === 'members'
-        ? value.split(',').map(m => m.trim())
-        : value
-    })
-  }
-
-  const handleSaveEdit = () => {
-    const updated = projects.map(p => (p.id === editId ? editedProject : p))
-    setProjects(updated)
-    setEditId(null)
-    setEditedProject(null)
-  }
-
-  const handleCancelEdit = () => {
-    setEditId(null)
-    setEditedProject(null)
-  }
+    p.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="project-view p-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h3>Project Oversight</h3>
-        <button className="btn btn-success" onClick={() => setShowModal(true)}>
-          + New Project
-        </button>
+    <div className="p-4 project-view">
+      <div className="d-flex justify-content-between mb-3">
+        <h4>Projects</h4>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ New Project</button>
       </div>
 
       <input
-        className="form-control mb-3"
-        placeholder="Search projects"
+        className="form-control mb-3 search-input"
+        placeholder="Search"
         value={searchTerm}
         onChange={e => setSearchTerm(e.target.value)}
       />
 
-      <div className="project-table-scroll">
-        <table className="table table-bordered table-hover bg-white">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Project Manager</th>
-              <th>Progress</th>
-              <th>End Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map(project => (
-              <tr
-                key={project.id}
-                className="py-10 align-middle"
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  if (editId !== project.id) {
-                    navigate(`/admin/project/${project.id}`, { state: project })
-                  }
-                }}
-              >
-                <td>{project.name}</td>
-                <td>
-                  {editId === project.id ? (
-                    <select
-                      className="form-select"
-                      value={editedProject.manager}
-                      onChange={e => handleFieldChange('manager', e.target.value)}
-                      onClick={e => e.stopPropagation()}
-                    >
-                      {managerOptions.map((name, idx) => (
-                        <option key={idx} value={name}>{name}</option>
-                      ))}
-                    </select>
-                  ) : (
-                    project.manager
-                  )}
-                </td>
-                <td>
-                  <span className={`badge bg-${statusColors[project.progress] || 'secondary'} text-white`}>
-                    {project.progress}
-                  </span>
-                </td>
-                <td>
-                  {editId === project.id ? (
-                    <input
-                      type="date"
-                      className="form-control"
-                      value={editedProject.endDate}
-                      onChange={e => handleFieldChange('endDate', e.target.value)}
-                      onClick={e => e.stopPropagation()}
-                    />
-                  ) : (
-                    formatDate(project.endDate)
-                  )}
-                </td>
-                <td className="actions-cell" onClick={(e) => e.stopPropagation()}>
-                  {editId === project.id ? (
-                    <>
-                      <button className="btn btn-sm btn-success me-2" onClick={handleSaveEdit}>Save</button>
-                      <button className="btn btn-sm btn-secondary" onClick={handleCancelEdit}>Cancel</button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        className="btn btn-outline-primary btn-sm me-2"
-                        onClick={() => {
-                          setEditId(project.id)
-                          setEditedProject({ ...project })
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-outline-danger btn-sm"
-                        onClick={() => handleDelete(project.id)}
-                      >
-                        Delete
-                      </button>
-                    </>
-                  )}
-                </td>
+      {loading ? <div>Loading...</div> : (
+        <div className="project-table-scroll">
+          <table className="table table-bordered bg-white project-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Manager</th>
+                <th>Status</th>
+                <th>End Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {filtered.map(proj => {
+                const managerName = proj.managerName
+                  || managerOptions.find(m => String(m.id) === String(proj.managerId))?.name
+                  || 'N/A';
+
+                const memberNames = proj.teamMembers || proj.memberNames || [];
+
+                return (
+                  <tr
+                    key={proj.id}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      const projectForDetails = {
+                        ...proj,
+                        manager: managerName,
+                        members: memberNames
+                      };
+                      navigate(`/admin/project/${proj.id}`, { state: projectForDetails });
+                    }}
+                  >
+                    <td>{proj.name}</td>
+                    <td>{managerName}</td>
+                    <td>
+                      <span className={`px-1 py-1 rounded text-uppercase fw-semibold ${
+                        proj.status === 'IN_PROGRESS' ? 'status-in-progress' :
+                        proj.status === 'COMPLETED' ? 'status-completed' :
+                        proj.status === 'NOT_STARTED' ? 'status-not-started' :
+                        proj.status === 'ON_HOLD' ? 'status-on-hold' : ''
+                      }`}>
+                        {proj.status?.replace('_', ' ') || 'N/A'}
+                      </span>
+                    </td>
+                    <td>{formatDateDDMMYYYY(proj.endDate)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {showModal && (
         <div className="modal-backdrop">
@@ -231,26 +195,43 @@ export default function Projects() {
               value={newProject.manager}
               onChange={e => setNewProject({ ...newProject, manager: e.target.value })}
             >
-              <option value="">Select Project Manager</option>
-              {managerOptions.map((name, idx) => (
-                <option key={idx} value={name}>{name}</option>
+              <option value="">Select Manager</option>
+              {managerOptions.map(({ id, name }) => (
+                <option key={id} value={id}>{name}</option>
               ))}
             </select>
+
             <input
+              type="number"
               className="form-control mb-2"
-              placeholder="Team Members (comma-separated)"
-              value={newProject.members}
-              onChange={e => setNewProject({ ...newProject, members: e.target.value })}
+              placeholder="Team Size"
+              min={0}
+              value={teamSize}
+              onChange={e => {
+                const val = parseInt(e.target.value) || 0;
+                setTeamSize(val);
+                setTeamMembers(Array(val).fill(''));
+              }}
             />
-            <select
-              className="form-select mb-2"
-              value={newProject.progress}
-              onChange={e => setNewProject({ ...newProject, progress: e.target.value })}
-            >
-              {progressOptions.map((status, idx) => (
-                <option key={idx} value={status}>{status}</option>
-              ))}
-            </select>
+
+            {teamMembers.map((val, i) => (
+              <select
+                key={i}
+                className="form-select mb-2"
+                value={val}
+                onChange={e => {
+                  const copy = [...teamMembers];
+                  copy[i] = e.target.value;
+                  setTeamMembers(copy);
+                }}
+              >
+                <option value="">Select Member {i + 1}</option>
+                {memberOptions.map(({ id, name }) => (
+                  <option key={id} value={id}>{name}</option>
+                ))}
+              </select>
+            ))}
+
             <input
               type="date"
               className="form-control mb-3"
@@ -259,11 +240,11 @@ export default function Projects() {
             />
             <div className="d-flex justify-content-end">
               <button className="btn btn-secondary me-2" onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={handleAddProject}>Add</button>
+              <button className="btn btn-success" onClick={handleAddProject}>Add</button>
             </div>
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }
