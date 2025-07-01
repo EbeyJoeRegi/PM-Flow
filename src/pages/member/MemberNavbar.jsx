@@ -12,7 +12,7 @@ export default function MemberNavbar() {
   const { name } = useSelector((state) => state.user);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const dropdownRef = useRef();
 
   const handleLogout = () => {
@@ -69,7 +69,6 @@ export default function MemberNavbar() {
                 to="."
                 end
                 className={({ isActive }) => isActive ? 'member-active' : ''}
-                onClick={() => setSidebarOpen(false)}
               >
                 <TbLayoutDashboardFilled /> <span className="link-text">Dashboard</span>
               </NavLink>
@@ -78,7 +77,6 @@ export default function MemberNavbar() {
               <NavLink
                 to="collaboration"
                 className={({ isActive }) => isActive ? 'member-active' : ''}
-                onClick={() => setSidebarOpen(false)}
               >
                 <FaUsers /> <span className="link-text">Collaboration</span>
               </NavLink>

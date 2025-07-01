@@ -65,10 +65,8 @@ export default function Dashboard() {
 
   const sortedProjects = [...filteredProjects].sort((a, b) => {
     if (!sortConfig.key) return 0;
-
     let aVal = a[sortConfig.key];
     let bVal = b[sortConfig.key];
-
     if (sortConfig.key.includes('Date')) {
       aVal = new Date(aVal);
       bVal = new Date(bVal);
@@ -76,7 +74,6 @@ export default function Dashboard() {
       aVal = (aVal || '').toLowerCase();
       bVal = (bVal || '').toLowerCase();
     }
-
     if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
     if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
     return 0;
@@ -146,21 +143,21 @@ export default function Dashboard() {
           <thead>
             <tr>
               <th style={{ cursor: 'pointer' }} onClick={() => requestSort('name')}>
-                Name {sortConfig.key === 'name' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}
+                Name <span className="ms-1">{sortConfig.key === 'name' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</span>
               </th>
               <th>Status</th>
               <th style={{ cursor: 'pointer' }} onClick={() => requestSort('startDate')}>
-                Start Date {sortConfig.key === 'startDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}
+                Start Date <span className="ms-1">{sortConfig.key === 'startDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</span>
               </th>
               <th style={{ cursor: 'pointer' }} onClick={() => requestSort('endDate')}>
-                End Date {sortConfig.key === 'endDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}
+                End Date <span className="ms-1">{sortConfig.key === 'endDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</span>
               </th>
               <th>Project Manager</th>
             </tr>
           </thead>
           <tbody>
             {currentProjects.map((proj, index) => (
-              <tr key={proj.id || index}>
+              <tr key={proj.id || index} style={{ height: '60px' }}>
                 <td>{proj.name}</td>
                 <td>
                   <span className={`badge bg-${statusColors[toTitleCase(proj.status?.replace(/_/g, ' '))] || 'secondary'}`}>
@@ -176,16 +173,22 @@ export default function Dashboard() {
         </table>
 
         {totalPages > 1 && (
-          <div className="d-flex justify-content-center align-items-center mt-3 gap-2 flex-wrap">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`btn ${currentPage === i + 1 ? 'btn-primary' : 'btn-outline-secondary'}`}
-              >
-                {i + 1}
-              </button>
-            ))}
+          <div className="d-flex justify-content-center align-items-center mt-4 manager-pagination gap-3 flex-wrap">
+            <button
+              className="btn btn-outline-dark"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => prev - 1)}
+            >
+              ← Prev
+            </button>
+            <span>Page {currentPage} of {totalPages}</span>
+            <button
+              className="btn btn-outline-dark"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(prev => prev + 1)}
+            >
+              Next →
+            </button>
           </div>
         )}
       </div>
