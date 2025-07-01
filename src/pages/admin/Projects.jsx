@@ -104,39 +104,38 @@ export default function Projects() {
   };
 
   const handleSaveEdit = async (projectId) => {
-  try {
-    const original = projects.find(p => p.id === projectId);
+    try {
+      const original = projects.find(p => p.id === projectId);
 
-    const updatedPayload = {
-      name: editedProject.name,
-      description: original.description || 'Updated project',
-      status: original.status || 'NOT_STARTED',
-      managerId: Number(editedProject.managerId),
-      teamMemberIds: original.teamMembers?.map(m => m.id) || [],
-      endDate: formatDateMMDDYYYY(editedProject.endDate)
-    };
+      const updatedPayload = {
+        name: editedProject.name,
+        description: original.description || 'Updated project',
+        status: original.status || 'NOT_STARTED',
+        managerId: Number(editedProject.managerId),
+        teamMemberIds: original.teamMembers?.map(m => m.id) || [],
+        endDate: formatDateMMDDYYYY(editedProject.endDate)
+      };
 
-    const updated = await updateProjectById(projectId, updatedPayload);
+      const updated = await updateProjectById(projectId, updatedPayload);
 
-    const updatedManagerName = managerOptions.find(m => String(m.id) === String(updated.managerId))?.name || 'N/A';
+      const updatedManagerName = managerOptions.find(m => String(m.id) === String(updated.managerId))?.name || 'N/A';
 
-    setProjects(prev => prev.map(p =>
-      p.id === projectId
-        ? {
-            ...p,
-            ...updated,
-            managerId: updated.managerId,
-            managerName: updatedManagerName
-          }
-        : p
-    ));
-    setEditProjectId(null);
-  } catch (error) {
-    console.error('Error updating project:', error);
-    alert('Failed to update project.');
-  }
-};
-
+      setProjects(prev => prev.map(p =>
+        p.id === projectId
+          ? {
+              ...p,
+              ...updated,
+              managerId: updated.managerId,
+              managerName: updatedManagerName
+            }
+          : p
+      ));
+      setEditProjectId(null);
+    } catch (error) {
+      console.error('Error updating project:', error);
+      alert('Failed to update project.');
+    }
+  };
 
   const handleDeleteProject = async (projectId) => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
@@ -180,7 +179,19 @@ export default function Projects() {
             </thead>
             <tbody>
               {filtered.map(proj => (
-                <tr key={proj.id}>
+                <tr
+                  key={proj.id}
+                  onClick={() => {
+                    navigate(`/admin/project/${proj.id}`, {
+                      state: {
+                        ...proj,
+                        manager: proj.managerName || managerOptions.find(m => String(m.id) === String(proj.managerId))?.name || 'N/A',
+                        members: proj.teamMembers || proj.memberNames || []
+                      }
+                    });
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
                   {editProjectId === proj.id ? (
                     <>
                       <td>
@@ -212,24 +223,29 @@ export default function Projects() {
                         />
                       </td>
                       <td>
-                        <button className="btn btn-sm btn-success me-2" onClick={() => handleSaveEdit(proj.id)}>Save</button>
-                        <button className="btn btn-sm btn-secondary" onClick={() => setEditProjectId(null)}>Cancel</button>
+                        <button
+                          className="btn btn-sm btn-success me-2"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleSaveEdit(proj.id);
+                          }}
+                        >
+                          Save
+                        </button>
+                        <button
+                          className="btn btn-sm btn-secondary"
+                          onClick={e => {
+                            e.stopPropagation();
+                            setEditProjectId(null);
+                          }}
+                        >
+                          Cancel
+                        </button>
                       </td>
                     </>
                   ) : (
                     <>
-                      <td
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => navigate(`/admin/project/${proj.id}`, {
-                          state: {
-                            ...proj,
-                            manager: proj.managerName || managerOptions.find(m => String(m.id) === String(proj.managerId))?.name || 'N/A',
-                            members: proj.teamMembers || proj.memberNames || []
-                          }
-                        })}
-                      >
-                        {proj.name}
-                      </td>
+                      <td>{proj.name}</td>
                       <td>{proj.managerName || managerOptions.find(m => String(m.id) === String(proj.managerId))?.name || 'N/A'}</td>
                       <td>
                         <span className={`px-1 py-1 rounded text-uppercase fw-semibold ${
@@ -243,10 +259,24 @@ export default function Projects() {
                       </td>
                       <td>{formatDateDDMMYYYY(proj.endDate)}</td>
                       <td>
-                        <button className="btn btn-sm btn-outline-primary me-2" onClick={() => handleEditClick(proj)} title="Edit">
+                        <button
+                          className="btn btn-sm btn-outline-primary me-2"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleEditClick(proj);
+                          }}
+                          title="Edit"
+                        >
                           <FaPen />
                         </button>
-                        <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteProject(proj.id)} title="Delete">
+                        <button
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleDeleteProject(proj.id);
+                          }}
+                          title="Delete"
+                        >
                           <FaTrash />
                         </button>
                       </td>
@@ -280,36 +310,43 @@ export default function Projects() {
               ))}
             </select>
 
-            <input
-              type="number"
-              className="form-control mb-2"
-              placeholder="Team Size"
-              min={0}
-              value={teamSize}
-              onChange={e => {
-                const val = parseInt(e.target.value) || 0;
-                setTeamSize(val);
-                setTeamMembers(Array(val).fill(''));
-              }}
-            />
+        <input
+  type="number"
+  className="form-control mb-2"
+  placeholder="Team Size"
+  min={0}
+  max={memberOptions.length}
+  value={teamSize}
+  onChange={e => {
+    let val = parseInt(e.target.value) || 0;
+    if (val > memberOptions.length) val = memberOptions.length;
+    setTeamSize(val);
+    setTeamMembers(Array(val).fill(''));
+  }}
+/>
 
-            {teamMembers.map((val, i) => (
-              <select
-                key={i}
-                className="form-select mb-2"
-                value={val}
-                onChange={e => {
-                  const copy = [...teamMembers];
-                  copy[i] = e.target.value;
-                  setTeamMembers(copy);
-                }}
-              >
-                <option value="">Select Member {i + 1}</option>
-                {memberOptions.map(({ id, name }) => (
-                  <option key={id} value={id}>{name}</option>
-                ))}
-              </select>
-            ))}
+
+            {teamMembers.map((val, i) => {
+              const alreadySelected = teamMembers.filter((_, idx) => idx !== i);
+              const availableOptions = memberOptions.filter(m => !alreadySelected.includes(m.id));
+              return (
+                <select
+                  key={i}
+                  className="form-select mb-2"
+                  value={val}
+                  onChange={e => {
+                    const copy = [...teamMembers];
+                    copy[i] = e.target.value;
+                    setTeamMembers(copy);
+                  }}
+                >
+                  <option value="">Select Member {i + 1}</option>
+                  {availableOptions.map(({ id, name }) => (
+                    <option key={id} value={id}>{name}</option>
+                  ))}
+                </select>
+              );
+            })}
 
             <input
               type="date"
