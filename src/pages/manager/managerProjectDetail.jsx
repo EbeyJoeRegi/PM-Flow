@@ -1,14 +1,14 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaRegCalendarAlt } from 'react-icons/fa';
 import '../../styles/managerProjectDetail.css';
-import { getManagerProjectByName } from '../../api/managerApi'; 
+import { getManagerProjectByName, getTasksByProjectId } from '../../api/managerApi';
 
 const ManagerProjectDetail = () => {
   const { projectName } = useParams();
-  const { token } = useSelector((state) => state.user); //id  = name for the time being
-  const id="ebey";
+  const { token } = useSelector((state) => state.user);
+  const id = "ebey"; // Temporary until dynamic manager ID used
   const navigate = useNavigate();
 
   const [projectDetail, setProjectDetail] = useState(null);
@@ -16,36 +16,9 @@ const ManagerProjectDetail = () => {
   const [endDate, setEndDate] = useState('');
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [members, setMembers] = useState([]);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        setLoading(true);
-        const data = await getManagerProjectByName(id, projectName, token);
-        setProjectDetail(data);
-        setStatus(data.status);
-        setEndDate(data.endDate);
-        setMembers(data.teamMembers);
-      } catch (err) {
-        setError(err.message || 'Failed to load project');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProject();
-  }, [id, projectName, token]);
-
-  const [tasks, setTasks] = useState([
-    { id: 1, name: 'Setup Repo', dueDate: '2025-04-10', priority: 'High', assignee: 'alan', status: 'Pending' },
-    { id: 2, name: 'Wireframes', dueDate: '2025-03-25', priority: 'Medium', assignee: 'dhanya', status: 'In Progress' },
-    { id: 3, name: 'API Planning', dueDate: '2025-05-01', priority: 'Low', assignee: 'akshay', status: 'Completed' },
-    { id: 4, name: 'UI Design', dueDate: '2025-04-01', priority: 'High', assignee: 'alan', status: 'Pending' },
-    { id: 5, name: 'Database Setup', dueDate: '2025-03-20', priority: 'High', assignee: 'dhanya', status: 'Pending' },
-    { id: 6, name: 'Integration', dueDate: '2025-04-15', priority: 'Medium', assignee: 'akshay', status: 'In Progress' }
-  ]);
+  const [tasks, setTasks] = useState([]);
 
   const [newTask, setNewTask] = useState({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
   const [showModal, setShowModal] = useState(false);
@@ -56,6 +29,37 @@ const ManagerProjectDetail = () => {
   const [sortField, setSortField] = useState('');
   const [page, setPage] = useState(1);
   const perPage = 5;
+
+  useEffect(() => {
+    const fetchProjectAndTasks = async () => {
+      try {
+        setLoading(true);
+        const projectData = await getManagerProjectByName(id, projectName, token);
+        setProjectDetail(projectData);
+        setStatus(projectData.status);
+        setEndDate(projectData.endDate);
+        setMembers(projectData.teamMembers);
+
+        const taskData = await getTasksByProjectId(projectData.id, token);
+        const transformedTasks = taskData.map(task => ({
+          id: task.id,
+          name: task.name,
+          dueDate: task.dueDate.split('T')[0],
+          priority: task.priority,
+          status: task.status, //? capitalize(task.status.toLowerCase()) : 'N/A',
+          assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`
+        }));
+        setTasks(transformedTasks);
+      } catch (err) {
+        setError(err.message || 'Failed to load project');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjectAndTasks();
+  }, [id, projectName, token]);
+
+  //const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
   const toggleAssignee = (name) => {
     setSelectedAssignees(prev =>
@@ -96,7 +100,7 @@ const ManagerProjectDetail = () => {
       setTaskError('Please fill in all the fields.');
       return;
     }
-    setTasks([...tasks, { id: tasks.length + 1, ...newTask, status: 'Pending' }]);
+    setTasks([...tasks, { id: tasks.length + 1, ...newTask, status: 'Not Started' }]);
     setShowModal(false);
     setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: members[0] || '' });
     setTaskError('');
@@ -104,6 +108,29 @@ const ManagerProjectDetail = () => {
 
   if (loading) return <div className="manager-project-container"><p>Loading...</p></div>;
   if (error) return <div className="manager-project-container"><p className="error">{error}</p></div>;
+
+  const getStatusBgClass = (status) => {
+    switch (status) {
+      case 'Not Started': return 'bg-secondary';
+      case 'In Progress': return 'bg-primary';
+      case 'Completed': return 'bg-success';
+      case 'On Hold': return 'bg-warning';
+      default: return 'bg-light text-dark';
+    }
+  };
+
+  const getPriorityTextClass = (priority) => {
+    switch (priority) {
+      case 'High':
+        return 'text-danger';
+      case 'Medium':
+        return 'text-warning';
+      case 'Low':
+        return 'text-info';
+      default:
+        return '';
+    }
+  };
 
   return (
     <div className="manager-project-container">
@@ -180,39 +207,50 @@ const ManagerProjectDetail = () => {
         </div>
 
         <div className="manager-project-task-table-wrapper">
-          <table className="manager-project-task-table">
-            <thead>
-              <tr>
-                <th>Task Name</th>
-                <th onClick={() => setSortField('dueDate')} className="sortable">Due Date</th>
-                <th onClick={() => setSortField('priority')} className="sortable">Priority</th>
-                <th onClick={() => setSortField('status')} className="sortable">Status</th>
-                <th>Assignee</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedTasks.length === 0 ? (
-                <tr><td colSpan="5">No tasks found.</td></tr>
-              ) : (
-                paginatedTasks.map(t => (
-                  <tr key={t.id} onClick={() => navigate(`tasks/${t.name}`)} className="manager-project-task-row">
-                    <td>{t.name}</td>
-                    <td>{t.dueDate}</td>
-                    <td>{t.priority}</td>
-                    <td>{t.status}</td>
-                    <td>{t.assignee}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+          <div className="manager-project-table-center">
+            <table className="manager-project-task-table">
+              <thead>
+                <tr>
+                  <th>Task Name</th>
+                  <th onClick={() => setSortField('dueDate')} className="sortable">Due Date</th>
+                  <th onClick={() => setSortField('priority')} className="sortable">Priority</th>
+                  <th onClick={() => setSortField('status')} className="sortable">Status</th>
+                  <th>Assignee</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedTasks.length === 0 ? (
+                  <tr><td colSpan="5">No tasks found.</td></tr>
+                ) : (
+                  paginatedTasks.map(t => (
+                    <tr key={t.id} onClick={() => navigate(`tasks/${t.name}`)} className="manager-project-task-row">
+                      <td>{t.name}</td>
+                      <td>{t.dueDate}</td>
+                      <td className={`fw-semibold ${getPriorityTextClass(t.priority)}`}>
+                        {t.priority}
+                      </td>
+                      <td>
+                        <span className={`status-badge ${getStatusBgClass(t.status)}`}>
+                          {t.status}
+                        </span>
+                      </td>
+
+                      <td>{t.assignee}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div className="manager-project-pagination">
-          <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Prev</button>
-          <span>Page {page} of {totalPages}</span>
-          <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>Next →</button>
-        </div>
+        {totalPages > 1 && (
+          <div className="manager-project-pagination">
+            <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Prev</button>
+            <span>Page {page} of {totalPages}</span>
+            <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>Next →</button>
+          </div>
+        )}
       </div>
 
       {showModal && (

@@ -1,6 +1,6 @@
 import '../../styles/managerDashboard.css';
 import { useState, useMemo, useEffect } from 'react';
-import { getManagerProjects } from '../../api/managerApi'; 
+import { getManagerProjects } from '../../api/managerApi';
 import { useSelector } from "react-redux";
 
 const ManagerDashboard = () => {
@@ -8,8 +8,8 @@ const ManagerDashboard = () => {
   const [statusAsc, setStatusAsc] = useState(true);
   const [statusSortActive, setStatusSortActive] = useState(false);
 
-  const { id, token } = useSelector((state) => state.user);
-  const managerId = "ebey"; 
+  const { token } = useSelector((state) => state.user); //id need to be included
+  const managerId = "ebey";
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -42,10 +42,10 @@ const ManagerDashboard = () => {
 
   const getBootstrapBgClass = (status) => {
     switch (status) {
-      case 'Not Started': return 'bg-primary';
-      case 'In Progress': return 'bg-warning';
+      case 'Not Started': return 'bg-secondary';
+      case 'In Progress': return 'bg-primary';
       case 'Completed': return 'bg-success';
-      case 'On Hold': return 'bg-secondary';
+      case 'On Hold': return 'bg-warning';
       default: return 'bg-light text-dark';
     }
   };
@@ -172,7 +172,11 @@ const ManagerDashboard = () => {
                 sortedProjects.map((proj, idx) => (
                   <tr key={idx}>
                     <td>{proj.name}</td>
-                    <td>{proj.status}</td>
+                    <td>
+                      <span className={`status-badge ${getBootstrapBgClass(proj.status)}`}>
+                        {proj.status}
+                      </span>
+                    </td>
                     <td>{proj.start}</td>
                     <td>{proj.end}</td>
                   </tr>

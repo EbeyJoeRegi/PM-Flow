@@ -30,3 +30,16 @@ export const getManagerProjectByName = async (managerId, projectName, token) => 
     throw error.response?.data || { message: "Project details fetch failed" };
   }
 };
+
+export const getTasksByProjectId = async (projectId, token) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/tasks/project/${projectId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to fetch tasks" };
+  }
+};

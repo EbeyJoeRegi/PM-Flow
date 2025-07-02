@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getManagerProjects } from '../../api/managerApi'; 
+import { getManagerProjects } from '../../api/managerApi';
 import '../../styles/managerProjects.css';
 import { useSelector } from "react-redux";
 
@@ -12,8 +12,8 @@ const ManagerProjects = () => {
   const [sortField, setSortField] = useState('');
   const [page, setPage] = useState(1);
 
-  const { id, token } = useSelector((state) => state.user);
-  const managerId = "ebey"; 
+  const { token } = useSelector((state) => state.user); //id need be included
+  const managerId = "ebey";
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -23,7 +23,7 @@ const ManagerProjects = () => {
           id: p.id,
           name: p.name,
           status: formatStatus(p.status),
-          start: '', // Not available in API
+           start: p.startDate,
           end: p.endDate
         }));
         setProjects(formatted);
@@ -42,6 +42,16 @@ const ManagerProjects = () => {
       case 'ON_HOLD': return 'On Hold';
       case 'COMPLETED': return 'Completed';
       default: return status;
+    }
+  };
+
+  const getStatusBgClass = (status) => { //projectDasgboard.css
+    switch (status) {
+      case 'Not Started': return 'bg-secondary';
+      case 'In Progress': return 'bg-primary';
+      case 'Completed': return 'bg-success';
+      case 'On Hold': return 'bg-warning';
+      default: return 'bg-light text-dark';
     }
   };
 
@@ -113,8 +123,13 @@ const ManagerProjects = () => {
               paginated.map(p => (
                 <tr key={p.id} onClick={() => goToDetail(p.name)} className="manager-clickable-row">
                   <td>{p.name}</td>
-                  <td>{p.status}</td>
-                  <td>{p.start || 'N/A'}</td>
+                  <td>
+                    <span className={`status-badge ${getStatusBgClass(p.status)}`}>
+                      {p.status}
+                    </span>
+                  </td>
+
+                  <td>{p.start}</td>
                   <td>{p.end}</td>
                 </tr>
               ))
