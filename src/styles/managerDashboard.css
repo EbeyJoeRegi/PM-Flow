@@ -26,17 +26,17 @@
 }
 
 .project-count {
+  margin-top: -10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 12px;
 }
 
 .project-count .big-number {
-  font-size: 48px;
+  font-size: 60px;
   font-weight: bold;
-  color: #007bff;
+  color: #00aeff;
   margin-bottom: 8px;
 }
 
@@ -81,22 +81,6 @@
   padding-right: 6px;
   font-size: 13px;
   line-height: 20px;
-}
-
-.progress-fill.in-progress {
-  background-color: #007bff;
-}
-
-.progress-fill.not-started {
-  background-color: #ffc107;
-}
-
-.progress-fill.on-hold {
-  background-color: #ff5722;
-}
-
-.progress-fill.completed {
-  background-color: #28a745;
 }
 
 .progress-fill.empty-bar {

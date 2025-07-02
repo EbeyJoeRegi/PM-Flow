@@ -1,30 +1,53 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { FaRegCalendarAlt } from 'react-icons/fa';
 import '../../styles/managerProjectDetail.css';
+import { getManagerProjectByName } from '../../api/managerApi'; 
 
 const ManagerProjectDetail = () => {
   const { projectName } = useParams();
-  const decodedName = decodeURIComponent(projectName);
+  const { token } = useSelector((state) => state.user); //id  = name for the time being
+  const id="ebey";
   const navigate = useNavigate();
 
-  const members = ['Alice', 'Bob', 'Charlie'];
-  const [status, setStatus] = useState('In Progress');
-  // const [startDate, setStartDate] = useState('2025-01-01');
-  const startDate = '2025-01-01';
-  const [endDate, setEndDate] = useState('2025-06-30');
+  const [projectDetail, setProjectDetail] = useState(null);
+  const [status, setStatus] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [isEditingDate, setIsEditingDate] = useState(false);
+  const [members, setMembers] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        setLoading(true);
+        const data = await getManagerProjectByName(id, projectName, token);
+        setProjectDetail(data);
+        setStatus(data.status);
+        setEndDate(data.endDate);
+        setMembers(data.teamMembers);
+      } catch (err) {
+        setError(err.message || 'Failed to load project');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProject();
+  }, [id, projectName, token]);
 
   const [tasks, setTasks] = useState([
-    { id: 1, name: 'Setup Repo', dueDate: '2025-04-10', priority: 'High', assignee: 'Alice', status: 'Pending' },
-    { id: 2, name: 'Wireframes', dueDate: '2025-03-25', priority: 'Medium', assignee: 'Bob', status: 'In Progress' },
-    { id: 3, name: 'API Planning', dueDate: '2025-05-01', priority: 'Low', assignee: 'Charlie', status: 'Completed' },
-    { id: 4, name: 'UI Design', dueDate: '2025-04-01', priority: 'High', assignee: 'Alice', status: 'Pending' },
-    { id: 5, name: 'Database Setup', dueDate: '2025-03-20', priority: 'High', assignee: 'Bob', status: 'Pending' },
-    { id: 6, name: 'Integration', dueDate: '2025-04-15', priority: 'Medium', assignee: 'Charlie', status: 'In Progress' }
+    { id: 1, name: 'Setup Repo', dueDate: '2025-04-10', priority: 'High', assignee: 'alan', status: 'Pending' },
+    { id: 2, name: 'Wireframes', dueDate: '2025-03-25', priority: 'Medium', assignee: 'dhanya', status: 'In Progress' },
+    { id: 3, name: 'API Planning', dueDate: '2025-05-01', priority: 'Low', assignee: 'akshay', status: 'Completed' },
+    { id: 4, name: 'UI Design', dueDate: '2025-04-01', priority: 'High', assignee: 'alan', status: 'Pending' },
+    { id: 5, name: 'Database Setup', dueDate: '2025-03-20', priority: 'High', assignee: 'dhanya', status: 'Pending' },
+    { id: 6, name: 'Integration', dueDate: '2025-04-15', priority: 'Medium', assignee: 'akshay', status: 'In Progress' }
   ]);
 
-  const [newTask, setNewTask] = useState({ name: '', dueDate: '', priority: 'Medium', assignee: members[0] });
+  const [newTask, setNewTask] = useState({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
   const [showModal, setShowModal] = useState(false);
   const [taskError, setTaskError] = useState('');
   const [searchTask, setSearchTask] = useState('');
@@ -75,26 +98,29 @@ const ManagerProjectDetail = () => {
     }
     setTasks([...tasks, { id: tasks.length + 1, ...newTask, status: 'Pending' }]);
     setShowModal(false);
-    setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: members[0] });
+    setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: members[0] || '' });
     setTaskError('');
   };
+
+  if (loading) return <div className="manager-project-container"><p>Loading...</p></div>;
+  if (error) return <div className="manager-project-container"><p className="error">{error}</p></div>;
 
   return (
     <div className="manager-project-container">
       <div className="manager-project-details-section">
         <div className="manager-project-title-bar">
-          <h2>{decodedName}</h2>
+          <h2>{projectDetail.name}</h2>
           <select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option>Not Started</option>
-            <option>In Progress</option>
-            <option>On Hold</option>
-            <option>Completed</option>
+            <option value="NOT_STARTED">Not Started</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="ON_HOLD">On Hold</option>
+            <option value="COMPLETED">Completed</option>
           </select>
         </div>
 
         <div className="manager-project-description-date">
           <div className="manager-project-description-block">
-            <p><strong>Description:</strong> This project involves redesigning and refactoring several key components...</p>
+            <p><strong>Description:</strong> {projectDetail.description}</p>
             <p><strong>Team Members:</strong></p>
             <ul>{members.map(m => <li key={m}>{m}</li>)}</ul>
           </div>
@@ -102,7 +128,7 @@ const ManagerProjectDetail = () => {
           <div className="manager-project-date-block">
             <div className="manager-project-date-display">
               <label>Start Date:</label>
-              <span>{startDate}</span>
+              <span>{projectDetail.startDate}</span>
             </div>
             <div className="manager-project-date-display">
               <label>End Date:</label>
@@ -152,6 +178,7 @@ const ManagerProjectDetail = () => {
             <button onClick={() => setShowModal(true)}>Create Task</button>
           </div>
         </div>
+
         <div className="manager-project-task-table-wrapper">
           <table className="manager-project-task-table">
             <thead>
@@ -180,6 +207,7 @@ const ManagerProjectDetail = () => {
             </tbody>
           </table>
         </div>
+
         <div className="manager-project-pagination">
           <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Prev</button>
           <span>Page {page} of {totalPages}</span>

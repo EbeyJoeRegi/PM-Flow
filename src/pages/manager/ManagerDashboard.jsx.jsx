@@ -1,20 +1,58 @@
 import '../../styles/managerDashboard.css';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { getManagerProjects } from '../../api/managerApi'; 
+import { useSelector } from "react-redux";
 
 const ManagerDashboard = () => {
+  const [projects, setProjects] = useState([]);
   const [statusAsc, setStatusAsc] = useState(true);
+  const [statusSortActive, setStatusSortActive] = useState(false);
 
-  const projects = useMemo(() => [
-    { name: "Website Redesign", status: "In Progress", start: "2024-12-01", end: "2026-03-01" },
-    { name: "Mobile App Launch", status: "Not Started", start: "2025-06-01", end: "2025-09-01" },
-    { name: "Cloud Migration", status: "On Hold", start: "2024-11-15", end: "2026-05-30" },
-    { name: "Marketing Campaign", status: "Completed", start: "2024-10-01", end: "2025-01-10" },
-    { name: "UI Overhaul", status: "In Progress", start: "2025-02-10", end: "2025-08-01" },
-    { name: "SEO Optimization", status: "On Hold", start: "2025-03-01", end: "2025-10-10" },
-  ], []);
+  const { id, token } = useSelector((state) => state.user);
+  const managerId = "ebey"; 
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await getManagerProjects(managerId, token);
+        const formatted = data.map(p => ({
+          name: p.name,
+          status: formatStatus(p.status),
+          start: p.startDate,
+          end: p.endDate
+        }));
+        setProjects(formatted);
+      } catch (err) {
+        console.error("Failed to fetch projects:", err.message);
+      }
+    };
+
+    fetchProjects();
+  }, [managerId, token]);
+
+  const formatStatus = (status) => {
+    switch (status) {
+      case 'NOT_STARTED': return 'Not Started';
+      case 'IN_PROGRESS': return 'In Progress';
+      case 'ON_HOLD': return 'On Hold';
+      case 'COMPLETED': return 'Completed';
+      default: return status;
+    }
+  };
+
+  const getBootstrapBgClass = (status) => {
+    switch (status) {
+      case 'Not Started': return 'bg-primary';
+      case 'In Progress': return 'bg-warning';
+      case 'Completed': return 'bg-success';
+      case 'On Hold': return 'bg-secondary';
+      default: return 'bg-light text-dark';
+    }
+  };
 
   const totalProjects = projects.length;
   const defaultStatuses = ["Not Started", "In Progress", "On Hold", "Completed"];
+
   const statusCount = useMemo(() => {
     const countMap = projects.reduce((acc, curr) => {
       if (defaultStatuses.includes(curr.status)) {
@@ -23,15 +61,12 @@ const ManagerDashboard = () => {
       return acc;
     }, {});
 
-    // Ensure all default statuses are present
     defaultStatuses.forEach(status => {
       if (!countMap[status]) countMap[status] = 0;
     });
 
     return countMap;
   }, [projects]);
-
-
 
   const closestProjects = useMemo(() => {
     const today = new Date();
@@ -42,33 +77,31 @@ const ManagerDashboard = () => {
       )
       .slice(0, 5);
   }, [projects]);
-  
-  const [statusSortActive, setStatusSortActive] = useState(false);
+
   const sortedProjects = useMemo(() => {
-  const sortedByEndDate = [...closestProjects].sort((a, b) =>
-    new Date(a.end) - new Date(b.end)
-  );
+    const sorted = [...closestProjects];
 
-  if (statusSortActive) {
-    sortedByEndDate.sort((a, b) =>
-      statusAsc
-        ? a.status.localeCompare(b.status)
-        : b.status.localeCompare(a.status)
-    );
-  }
+    if (statusSortActive) {
+      sorted.sort((a, b) =>
+        statusAsc
+          ? a.status.localeCompare(b.status)
+          : b.status.localeCompare(a.status)
+      );
+    } else {
+      sorted.sort((a, b) => new Date(a.end) - new Date(b.end));
+    }
 
-  return sortedByEndDate;
-}, [closestProjects, statusAsc, statusSortActive]);
+    return sorted;
+  }, [closestProjects, statusAsc, statusSortActive]);
 
+  const handleStatusSort = () => {
+    setStatusSortActive(true);
+    setStatusAsc(prev => !prev);
+  };
 
-const handleStatusSort = () => {
-  setStatusSortActive(true);
-  setStatusAsc(prev => !prev);
-};
-
-const handleEndDateSort = () => {
-  setStatusSortActive(false); 
-};
+  const handleEndDateSort = () => {
+    setStatusSortActive(false);
+  };
 
   return (
     <div className="dashboard-wrapper">
@@ -93,7 +126,7 @@ const handleEndDateSort = () => {
                 <div className="progress-container">
                   {count > 0 ? (
                     <div
-                      className={`progress-fill ${status.toLowerCase().replace(' ', '-')}`}
+                      className={`progress-fill ${getBootstrapBgClass(status)}`}
                       style={{ width: `${percent}%` }}
                     >
                       {count}
@@ -110,7 +143,6 @@ const handleEndDateSort = () => {
               </div>
             );
           })}
-
         </div>
       </div>
 
@@ -147,7 +179,6 @@ const handleEndDateSort = () => {
                 ))
               )}
             </tbody>
-
           </table>
         </div>
       </div>

@@ -1,69 +1,52 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getManagerProjects } from '../../api/managerApi'; 
 import '../../styles/managerProjects.css';
+import { useSelector } from "react-redux";
 
 const ManagerProjects = () => {
   const navigate = useNavigate();
-
-  const allProjects = useMemo(() => [
-    {
-      id: 1,
-      name: "Corporate Website Revamp",
-      status: "In Progress",
-      start: "2024-12-01",
-      end: "2025-03-01"
-    },
-    {
-      id: 2,
-      name: "NextGen Mobile App Development",
-      status: "Not Started",
-      start: "2025-06-01",
-      end: "2025-09-01"
-    },
-    {
-      id: 3,
-      name: "Cloud Infrastructure Migration",
-      status: "On Hold",
-      start: "2024-11-15",
-      end: "2025-05-30"
-    },
-    {
-      id: 4,
-      name: "Q1 Marketing Launch",
-      status: "Completed",
-      start: "2024-10-01",
-      end: "2025-01-10"
-    },
-    {
-      id: 5,
-      name: "Dashboard UI Modernization",
-      status: "In Progress",
-      start: "2025-02-10",
-      end: "2025-08-01"
-    },
-    {
-      id: 6,
-      name: "Advanced SEO Optimization",
-      status: "On Hold",
-      start: "2025-03-01",
-      end: "2025-10-10"
-    },
-    {
-      id: 7,
-      name: "API Backend Refactoring",
-      status: "Completed",
-      start: "2025-01-15",
-      end: "2025-06-15"
-    }
-  ], []);
-
+  const [projects, setProjects] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortField, setSortField] = useState('');
   const [page, setPage] = useState(1);
 
+  const { id, token } = useSelector((state) => state.user);
+  const managerId = "ebey"; 
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await getManagerProjects(managerId, token);
+        const formatted = data.map(p => ({
+          id: p.id,
+          name: p.name,
+          status: formatStatus(p.status),
+          start: '', // Not available in API
+          end: p.endDate
+        }));
+        setProjects(formatted);
+      } catch (err) {
+        console.error("Error fetching projects:", err.message);
+      }
+    };
+
+    fetchProjects();
+  }, [managerId, token]);
+
+  const formatStatus = (status) => {
+    switch (status) {
+      case 'NOT_STARTED': return 'Not Started';
+      case 'IN_PROGRESS': return 'In Progress';
+      case 'ON_HOLD': return 'On Hold';
+      case 'COMPLETED': return 'Completed';
+      default: return status;
+    }
+  };
+
   const filteredProjects = useMemo(() => {
-    let filtered = [...allProjects];
+    let filtered = [...projects];
 
     if (statusFilter) {
       filtered = filtered.filter(p => p.status === statusFilter);
@@ -74,13 +57,13 @@ const ManagerProjects = () => {
     }
 
     if (sortField === 'start') {
-      filtered.sort((a, b) => new Date(a.start) - new Date(b.start));
+      filtered.sort((a, b) => new Date(a.start || '1970-01-01') - new Date(b.start || '1970-01-01'));
     } else if (sortField === 'end') {
       filtered.sort((a, b) => new Date(a.end) - new Date(b.end));
     }
 
     return filtered;
-  }, [allProjects, statusFilter, searchQuery, sortField]);
+  }, [projects, statusFilter, searchQuery, sortField]);
 
   const perPage = 5;
   const totalPages = Math.ceil(filteredProjects.length / perPage);
@@ -131,7 +114,7 @@ const ManagerProjects = () => {
                 <tr key={p.id} onClick={() => goToDetail(p.name)} className="manager-clickable-row">
                   <td>{p.name}</td>
                   <td>{p.status}</td>
-                  <td>{p.start}</td>
+                  <td>{p.start || 'N/A'}</td>
                   <td>{p.end}</td>
                 </tr>
               ))
