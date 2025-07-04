@@ -189,7 +189,7 @@ const handleTaskCreate = async () => {
         <span>{formatDate(projectDetail.startDate)}</span>
       </div>
       <div className="manager-project-date-display">
-        <label>Due Date :</label> {/* &nbsp; */}
+        <label>Due Date &nbsp;:</label> {/*  */}
         <span>{formatDate(endDate)}</span>
       </div>
     </div>
