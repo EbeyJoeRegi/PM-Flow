@@ -2,6 +2,7 @@ import '../../styles/managerDashboard.css';
 import { useState, useMemo, useEffect } from 'react';
 import { getManagerProjects } from '../../api/managerApi';
 import { useSelector } from "react-redux";
+import { formatStatus,getBootstrapBgClass } from '../CommonFunction';
 
 const ManagerDashboard = () => {
   const [projects, setProjects] = useState([]);
@@ -28,27 +29,7 @@ const ManagerDashboard = () => {
     };
 
     fetchProjects();
-  }, [managerId, token]);
-
-  const formatStatus = (status) => {
-    switch (status) {
-      case 'NOT_STARTED': return 'Not Started';
-      case 'IN_PROGRESS': return 'In Progress';
-      case 'ON_HOLD': return 'On Hold';
-      case 'COMPLETED': return 'Completed';
-      default: return status;
-    }
-  };
-
-  const getBootstrapBgClass = (status) => {
-    switch (status) {
-      case 'Not Started': return 'bg-secondary';
-      case 'In Progress': return 'bg-primary';
-      case 'Completed': return 'bg-success';
-      case 'On Hold': return 'bg-warning';
-      default: return 'bg-light text-dark';
-    }
-  };
+  },[managerId, token]);
 
   const totalProjects = projects.length;
   const defaultStatuses = ["Not Started", "In Progress", "On Hold", "Completed"];
@@ -158,7 +139,7 @@ const ManagerDashboard = () => {
                 <th>Project</th>
                 <th onClick={handleStatusSort} className="clickable">Status ⬍</th>
                 <th>Start Date</th>
-                <th onClick={handleEndDateSort} className="clickable">End Date</th>
+                <th onClick={handleEndDateSort} className="clickable">Due Date</th>
               </tr>
             </thead>
             <tbody>

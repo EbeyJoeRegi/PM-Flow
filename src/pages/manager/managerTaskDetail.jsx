@@ -1,28 +1,63 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { getTaskById } from '../../api/managerApi';
 import '../../styles/managerTaskDetail.css';
 
 const ManagerTaskDetail = () => {
-  const { taskname } = useParams();
-
-  const [taskDetails] = useState({
-    project: taskname,
-    status: 'In Progress', // Change to Completed or To Do as needed
-    description: 'This task focuses on redesigning the header component to improve user experience and responsiveness across devices.',
-    assignee: 'Alice',
-    priority: 'High',
-    dueDate: '2025-04-10',
-  });
-
+  const { taskID } = useParams();
+  const { token } = useSelector((state) => state.user);
+  const [taskDetails, setTaskDetails] = useState(null);
   const [comments, setComments] = useState([
     { id: 1, sender: 'Alice', message: 'Started working on wireframes.', time: '10:00 AM', date: '2025-06-21' },
     { id: 2, sender: 'Bob', message: 'Make sure it’s mobile responsive.', time: '10:05 AM', date: '2025-06-22' },
     { id: 3, sender: 'Alice', message: 'Sure, will update by today.', time: '10:15 AM', date: '2025-06-23' },
     { id: 4, sender: 'You', message: 'Sure, will update by today.', time: '10:15 AM', date: '2025-03-23' }
   ]);
-
   const [newComment, setNewComment] = useState('');
   const chatBoxRef = useRef(null);
+
+  useEffect(() => {
+    const fetchTask = async () => {
+      try {
+        const task = await getTaskById(taskID,token);
+        setTaskDetails({
+          name: task.name,
+          description: task.description || 'N/A',
+          status: task.status,
+          assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`,
+          priority: task.priority,
+          dueDate: task.dueDate ? task.dueDate.split('T')[0] : 'N/A',
+        });
+      } catch (error) {
+        console.error('Error fetching task:', error);
+      }
+    };
+
+    fetchTask();
+  }, [taskID,token]);
+
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [comments]);
+
+  const handleSend = () => {
+    if (!newComment.trim()) return;
+
+    const now = new Date();
+    const newMsg = {
+      id: comments.length + 1,
+      sender: 'You',
+      message: newComment,
+      time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      date: now.toISOString().split('T')[0],
+    };
+
+    setComments(prev => [...prev, newMsg]);
+    setNewComment('');
+  };
 
   const groupCommentsByDate = () => {
     const grouped = {};
@@ -48,41 +83,22 @@ const ManagerTaskDetail = () => {
     return grouped;
   };
 
-  useEffect(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
-  }, [comments]);
-
-  const handleSend = () => {
-    if (!newComment.trim()) return;
-
-    const now = new Date();
-    const newMsg = {
-      id: comments.length + 1,
-      sender: 'You',
-      message: newComment,
-      time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      date: now.toISOString().split('T')[0],
-    };
-
-    setComments(prev => [...prev, newMsg]);
-    setNewComment('');
-  };
-
   const statusClass = {
-    'Completed': 'status-completed',
-    'In Progress': 'status-inprogress',
-    'To Do': 'status-todo',
-  }[taskDetails.status] || '';
+    'Completed': 'completed',
+    'In Progress': 'inprogress',
+    'On Hold': 'onhold',
+    'Not Started': 'notstarted',
+  }[taskDetails?.status] || '';
 
   const groupedComments = groupCommentsByDate();
+
+  if (!taskDetails) return <div className="task-detail-page">Loading...</div>;
 
   return (
     <div className="task-detail-page">
       <div className="task-detail-container">
         <div className="task-detail-header">
-          <h2>{taskDetails.project}</h2>
+          <h2>{taskDetails.name}</h2>
           <span className={`task-status ${statusClass}`}>{taskDetails.status}</span>
         </div>
 
@@ -103,12 +119,12 @@ const ManagerTaskDetail = () => {
         <h3>Comments</h3>
         <div className="chat-box" ref={chatBoxRef}>
           {Object.entries(groupedComments)
-            .sort((a, b) => new Date(b[1][0].date) - new Date(a[1][0].date)) // latest date last
+            .sort((a, b) => new Date(b[1][0].date) - new Date(a[1][0].date))
             .map(([date, msgs]) => (
               <div key={date} className="comment-group">
                 <div className="comment-date-header">{date}</div>
                 {[...msgs]
-                  .sort((a, b) => new Date(a.time) - new Date(b.time)) // sort by time
+                  .sort((a, b) => a.time.localeCompare(b.time))
                   .map(c => (
                     <div key={c.id} className={`chat-message-wrapper ${c.sender === 'You' ? 'self' : 'other'}`}>
                       <div className={`chat-message ${c.sender === 'You' ? 'self' : 'other'}`}>

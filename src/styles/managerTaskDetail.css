@@ -27,19 +27,24 @@
   border-radius: 8px;
 }
 
-.status-completed {
+.completed {
   background-color: #d4edda;
   color: #155724;
 }
 
-.status-inprogress {
+.inprogress {
   background-color: #cce5ff;
   color: #004085;
 }
 
-.status-todo {
-  background-color: #f8f9fa;
-  color: #6c757d;
+.onhold {
+  background-color: #f6ffcc;
+  color: #949d11;
+}
+
+.notstarted {
+  background-color: #dfdfdf;
+  color: #626161;
   border: 1px solid #ced4da;
 }
 
