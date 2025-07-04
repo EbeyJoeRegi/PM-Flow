@@ -20,29 +20,6 @@
   margin: 0;
 }
 
-.task-status {
-  font-size: 16px;
-  font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 8px;
-}
-
-.status-completed {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.status-inprogress {
-  background-color: #cce5ff;
-  color: #004085;
-}
-
-.status-todo {
-  background-color: #f8f9fa;
-  color: #6c757d;
-  border: 1px solid #ced4da;
-}
-
 .task-description {
   color: #555;
   margin-bottom: 20px;
@@ -80,7 +57,7 @@
 }
 
 .chat-box {
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
   background-color: #f7f7f7;
   border-radius: 8px;
@@ -196,7 +173,7 @@
   }
 
   .chat-box {
-    max-height: 250px;
+    max-height: 350px;
   }
 
 }

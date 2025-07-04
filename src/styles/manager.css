@@ -109,7 +109,7 @@
 
 /* Sidebar */
 .manager-sidebar {
-  width: 240px;
+  min-width: 240px;
   background: linear-gradient(180deg, #a4bac3, #7fc8e7);
   color: #ffffff;
   min-height: 100vh;
