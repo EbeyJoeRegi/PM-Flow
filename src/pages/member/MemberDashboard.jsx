@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/Member.css';
+import { getTasksByUserId } from '../../api/teamMemberApi';
 
 export default function MemberDashboard() {
   const navigate = useNavigate();
@@ -12,37 +13,46 @@ export default function MemberDashboard() {
   useEffect(() => {
     localStorage.setItem('employeeName', employeeName);
 
-    const taskData = [
-      { name: 'Task 1', priority: 'High', status: 'In Progress', dueDate: '2025-06-25', project: 'Project A' },
-      { name: 'Task 2', priority: 'Medium', status: 'Completed', dueDate: '2025-06-26', project: 'Project B' },
-      { name: 'Task 3', priority: 'Low', status: 'On Hold', dueDate: '2025-06-27', project: 'Project C' },
-      { name: 'Task 4', priority: 'High', status: 'In Progress', dueDate: '2025-06-26', project: 'Project D' }
-    ];
+    const fetchTasks = async () => {
+      try {
+        const userString = localStorage.getItem('user');
+        const user = JSON.parse(userString);
+        const userId = user?.id;
 
-    setTasks(taskData);
-    localStorage.setItem('tasks', JSON.stringify(taskData));
+        if (!userId) {
+          console.error('User ID not found in localStorage');
+          return;
+        }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+        const taskData = await getTasksByUserId(userId);
+        setTasks(taskData);
+        localStorage.setItem('tasks', JSON.stringify(taskData));
 
-    const parseDate = (str) => new Date(str);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-    const upcoming = taskData
-      .filter(task => task.status === 'In Progress')
-      .map(task => {
-        const due = parseDate(task.dueDate);
-        const timeDiff = due - today;
-        const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-        return {
-          date: task.dueDate,
-          task: task.name,
-          isUrgent: daysLeft <= 3 && daysLeft >= 0,
-          daysLeft
-        };
-      })
-      .filter(item => item.isUrgent);
+        const upcoming = taskData
+          .filter(task => task.status === 'In Progress')
+          .map(task => {
+            const due = new Date(task.dueDate);
+            const timeDiff = due - today;
+            const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            return {
+              date: task.dueDate,
+              task: task.name,
+              isUrgent: daysLeft <= 3 && daysLeft >= 0,
+              daysLeft
+            };
+          })
+          .filter(item => item.isUrgent);
 
-    setDeadlines(upcoming);
+        setDeadlines(upcoming);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    fetchTasks();
   }, []);
 
   const handleAssignedTaskClick = () => {

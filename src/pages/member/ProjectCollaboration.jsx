@@ -16,6 +16,7 @@ export default function ProjectCollaboration() {
       status: 'Not Started',
       manager: 'Manager',
       project: projectId,
+      description: 'No description provided.'
     }
   );
   const [editStatus, setEditStatus] = useState(taskDetails.status);
@@ -97,9 +98,14 @@ export default function ProjectCollaboration() {
           <h4 className="mb-1">Task: {taskDetails.name}</h4>
           <p className="mb-1 text-muted">Manager: {taskDetails.manager}</p>
           <p className="mb-1 text-muted">Due Date: {taskDetails.dueDate}</p>
+            <p className="mb-1 text-muted">
+            <strong>Description:</strong> {taskDetails.description}
+          </p>
+
+
         </div>
 
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center gap-2 mt-3 mt-md-0">
           <label htmlFor="statusSelect" className="fw-semibold mb-0">Status:</label>
           <span className={`badge bg-${statusColors[taskDetails.status]} px-3 py-2`}>{taskDetails.status}</span>
           <select

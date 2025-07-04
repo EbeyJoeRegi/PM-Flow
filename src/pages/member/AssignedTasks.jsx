@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/Member.css';
+import { getTasksByUserId } from '../../api/teamMemberApi';
 
 export default function AssignedTasks() {
   const location = useLocation();
@@ -18,10 +19,25 @@ export default function AssignedTasks() {
       setTasks(stateTasks);
       localStorage.setItem('assignedTasks', JSON.stringify(stateTasks));
     } else {
-      const stored = localStorage.getItem('assignedTasks');
-      if (stored) {
-        setTasks(JSON.parse(stored));
-      }
+      const fetchFromLocalOrAPI = async () => {
+        const stored = localStorage.getItem('assignedTasks');
+        if (stored) {
+          setTasks(JSON.parse(stored));
+        } else {
+          try {
+            const userString = localStorage.getItem('user');
+            const user = JSON.parse(userString);
+            const userId = user?.id;
+            if (!userId) return;
+            const fetchedTasks = await getTasksByUserId(userId);
+            setTasks(fetchedTasks);
+            localStorage.setItem('assignedTasks', JSON.stringify(fetchedTasks));
+          } catch (error) {
+            console.error('Failed to fetch tasks:', error);
+          }
+        }
+      };
+      fetchFromLocalOrAPI();
     }
   }, [location.state]);
 
