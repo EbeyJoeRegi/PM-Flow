@@ -18,10 +18,23 @@ export const formatStatus = (status) => {
 
 export const getBootstrapBgClass = (status) => {
     switch (status) {
-      case 'Not Started': return 'bg-secondary';
-      case 'In Progress': return 'bg-primary';
-      case 'Completed': return 'bg-success';
-      case 'On Hold': return 'bg-warning';
+      case 'Not Started': return 'bg-secondary text-light';
+      case 'In Progress': return 'bg-primary text-light';
+      case 'Completed': return 'bg-success text-light';
+      case 'On Hold': return 'bg-warning text-light';
       default: return 'bg-light text-dark';
+    }
+  };
+
+export const getTaskPriorityClass = (priority) => {
+    switch (priority) {
+      case 'High':
+        return 'text-danger';
+      case 'Medium':
+        return 'text-warning';
+      case 'Low':
+        return 'text-info';
+      default:
+        return '';
     }
   };

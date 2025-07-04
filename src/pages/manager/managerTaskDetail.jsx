@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getTaskById } from '../../api/managerApi';
+import { getTaskPriorityClass } from '../CommonFunction';
 import '../../styles/managerTaskDetail.css';
+import { MdModeEditOutline } from "react-icons/md";
 
 const ManagerTaskDetail = () => {
   const { taskID } = useParams();
@@ -16,11 +18,15 @@ const ManagerTaskDetail = () => {
   ]);
   const [newComment, setNewComment] = useState('');
   const chatBoxRef = useRef(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editedTask, setEditedTask] = useState({});
+  const [editError, setEditError] = useState('');
+
 
   useEffect(() => {
     const fetchTask = async () => {
       try {
-        const task = await getTaskById(taskID,token);
+        const task = await getTaskById(taskID, token);
         setTaskDetails({
           name: task.name,
           description: task.description || 'N/A',
@@ -35,7 +41,7 @@ const ManagerTaskDetail = () => {
     };
 
     fetchTask();
-  }, [taskID,token]);
+  }, [taskID, token]);
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -69,8 +75,8 @@ const ManagerTaskDetail = () => {
         c.date === today
           ? 'Today'
           : c.date === yesterday
-          ? 'Yesterday'
-          : new Date(c.date).toLocaleDateString('en-GB', {
+            ? 'Yesterday'
+            : new Date(c.date).toLocaleDateString('en-GB', {
               day: '2-digit',
               month: 'short',
               year: 'numeric',
@@ -99,15 +105,32 @@ const ManagerTaskDetail = () => {
       <div className="task-detail-container">
         <div className="task-detail-header">
           <h2>{taskDetails.name}</h2>
-          <span className={`task-status ${statusClass}`}>{taskDetails.status}</span>
+          <div className="status-edit-display">
+            <span className={`status-badges ${statusClass}`}>{taskDetails.status}</span>
+            <MdModeEditOutline
+              className={`edit-icon icon-${statusClass}`}
+              onClick={() => {
+                setEditModalOpen(true);
+                setEditedTask({
+                  name: taskDetails.name,
+                  description: taskDetails.description,
+                  dueDate: taskDetails.dueDate,
+                  priority: taskDetails.priority,
+                });
+                setEditError('');
+              }}
+            />
+          </div>
         </div>
-
+        
         <p className="task-description">{taskDetails.description}</p>
 
         <div className="task-info-section">
           <div className="task-info-column">
             <p><strong>Assignee:</strong> {taskDetails.assignee}</p>
-            <p><strong>Priority:</strong> {taskDetails.priority}</p>
+            <p><strong>Priority:</strong> <span className={`${getTaskPriorityClass(taskDetails.priority)}`}>
+              {taskDetails.priority}
+            </span></p>
           </div>
           <div className="task-info-column">
             <p><strong>Due Date:</strong> {taskDetails.dueDate}</p>
@@ -147,6 +170,68 @@ const ManagerTaskDetail = () => {
           <button onClick={handleSend}>Send</button>
         </div>
       </div>
+      {editModalOpen && (
+        <div className="edit-modal-overlay" onClick={() => setEditModalOpen(false)}>
+          <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
+            <h4>Edit Task Info</h4>
+
+            <label>Task Name</label>
+            <input
+              value={editedTask.name}
+              onChange={(e) => setEditedTask({ ...editedTask, name: e.target.value })}
+            />
+
+            <label>Description</label>
+            <textarea
+              value={editedTask.description}
+              onChange={(e) => setEditedTask({ ...editedTask, description: e.target.value })}
+            />
+
+            <label>Due Date</label>
+            <input
+              type="date"
+              value={editedTask.dueDate}
+              onChange={(e) => setEditedTask({ ...editedTask, dueDate: e.target.value })}
+            />
+
+            <label>Priority</label>
+            <select
+              value={editedTask.priority}
+              onChange={(e) => setEditedTask({ ...editedTask, priority: e.target.value })}
+            >
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+
+            {editError && <div className="manager-project-error">{editError}</div>}
+
+            <div className="edit-modal-actions">
+              <button
+                onClick={() => {
+                  if (
+                    editedTask.name === taskDetails.name &&
+                    editedTask.description === taskDetails.description &&
+                    editedTask.dueDate === taskDetails.dueDate &&
+                    editedTask.priority === taskDetails.priority
+                  ) {
+                    setEditError('No changes made.');
+                    return;
+                  }
+
+                  // while updating to backend, API call here
+                  console.log('Changes Saved:', editedTask);
+                  setEditModalOpen(false);
+                }}
+              >
+                Save
+              </button>
+              <button className="cancel-btn" onClick={() => setEditModalOpen(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

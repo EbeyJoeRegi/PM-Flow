@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { formatDate } from '../CommonFunction';
+import { formatDate, formatStatus, getBootstrapBgClass, getTaskPriorityClass} from '../CommonFunction';
 import { MdModeEditOutline } from "react-icons/md";
 import '../../styles/managerProjectDetail.css';
 import { getManagerProjectByName, getTasksByProjectId, createTask } from '../../api/managerApi';
@@ -34,16 +34,6 @@ const ManagerProjectDetail = () => {
   const [sortField, setSortField] = useState('');
   const [page, setPage] = useState(1);
   const perPage = 5;
-
-  const formatStatus = (status) => {
-    switch (status) {
-      case 'NOT_STARTED': return 'Not Started';
-      case 'IN_PROGRESS': return 'In Progress';
-      case 'ON_HOLD': return 'On Hold';
-      case 'COMPLETED': return 'Completed';
-      default: return status;
-    }
-  };
 
   useEffect(() => {
     const fetchProjectAndTasks = async () => {
@@ -164,36 +154,13 @@ const handleTaskCreate = async () => {
   if (loading) return <div className="manager-project-container"><p>Loading...</p></div>;
   if (error) return <div className="manager-project-container"><p className="error">{error}</p></div>;
 
-  const getTaskStatusBgClass = (status) => {
-    switch (status) {
-      case 'Not Started': return 'bg-secondary';
-      case 'In Progress': return 'bg-primary';
-      case 'Completed': return 'bg-success';
-      case 'On Hold': return 'bg-warning';
-      default: return 'bg-light text-dark';
-    }
-  };
-
-  const getTaskPriorityClass = (priority) => {
-    switch (priority) {
-      case 'High':
-        return 'text-danger';
-      case 'Medium':
-        return 'text-warning';
-      case 'Low':
-        return 'text-info';
-      default:
-        return '';
-    }
-  };
-
   return (
     <div className="manager-project-container">
       <div className="manager-project-details-section">
         <div className="manager-project-title-bar">
           <h2>{projectDetail.name}</h2>
           <div className="status-edit-display">
-            <span className={`status-badge ${status.toLowerCase().replace(/\s/g, '')}`}>
+            <span className={`status-badges ${status.toLowerCase().replace(/\s/g, '')}`}>
               {status}
             </span>
             <MdModeEditOutline className={`edit-icon icon-${status.toLowerCase().replace(/\s/g, '')}`} onClick={() => {
@@ -286,7 +253,7 @@ const handleTaskCreate = async () => {
                         {t.priority}
                       </td>
                       <td>
-                        <span className={`status-badge ${getTaskStatusBgClass(t.status)}`}>
+                        <span className={`status-badge text-light ${getBootstrapBgClass(t.status)}`}>
                           {t.status}
                         </span>
                       </td>

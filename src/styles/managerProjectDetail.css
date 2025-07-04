@@ -79,29 +79,6 @@
   font-size: 18px;
 }
 
-.icon-completed {
-  color: #268f3f;
-}
-
-.icon-inprogress {
-  color: #186dc8;
-}
-
-.icon-onhold {
-  color: #a0ab08;
-}
-
-.icon-notstarted {
-  color: #737373;
-}
-
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 7px;
-  font-weight: 500;
-  font-size: 14px;
-}
-
 .edit-modal-overlay {
   position: fixed;
   top: 0;
@@ -132,7 +109,8 @@
 }
 
 .edit-modal select,
-.edit-modal input {
+.edit-modal input,
+.edit-modal textarea {
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #ccc;

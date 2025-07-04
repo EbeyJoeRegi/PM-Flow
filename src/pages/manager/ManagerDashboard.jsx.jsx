@@ -29,7 +29,7 @@ const ManagerDashboard = () => {
     };
 
     fetchProjects();
-  },[managerId, token]);
+  }, [managerId, token]);
 
   const totalProjects = projects.length;
   const defaultStatuses = ["Not Started", "In Progress", "On Hold", "Completed"];

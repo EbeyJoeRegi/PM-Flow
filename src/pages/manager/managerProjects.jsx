@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getManagerProjects } from '../../api/managerApi';
 import '../../styles/managerProjects.css';
 import { useSelector } from "react-redux";
+import { formatStatus,getBootstrapBgClass } from '../CommonFunction';
 
 const ManagerProjects = () => {
   const navigate = useNavigate();
@@ -34,26 +35,6 @@ const ManagerProjects = () => {
 
     fetchProjects();
   }, [managerId, token]);
-
-  const formatStatus = (status) => {
-    switch (status) {
-      case 'NOT_STARTED': return 'Not Started';
-      case 'IN_PROGRESS': return 'In Progress';
-      case 'ON_HOLD': return 'On Hold';
-      case 'COMPLETED': return 'Completed';
-      default: return status;
-    }
-  };
-
-  const getStatusBgClass = (status) => { //projectDasgboard.css
-    switch (status) {
-      case 'Not Started': return 'bg-secondary';
-      case 'In Progress': return 'bg-primary';
-      case 'Completed': return 'bg-success';
-      case 'On Hold': return 'bg-warning';
-      default: return 'bg-light text-dark';
-    }
-  };
 
   const filteredProjects = useMemo(() => {
     let filtered = [...projects];
@@ -124,7 +105,7 @@ const ManagerProjects = () => {
                 <tr key={p.id} onClick={() => goToDetail(p.name)} className="manager-clickable-row">
                   <td>{p.name}</td>
                   <td>
-                    <span className={`status-badge ${getStatusBgClass(p.status)}`}>
+                    <span className={`status-badge ${getBootstrapBgClass(p.status)}`}>
                       {p.status}
                     </span>
                   </td>
