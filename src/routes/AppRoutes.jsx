@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Manager from "../pages/manager/Manager";
@@ -53,7 +53,7 @@ const AppRoutes = () => {
       >
         <Route index element={<ManagerDashboard />} />
         <Route path="projects" element={<ManagerProjects />} />
-        <Route path="projects/:projectName/tasks/:taskname" element={<ManagerTaskDetail />} />
+        <Route path="projects/:projectName/tasks/:taskID" element={<ManagerTaskDetail />} />
         <Route path="collaboration" element={<CollaborationProjects />} />
         <Route path="projects/:projectName" element={<ManagerProjectDetail />} />
         <Route path="collaboration/:id" element={<ProjectChatPage />} />

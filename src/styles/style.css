@@ -8,3 +8,104 @@ body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #e0e7ff, #158991);
 }
+
+/*<--- manager --->*/
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 13px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  min-width: 100px;
+}
+
+@media (max-width: 768px) {
+  .status-badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    min-width: 75px;
+  }
+}
+
+.status-badges {
+  font-size: 15px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+/* status badge top right*/
+.completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.inprogress {
+  background-color: #cce5ff;
+  color: #000000;
+}
+
+.onhold {
+  background-color: #f6ffcc;
+  color: #949d11;
+}
+
+.notstarted {
+  background-color: #dfdfdf;
+  color: #626161;
+  border: 1px solid #ced4da;
+}
+
+/*Edit pencil icon*/
+.icon-completed {
+  color: #268f3f;
+}
+
+.icon-inprogress {
+  color: #186dc8;
+}
+
+.icon-onhold {
+  color: #a0ab08;
+}
+
+.icon-notstarted {
+  color: #737373;
+}
+
+/*Pagination*/
+.manager-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.manager-pagination button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.manager-pagination button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+@media (max-width: 368px) {
+    .manager-pagination {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .manager-pagination button {
+    width: 100%;
+  }  
+}

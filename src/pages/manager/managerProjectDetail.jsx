@@ -1,9 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { FaRegCalendarAlt } from 'react-icons/fa';
+import { formatDate, formatStatus, getBootstrapBgClass, getTaskPriorityClass } from '../../utils/Helper';
+import { MdModeEditOutline } from "react-icons/md";
 import '../../styles/managerProjectDetail.css';
-import { getManagerProjectByName, getTasksByProjectId } from '../../api/managerApi';
+import { getManagerProjectByName, getTasksByProjectId, createTask } from '../../api/managerApi';
+import { Pagination } from '../../components/Pagination';
 
 const ManagerProjectDetail = () => {
   const { projectName } = useParams();
@@ -14,13 +16,17 @@ const ManagerProjectDetail = () => {
   const [projectDetail, setProjectDetail] = useState(null);
   const [status, setStatus] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [isEditingDate, setIsEditingDate] = useState(false);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [tasks, setTasks] = useState([]);
+  const [editPopup, setEditPopup] = useState(false);
+  const [editedStatus, setEditedStatus] = useState('');
+  const [editedEndDate, setEditedEndDate] = useState('');
+  const [saveError, setSaveError] = useState('');
 
-  const [newTask, setNewTask] = useState({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
+
+  const [newTask, setNewTask] = useState({ name: '', dueDate: '', priority: 'MEDIUM', assignee: '' });
   const [showModal, setShowModal] = useState(false);
   const [taskError, setTaskError] = useState('');
   const [searchTask, setSearchTask] = useState('');
@@ -36,7 +42,7 @@ const ManagerProjectDetail = () => {
         setLoading(true);
         const projectData = await getManagerProjectByName(id, projectName, token);
         setProjectDetail(projectData);
-        setStatus(projectData.status);
+        setStatus(formatStatus(projectData.status));
         setEndDate(projectData.endDate);
         setMembers(projectData.teamMembers);
 
@@ -44,9 +50,9 @@ const ManagerProjectDetail = () => {
         const transformedTasks = taskData.map(task => ({
           id: task.id,
           name: task.name,
-          dueDate: task.dueDate.split('T')[0],
+          dueDate: task.dueDate ? formatDate(task.dueDate.split('T')[0]) : 'N/A',
           priority: task.priority,
-          status: task.status, //? capitalize(task.status.toLowerCase()) : 'N/A',
+          status: formatStatus(task.status), //? capitalize(task.status.toLowerCase()) : 'N/A',
           assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`
         }));
         setTasks(transformedTasks);
@@ -95,85 +101,103 @@ const ManagerProjectDetail = () => {
   const totalPages = Math.ceil(filteredTasks.length / perPage);
   const paginatedTasks = filteredTasks.slice((page - 1) * perPage, page * perPage);
 
-  const handleTaskCreate = () => {
+  const handleTaskCreate = async () => {
     if (!newTask.name || !newTask.dueDate || !newTask.priority || !newTask.assignee) {
       setTaskError('Please fill in all the fields.');
       return;
     }
-    setTasks([...tasks, { id: tasks.length + 1, ...newTask, status: 'Not Started' }]);
-    setShowModal(false);
-    setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: members[0] || '' });
-    setTaskError('');
+
+    try {
+      const payload = {
+        name: newTask.name,
+        priority: newTask.priority,
+        status: "NOT_STARTED",
+        dueDate: newTask.dueDate,
+        projectId: projectDetail.id,
+        assigneeId: 3, // hardcoded for now
+      };
+
+      // await createTask(payload, token);
+
+      // // refresh tasks
+      // const taskData = await getTasksByProjectId(projectDetail.id, token);
+      // const transformedTasks = taskData.map(task => ({
+      //   id: task.id,
+      //   name: task.name,
+      //   dueDate: task.dueDate ? formatDate(task.dueDate.split('T')[0]) : 'N/A',
+      //   priority: task.priority,
+      //   status: task.status,
+      //   assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`
+      // }));
+      // setTasks(transformedTasks);
+
+      const createdTask = await createTask(payload, token);
+        setTasks(prev => [
+          ...prev,
+          {
+            id: createdTask.id,
+            name: createdTask.name,
+            dueDate: formatDate(createdTask.dueDate),
+            priority: createdTask.priority,
+            status: formatStatus(createdTask.status),
+            assignee: `${createdTask.assigneeFirstName} ${createdTask.assigneeLastName}`
+          }
+        ]);
+
+      setShowModal(false);
+      setNewTask({ name: '', dueDate: '', priority: 'MEDIUM', assignee: '' });
+      setTaskError('');
+    } catch (err) {
+      setTaskError(err.message || 'Failed to create task.');
+    }
   };
 
   if (loading) return <div className="manager-project-container"><p>Loading...</p></div>;
   if (error) return <div className="manager-project-container"><p className="error">{error}</p></div>;
-
-  const getStatusBgClass = (status) => {
-    switch (status) {
-      case 'Not Started': return 'bg-secondary';
-      case 'In Progress': return 'bg-primary';
-      case 'Completed': return 'bg-success';
-      case 'On Hold': return 'bg-warning';
-      default: return 'bg-light text-dark';
-    }
-  };
-
-  const getPriorityTextClass = (priority) => {
-    switch (priority) {
-      case 'High':
-        return 'text-danger';
-      case 'Medium':
-        return 'text-warning';
-      case 'Low':
-        return 'text-info';
-      default:
-        return '';
-    }
-  };
 
   return (
     <div className="manager-project-container">
       <div className="manager-project-details-section">
         <div className="manager-project-title-bar">
           <h2>{projectDetail.name}</h2>
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="NOT_STARTED">Not Started</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="ON_HOLD">On Hold</option>
-            <option value="COMPLETED">Completed</option>
-          </select>
+          <div className="status-edit-display">
+            <span className={`status-badges ${status.toLowerCase().replace(/\s/g, '')}`}>
+              {status}
+            </span>
+            <MdModeEditOutline className={`edit-icon icon-${status.toLowerCase().replace(/\s/g, '')}`} onClick={() => {
+              setEditPopup(true);
+              setEditedStatus(status);
+              setEditedEndDate(endDate);
+              setSaveError('');
+            }} />
+          </div>
         </div>
 
         <div className="manager-project-description-date">
           <div className="manager-project-description-block">
             <p><strong>Description:</strong> {projectDetail.description}</p>
-            <p><strong>Team Members:</strong></p>
-            <ul>{members.map(m => <li key={m}>{m}</li>)}</ul>
           </div>
 
-          <div className="manager-project-date-block">
-            <div className="manager-project-date-display">
-              <label>Start Date:</label>
-              <span>{projectDetail.startDate}</span>
+          <div className="manager-project-info-pair">
+            <div className="manager-project-team-block">
+              <p><strong>Team Members</strong></p>
+              <ul>{members.map(m => <li key={m}>{m}</li>)}</ul>
             </div>
-            <div className="manager-project-date-display">
-              <label>End Date:</label>
-              {isEditingDate ? (
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  onBlur={() => setIsEditingDate(false)}
-                  autoFocus
-                />
-              ) : (
-                <span>{endDate} <FaRegCalendarAlt className="manager-project-calendar-icon" onClick={() => setIsEditingDate(true)} /></span>
-              )}
+
+            <div className="manager-project-date-block">
+              <div className="manager-project-date-display">
+                <label>Start Date :</label>
+                <span>{formatDate(projectDetail.startDate)}</span>
+              </div>
+              <div className="manager-project-date-display">
+                <label>Due Date &nbsp;:</label> {/*  */}
+                <span>{formatDate(endDate)}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
 
       <div className="manager-project-task-section">
         <div className="manager-project-task-header">
@@ -223,14 +247,14 @@ const ManagerProjectDetail = () => {
                   <tr><td colSpan="5">No tasks found.</td></tr>
                 ) : (
                   paginatedTasks.map(t => (
-                    <tr key={t.id} onClick={() => navigate(`tasks/${t.name}`)} className="manager-project-task-row">
+                    <tr key={t.id} onClick={() => navigate(`tasks/${t.id}`)} className="manager-project-task-row">
                       <td>{t.name}</td>
                       <td>{t.dueDate}</td>
-                      <td className={`fw-semibold ${getPriorityTextClass(t.priority)}`}>
+                      <td className={`fw-semibold ${getTaskPriorityClass(t.priority)}`}>
                         {t.priority}
                       </td>
                       <td>
-                        <span className={`status-badge ${getStatusBgClass(t.status)}`}>
+                        <span className={`status-badge text-light ${getBootstrapBgClass(t.status)}`}>
                           {t.status}
                         </span>
                       </td>
@@ -243,19 +267,24 @@ const ManagerProjectDetail = () => {
             </table>
           </div>
         </div>
-
         {totalPages > 1 && (
-          <div className="manager-project-pagination">
-            <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Prev</button>
-            <span>Page {page} of {totalPages}</span>
-            <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>Next →</button>
-          </div>
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         )}
       </div>
 
       {showModal && (
-        <div className="manager-project-modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="manager-project-modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="manager-project-modal-overlay"
+          onClick={() => {
+            setShowModal(false);
+            setNewTask({ name: '', dueDate: '', priority: 'MEDIUM', assignee: '' });
+            setTaskError('');
+          }}
+        >
+          <div
+            className="manager-project-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h4>Create New Task</h4>
             <input
               placeholder="Task Name"
@@ -271,24 +300,88 @@ const ManagerProjectDetail = () => {
               value={newTask.priority}
               onChange={e => setNewTask({ ...newTask, priority: e.target.value })}
             >
-              <option>High</option>
-              <option>Medium</option>
-              <option>Low</option>
+              <option value="HIGH">High</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="LOW">Low</option>
             </select>
             <select
               value={newTask.assignee}
               onChange={e => setNewTask({ ...newTask, assignee: e.target.value })}
             >
-              {members.map(m => <option key={m}>{m}</option>)}
+              <option value="" disabled>Select Assignee</option>
+              <option value="Alice">Alice</option>
+              <option value="Bob">Bob</option>
+              <option value="Charlie">Charlie</option>
             </select>
+
             {taskError && <div className="manager-project-error">{taskError}</div>}
+
             <div className="manager-project-modal-actions">
               <button onClick={handleTaskCreate}>Add Task</button>
-              <button className="cancel-btn" onClick={() => setShowModal(false)}>Cancel</button>
+              <button
+                className="cancel-btn"
+                onClick={() => {
+                  setShowModal(false);
+                  setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
+                  setTaskError('');
+                }}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
       )}
+
+      {editPopup && (
+        <div className="edit-modal-overlay" onClick={() => setEditPopup(false)}>
+          <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
+            <h4>Edit Project Info</h4>
+            <label>Status</label>
+            <select
+              value={editedStatus}
+              onChange={(e) => setEditedStatus(e.target.value)}
+            >
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+              <option value="On Hold">On Hold</option>
+              <option value="Completed">Completed</option>
+            </select>
+
+            <label>End Date</label>
+            <input
+              type="date"
+              value={editedEndDate}
+              onChange={(e) => setEditedEndDate(e.target.value)}
+            />
+
+            {saveError && <div className="manager-project-error">{saveError}</div>}
+
+            <div className="edit-modal-actions">
+              <button
+                onClick={() => {
+                  if (
+                    editedStatus === status &&
+                    editedEndDate === endDate
+                  ) {
+                    setSaveError('No changes made.');
+                    return;
+                  }
+                  setStatus(editedStatus);
+                  setEndDate(editedEndDate);
+                  setEditPopup(false);
+                }}
+              >
+                Save
+              </button>
+              <button className="cancel-btn" onClick={() => setEditPopup(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

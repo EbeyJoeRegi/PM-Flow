@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { getManagerProjects } from '../../api/managerApi';
 import '../../styles/managerProjects.css';
 import { useSelector } from "react-redux";
+import { formatStatus, getBootstrapBgClass, formatDate } from '../../utils/Helper';
+import { Pagination } from '../../components/Pagination';
 
 const ManagerProjects = () => {
   const navigate = useNavigate();
@@ -23,7 +25,7 @@ const ManagerProjects = () => {
           id: p.id,
           name: p.name,
           status: formatStatus(p.status),
-           start: p.startDate,
+          start: p.startDate,
           end: p.endDate
         }));
         setProjects(formatted);
@@ -34,26 +36,6 @@ const ManagerProjects = () => {
 
     fetchProjects();
   }, [managerId, token]);
-
-  const formatStatus = (status) => {
-    switch (status) {
-      case 'NOT_STARTED': return 'Not Started';
-      case 'IN_PROGRESS': return 'In Progress';
-      case 'ON_HOLD': return 'On Hold';
-      case 'COMPLETED': return 'Completed';
-      default: return status;
-    }
-  };
-
-  const getStatusBgClass = (status) => { //projectDasgboard.css
-    switch (status) {
-      case 'Not Started': return 'bg-secondary';
-      case 'In Progress': return 'bg-primary';
-      case 'Completed': return 'bg-success';
-      case 'On Hold': return 'bg-warning';
-      default: return 'bg-light text-dark';
-    }
-  };
 
   const filteredProjects = useMemo(() => {
     let filtered = [...projects];
@@ -75,7 +57,7 @@ const ManagerProjects = () => {
     return filtered;
   }, [projects, statusFilter, searchQuery, sortField]);
 
-  const perPage = 5;
+  const perPage = 10;
   const totalPages = Math.ceil(filteredProjects.length / perPage);
   const paginated = filteredProjects.slice((page - 1) * perPage, page * perPage);
 
@@ -113,7 +95,7 @@ const ManagerProjects = () => {
               <th>Name</th>
               <th>Status</th>
               <th onClick={() => setSortField('start')} className="manager-sortable">Start Date ⬍</th>
-              <th onClick={() => setSortField('end')} className="manager-sortable">End Date ⬍</th>
+              <th onClick={() => setSortField('end')} className="manager-sortable">Due Date ⬍</th>
             </tr>
           </thead>
           <tbody>
@@ -124,25 +106,22 @@ const ManagerProjects = () => {
                 <tr key={p.id} onClick={() => goToDetail(p.name)} className="manager-clickable-row">
                   <td>{p.name}</td>
                   <td>
-                    <span className={`status-badge ${getStatusBgClass(p.status)}`}>
+                    <span className={`status-badge ${getBootstrapBgClass(p.status)}`}>
                       {p.status}
                     </span>
                   </td>
 
-                  <td>{p.start}</td>
-                  <td>{p.end}</td>
+                  <td>{formatDate(p.start)}</td>
+                  <td>{formatDate(p.end)}</td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
-
-      <div className="manager-pagination">
-        <button disabled={page === 1} onClick={() => setPage(page - 1)}>← Prev</button>
-        <span>Page {page} of {totalPages}</span>
-        <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>Next →</button>
-      </div>
+        {totalPages > 1 && (
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        )}
     </div>
   );
 };
