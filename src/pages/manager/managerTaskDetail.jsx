@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getTaskById } from '../../api/managerApi';
-import { getTaskPriorityClass } from '../CommonFunction';
+import { getTaskPriorityClass, formatDate } from '../../utils/Helper';
 import '../../styles/managerTaskDetail.css';
 import { MdModeEditOutline } from "react-icons/md";
 
@@ -89,13 +89,6 @@ const ManagerTaskDetail = () => {
     return grouped;
   };
 
-  const statusClass = {
-    'Completed': 'completed',
-    'In Progress': 'inprogress',
-    'On Hold': 'onhold',
-    'Not Started': 'notstarted',
-  }[taskDetails?.status] || '';
-
   const groupedComments = groupCommentsByDate();
 
   if (!taskDetails) return <div className="task-detail-page">Loading...</div>;
@@ -106,9 +99,9 @@ const ManagerTaskDetail = () => {
         <div className="task-detail-header">
           <h2>{taskDetails.name}</h2>
           <div className="status-edit-display">
-            <span className={`status-badges ${statusClass}`}>{taskDetails.status}</span>
+            <span className={`status-badges ${taskDetails.status.toLowerCase().replace(/\s/g, '')}`}>{taskDetails.status}</span>
             <MdModeEditOutline
-              className={`edit-icon icon-${statusClass}`}
+              className={`edit-icon icon-${taskDetails.status.toLowerCase().replace(/\s/g, '')}`}
               onClick={() => {
                 setEditModalOpen(true);
                 setEditedTask({
@@ -133,7 +126,7 @@ const ManagerTaskDetail = () => {
             </span></p>
           </div>
           <div className="task-info-column">
-            <p><strong>Due Date:</strong> {taskDetails.dueDate}</p>
+            <p><strong>Due Date:</strong> {formatDate(taskDetails.dueDate)}</p>
           </div>
         </div>
       </div>

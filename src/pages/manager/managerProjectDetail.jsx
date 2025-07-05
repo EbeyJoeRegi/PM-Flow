@@ -1,10 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { formatDate, formatStatus, getBootstrapBgClass, getTaskPriorityClass} from '../CommonFunction';
+import { formatDate, formatStatus, getBootstrapBgClass, getTaskPriorityClass } from '../../utils/Helper';
 import { MdModeEditOutline } from "react-icons/md";
 import '../../styles/managerProjectDetail.css';
 import { getManagerProjectByName, getTasksByProjectId, createTask } from '../../api/managerApi';
+import { Pagination } from '../../components/Pagination';
 
 const ManagerProjectDetail = () => {
   const { projectName } = useParams();
@@ -100,56 +101,56 @@ const ManagerProjectDetail = () => {
   const totalPages = Math.ceil(filteredTasks.length / perPage);
   const paginatedTasks = filteredTasks.slice((page - 1) * perPage, page * perPage);
 
-const handleTaskCreate = async () => {
-  if (!newTask.name || !newTask.dueDate || !newTask.priority || !newTask.assignee) {
-    setTaskError('Please fill in all the fields.');
-    return;
-  }
+  const handleTaskCreate = async () => {
+    if (!newTask.name || !newTask.dueDate || !newTask.priority || !newTask.assignee) {
+      setTaskError('Please fill in all the fields.');
+      return;
+    }
 
-  try {
-    const payload = {
-      name: newTask.name,
-      priority: newTask.priority,
-      status: "Not Started",
-      dueDate: newTask.dueDate,
-      projectId: projectDetail.id,
-      assigneeId: 3, // hardcoded for now
-    };
+    try {
+      const payload = {
+        name: newTask.name,
+        priority: newTask.priority,
+        status: "Not Started",
+        dueDate: newTask.dueDate,
+        projectId: projectDetail.id,
+        assigneeId: 3, // hardcoded for now
+      };
 
-    await createTask(payload, token);
+      await createTask(payload, token);
 
-    // refresh tasks
-    const taskData = await getTasksByProjectId(projectDetail.id, token);
-    const transformedTasks = taskData.map(task => ({
-      id: task.id,
-      name: task.name,
-      dueDate: task.dueDate ? formatDate(task.dueDate.split('T')[0]) : 'N/A',
-      priority: task.priority,
-      status: task.status,
-      assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`
-    }));
-    setTasks(transformedTasks);
+      // refresh tasks
+      const taskData = await getTasksByProjectId(projectDetail.id, token);
+      const transformedTasks = taskData.map(task => ({
+        id: task.id,
+        name: task.name,
+        dueDate: task.dueDate ? formatDate(task.dueDate.split('T')[0]) : 'N/A',
+        priority: task.priority,
+        status: task.status,
+        assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`
+      }));
+      setTasks(transformedTasks);
 
-    // const createdTask = await createTask(payload, token);
-    //   setTasks(prev => [
-    //     ...prev,
-    //     {
-    //       id: createdTask.id,
-    //       name: createdTask.name,
-    //       dueDate: formatDate(newTask.dueDate),
-    //       priority: newTask.priority,
-    //       status: 'Not Started',
-    //       assignee: newTask.assignee
-    //     }
-    //   ]);
+      // const createdTask = await createTask(payload, token);
+      //   setTasks(prev => [
+      //     ...prev,
+      //     {
+      //       id: createdTask.id,
+      //       name: createdTask.name,
+      //       dueDate: formatDate(newTask.dueDate),
+      //       priority: newTask.priority,
+      //       status: 'Not Started',
+      //       assignee: newTask.assignee
+      //     }
+      //   ]);
 
-    setShowModal(false);
-    setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
-    setTaskError('');
-  } catch (err) {
-    setTaskError(err.message || 'Failed to create task.');
-  }
-};
+      setShowModal(false);
+      setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
+      setTaskError('');
+    } catch (err) {
+      setTaskError(err.message || 'Failed to create task.');
+    }
+  };
 
   if (loading) return <div className="manager-project-container"><p>Loading...</p></div>;
   if (error) return <div className="manager-project-container"><p className="error">{error}</p></div>;
@@ -173,28 +174,28 @@ const handleTaskCreate = async () => {
         </div>
 
         <div className="manager-project-description-date">
-  <div className="manager-project-description-block">
-    <p><strong>Description:</strong> {projectDetail.description}</p>
-  </div>
+          <div className="manager-project-description-block">
+            <p><strong>Description:</strong> {projectDetail.description}</p>
+          </div>
 
-  <div className="manager-project-info-pair">
-    <div className="manager-project-team-block">
-      <p><strong>Team Members</strong></p>
-      <ul>{members.map(m => <li key={m}>{m}</li>)}</ul>
-    </div>
+          <div className="manager-project-info-pair">
+            <div className="manager-project-team-block">
+              <p><strong>Team Members</strong></p>
+              <ul>{members.map(m => <li key={m}>{m}</li>)}</ul>
+            </div>
 
-    <div className="manager-project-date-block">
-      <div className="manager-project-date-display">
-        <label>Start Date :</label>
-        <span>{formatDate(projectDetail.startDate)}</span>
-      </div>
-      <div className="manager-project-date-display">
-        <label>Due Date &nbsp;:</label> {/*  */}
-        <span>{formatDate(endDate)}</span>
-      </div>
-    </div>
-  </div>
-</div>
+            <div className="manager-project-date-block">
+              <div className="manager-project-date-display">
+                <label>Start Date :</label>
+                <span>{formatDate(projectDetail.startDate)}</span>
+              </div>
+              <div className="manager-project-date-display">
+                <label>Due Date &nbsp;:</label> {/*  */}
+                <span>{formatDate(endDate)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
 
@@ -266,76 +267,71 @@ const handleTaskCreate = async () => {
             </table>
           </div>
         </div>
-
         {totalPages > 1 && (
-          <div className="manager-project-pagination">
-            <button disabled={page === 1} onClick={() => setPage(p => p - 1)}>← Prev</button>
-            <span>Page {page} of {totalPages}</span>
-            <button disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>Next →</button>
-          </div>
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         )}
       </div>
 
       {showModal && (
-  <div
-    className="manager-project-modal-overlay"
-    onClick={() => {
-      setShowModal(false);
-      setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
-      setTaskError('');
-    }}
-  >
-    <div
-      className="manager-project-modal"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <h4>Create New Task</h4>
-      <input
-        placeholder="Task Name"
-        value={newTask.name}
-        onChange={e => setNewTask({ ...newTask, name: e.target.value })}
-      />
-      <input
-        type="date"
-        value={newTask.dueDate}
-        onChange={e => setNewTask({ ...newTask, dueDate: e.target.value })}
-      />
-      <select
-        value={newTask.priority}
-        onChange={e => setNewTask({ ...newTask, priority: e.target.value })}
-      >
-        <option value="High">High</option>
-        <option value="Medium">Medium</option>
-        <option value="Low">Low</option>
-      </select>
-      <select
-        value={newTask.assignee}
-        onChange={e => setNewTask({ ...newTask, assignee: e.target.value })}
-      >
-        <option value="" disabled>Select Assignee</option>
-        <option value="Alice">Alice</option>
-        <option value="Bob">Bob</option>
-        <option value="Charlie">Charlie</option>
-      </select>
-
-      {taskError && <div className="manager-project-error">{taskError}</div>}
-
-      <div className="manager-project-modal-actions">
-        <button onClick={handleTaskCreate}>Add Task</button>
-        <button
-          className="cancel-btn"
+        <div
+          className="manager-project-modal-overlay"
           onClick={() => {
             setShowModal(false);
             setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
             setTaskError('');
           }}
         >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+          <div
+            className="manager-project-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h4>Create New Task</h4>
+            <input
+              placeholder="Task Name"
+              value={newTask.name}
+              onChange={e => setNewTask({ ...newTask, name: e.target.value })}
+            />
+            <input
+              type="date"
+              value={newTask.dueDate}
+              onChange={e => setNewTask({ ...newTask, dueDate: e.target.value })}
+            />
+            <select
+              value={newTask.priority}
+              onChange={e => setNewTask({ ...newTask, priority: e.target.value })}
+            >
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+            <select
+              value={newTask.assignee}
+              onChange={e => setNewTask({ ...newTask, assignee: e.target.value })}
+            >
+              <option value="" disabled>Select Assignee</option>
+              <option value="Alice">Alice</option>
+              <option value="Bob">Bob</option>
+              <option value="Charlie">Charlie</option>
+            </select>
+
+            {taskError && <div className="manager-project-error">{taskError}</div>}
+
+            <div className="manager-project-modal-actions">
+              <button onClick={handleTaskCreate}>Add Task</button>
+              <button
+                className="cancel-btn"
+                onClick={() => {
+                  setShowModal(false);
+                  setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
+                  setTaskError('');
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {editPopup && (
         <div className="edit-modal-overlay" onClick={() => setEditPopup(false)}>

@@ -9,7 +9,7 @@ body {
   background: linear-gradient(135deg, #e0e7ff, #158991);
 }
 
-/* manager */
+/*<--- manager --->*/
 
 .status-badge {
   display: inline-block;
@@ -74,4 +74,38 @@ body {
 
 .icon-notstarted {
   color: #737373;
+}
+
+/*Pagination*/
+.manager-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.manager-pagination button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.manager-pagination button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+@media (max-width: 368px) {
+    .manager-pagination {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .manager-pagination button {
+    width: 100%;
+  }  
 }
