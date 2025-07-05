@@ -77,7 +77,7 @@ export default function MemberDashboard() {
   };
 
   return (
-    <div className="member-dashboard-container container-fluid px-4">
+    <div className="member-dashboard-container container-fluid px-4" style={{ overflowX: 'auto', width: '100%' }}>
       <div className="row gx-4">
         <div className="col-lg-8 mb-4">
           <div className="card tasks-card p-3 h-100 d-flex flex-column">
