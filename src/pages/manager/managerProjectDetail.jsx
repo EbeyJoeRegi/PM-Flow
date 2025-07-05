@@ -26,7 +26,7 @@ const ManagerProjectDetail = () => {
   const [saveError, setSaveError] = useState('');
 
 
-  const [newTask, setNewTask] = useState({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
+  const [newTask, setNewTask] = useState({ name: '', dueDate: '', priority: 'MEDIUM', assignee: '' });
   const [showModal, setShowModal] = useState(false);
   const [taskError, setTaskError] = useState('');
   const [searchTask, setSearchTask] = useState('');
@@ -52,7 +52,7 @@ const ManagerProjectDetail = () => {
           name: task.name,
           dueDate: task.dueDate ? formatDate(task.dueDate.split('T')[0]) : 'N/A',
           priority: task.priority,
-          status: task.status, //? capitalize(task.status.toLowerCase()) : 'N/A',
+          status: formatStatus(task.status), //? capitalize(task.status.toLowerCase()) : 'N/A',
           assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`
         }));
         setTasks(transformedTasks);
@@ -111,41 +111,41 @@ const ManagerProjectDetail = () => {
       const payload = {
         name: newTask.name,
         priority: newTask.priority,
-        status: "Not Started",
+        status: "NOT_STARTED",
         dueDate: newTask.dueDate,
         projectId: projectDetail.id,
         assigneeId: 3, // hardcoded for now
       };
 
-      await createTask(payload, token);
+      // await createTask(payload, token);
 
-      // refresh tasks
-      const taskData = await getTasksByProjectId(projectDetail.id, token);
-      const transformedTasks = taskData.map(task => ({
-        id: task.id,
-        name: task.name,
-        dueDate: task.dueDate ? formatDate(task.dueDate.split('T')[0]) : 'N/A',
-        priority: task.priority,
-        status: task.status,
-        assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`
-      }));
-      setTasks(transformedTasks);
+      // // refresh tasks
+      // const taskData = await getTasksByProjectId(projectDetail.id, token);
+      // const transformedTasks = taskData.map(task => ({
+      //   id: task.id,
+      //   name: task.name,
+      //   dueDate: task.dueDate ? formatDate(task.dueDate.split('T')[0]) : 'N/A',
+      //   priority: task.priority,
+      //   status: task.status,
+      //   assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`
+      // }));
+      // setTasks(transformedTasks);
 
-      // const createdTask = await createTask(payload, token);
-      //   setTasks(prev => [
-      //     ...prev,
-      //     {
-      //       id: createdTask.id,
-      //       name: createdTask.name,
-      //       dueDate: formatDate(newTask.dueDate),
-      //       priority: newTask.priority,
-      //       status: 'Not Started',
-      //       assignee: newTask.assignee
-      //     }
-      //   ]);
+      const createdTask = await createTask(payload, token);
+        setTasks(prev => [
+          ...prev,
+          {
+            id: createdTask.id,
+            name: createdTask.name,
+            dueDate: formatDate(createdTask.dueDate),
+            priority: createdTask.priority,
+            status: formatStatus(createdTask.status),
+            assignee: `${createdTask.assigneeFirstName} ${createdTask.assigneeLastName}`
+          }
+        ]);
 
       setShowModal(false);
-      setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
+      setNewTask({ name: '', dueDate: '', priority: 'MEDIUM', assignee: '' });
       setTaskError('');
     } catch (err) {
       setTaskError(err.message || 'Failed to create task.');
@@ -277,7 +277,7 @@ const ManagerProjectDetail = () => {
           className="manager-project-modal-overlay"
           onClick={() => {
             setShowModal(false);
-            setNewTask({ name: '', dueDate: '', priority: 'Medium', assignee: '' });
+            setNewTask({ name: '', dueDate: '', priority: 'MEDIUM', assignee: '' });
             setTaskError('');
           }}
         >
@@ -300,9 +300,9 @@ const ManagerProjectDetail = () => {
               value={newTask.priority}
               onChange={e => setNewTask({ ...newTask, priority: e.target.value })}
             >
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
+              <option value="HIGH">High</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="LOW">Low</option>
             </select>
             <select
               value={newTask.assignee}

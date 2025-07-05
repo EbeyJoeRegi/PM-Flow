@@ -28,10 +28,10 @@
 
 .task-info-section {
   display: flex;
-  justify-content: space-between;
-  gap: 40px;
+  /* justify-content: space-between; */
+  gap: 50%;
   flex-wrap: wrap;
-  margin-top: 12px;
+  /* margin-top: 12px; */
 }
 
 .task-info-section p {
@@ -163,7 +163,7 @@
 @media (max-width: 768px) {
   .task-info-section {
     flex-direction: column;
-    gap: 16px;
+    /* gap: 16px; */
   }
 
   .task-detail-header {
