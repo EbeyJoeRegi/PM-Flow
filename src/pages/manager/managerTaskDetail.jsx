@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { getTaskById } from '../../api/managerApi';
-import { getTaskPriorityClass } from '../CommonFunction';
+import { getTaskById, updateTaskById } from '../../api/managerApi';
+import { getTaskPriorityClass, formatDate, formatStatus } from '../../utils/Helper';
 import '../../styles/managerTaskDetail.css';
 import { MdModeEditOutline } from "react-icons/md";
 
@@ -30,7 +30,7 @@ const ManagerTaskDetail = () => {
         setTaskDetails({
           name: task.name,
           description: task.description || 'N/A',
-          status: task.status,
+          status: formatStatus(task.status),
           assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`,
           priority: task.priority,
           dueDate: task.dueDate ? task.dueDate.split('T')[0] : 'N/A',
@@ -89,13 +89,6 @@ const ManagerTaskDetail = () => {
     return grouped;
   };
 
-  const statusClass = {
-    'Completed': 'completed',
-    'In Progress': 'inprogress',
-    'On Hold': 'onhold',
-    'Not Started': 'notstarted',
-  }[taskDetails?.status] || '';
-
   const groupedComments = groupCommentsByDate();
 
   if (!taskDetails) return <div className="task-detail-page">Loading...</div>;
@@ -106,9 +99,9 @@ const ManagerTaskDetail = () => {
         <div className="task-detail-header">
           <h2>{taskDetails.name}</h2>
           <div className="status-edit-display">
-            <span className={`status-badges ${statusClass}`}>{taskDetails.status}</span>
+            <span className={`status-badges ${taskDetails.status.toLowerCase().replace(/\s/g, '')}`}>{taskDetails.status}</span>
             <MdModeEditOutline
-              className={`edit-icon icon-${statusClass}`}
+              className={`edit-icon icon-${taskDetails.status.toLowerCase().replace(/\s/g, '')}`}
               onClick={() => {
                 setEditModalOpen(true);
                 setEditedTask({
@@ -122,7 +115,7 @@ const ManagerTaskDetail = () => {
             />
           </div>
         </div>
-        
+
         <p className="task-description">{taskDetails.description}</p>
 
         <div className="task-info-section">
@@ -133,7 +126,7 @@ const ManagerTaskDetail = () => {
             </span></p>
           </div>
           <div className="task-info-column">
-            <p><strong>Due Date:</strong> {taskDetails.dueDate}</p>
+            <p><strong>Due Date:</strong> {formatDate(taskDetails.dueDate)}</p>
           </div>
         </div>
       </div>
@@ -199,16 +192,16 @@ const ManagerTaskDetail = () => {
               value={editedTask.priority}
               onChange={(e) => setEditedTask({ ...editedTask, priority: e.target.value })}
             >
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
+              <option value="HIGH">High</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="LOW">Low</option>
             </select>
 
             {editError && <div className="manager-project-error">{editError}</div>}
 
             <div className="edit-modal-actions">
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (
                     editedTask.name === taskDetails.name &&
                     editedTask.description === taskDetails.description &&
@@ -219,9 +212,19 @@ const ManagerTaskDetail = () => {
                     return;
                   }
 
-                  // while updating to backend, API call here
-                  console.log('Changes Saved:', editedTask);
-                  setEditModalOpen(false);
+                  try {
+                    await updateTaskById(taskID, editedTask, token);
+                    setTaskDetails({
+                      ...taskDetails,
+                      name: editedTask.name,
+                      description: editedTask.description,
+                      dueDate: editedTask.dueDate,
+                      priority: editedTask.priority,
+                    });
+                    setEditModalOpen(false);
+                  } catch (err) {
+                    setEditError(err);
+                  }
                 }}
               >
                 Save

@@ -46,7 +46,12 @@ export const getTasksByProjectId = async (projectId, token) => {
 
 export const createTask = async (taskData, token) => {
   try {
-    const response = await axios.post(`${BASE_URL}/api/tasks`, taskData, {
+    const response = await axios.post(`${BASE_URL}/api/tasks`, 
+            {
+        ...taskData,
+        dueDate: `${taskData.dueDate}T00:00:00`, 
+      },
+      {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -67,5 +72,24 @@ export const getTaskById = async (taskId,token) => {
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Failed to fetch task details' };
+  }
+};
+
+export const updateTaskById = async (taskID, TaskData, token) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/api/tasks/${taskID}`,
+      {
+        ...TaskData,
+        dueDate: `${TaskData.dueDate}T00:00:00`, 
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.message || 'Failed to update task';
   }
 };

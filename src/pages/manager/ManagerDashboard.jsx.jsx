@@ -2,7 +2,7 @@ import '../../styles/managerDashboard.css';
 import { useState, useMemo, useEffect } from 'react';
 import { getManagerProjects } from '../../api/managerApi';
 import { useSelector } from "react-redux";
-import { formatStatus,getBootstrapBgClass } from '../CommonFunction';
+import { formatStatus, getBootstrapBgClass, formatDate } from '../../utils/Helper';
 
 const ManagerDashboard = () => {
   const [projects, setProjects] = useState([]);
@@ -158,8 +158,9 @@ const ManagerDashboard = () => {
                         {proj.status}
                       </span>
                     </td>
-                    <td>{proj.start}</td>
-                    <td>{proj.end}</td>
+                    <td>{formatDate(proj.start)}</td>
+                    <td>{formatDate(proj.end)}</td>
+
                   </tr>
                 ))
               )}

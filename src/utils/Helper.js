@@ -28,11 +28,11 @@ export const getBootstrapBgClass = (status) => {
 
 export const getTaskPriorityClass = (priority) => {
     switch (priority) {
-      case 'High':
+      case 'HIGH':
         return 'text-danger';
-      case 'Medium':
+      case 'MEDIUM':
         return 'text-warning';
-      case 'Low':
+      case 'LOW':
         return 'text-info';
       default:
         return '';

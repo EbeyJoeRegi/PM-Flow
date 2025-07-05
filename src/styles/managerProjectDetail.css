@@ -312,27 +312,6 @@
   font-style: italic;
 }
 
-.manager-project-pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.manager-project-pagination button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
-
-.manager-project-pagination button:disabled {
-  background-color: #aaa;
-  cursor: not-allowed;
-}
-
 .manager-project-modal-overlay {
   position: fixed;
   top: 0;
@@ -432,19 +411,8 @@
     justify-content: space-between;
   }
 
-  .manager-project-pagination {
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .manager-project-pagination button {
-    width: 100%;
-  }
-
   .manager-project-modal,
   .edit-modal {
     max-width: 90%;
   }
 }
-
