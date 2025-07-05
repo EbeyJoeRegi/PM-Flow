@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllUsers } from '../../api/adminApi';
+import { getAllUsers, updateUserByAdmin } from '../../api/adminApi';
 import { FaPen, FaTrash } from 'react-icons/fa';
 import '../../styles/Admin.css';
 
@@ -24,14 +24,22 @@ export default function Users() {
     setSelectedRole(user.role);
   };
 
-  const handleSave = () => {
-    const updated = users.map(user =>
-      user.id === editId
-        ? { ...user, firstName, lastName, role: selectedRole }
-        : user
-    );
-    setUsers(updated);
-    setEditId(null);
+  const handleSave = async () => {
+    try {
+      const updatedData = {
+        firstName,
+        lastName,
+        role: selectedRole
+      };
+      await updateUserByAdmin(editId, updatedData);
+      const updated = users.map(user =>
+        user.id === editId ? { ...user, ...updatedData } : user
+      );
+      setUsers(updated);
+      setEditId(null);
+    } catch {
+      alert('Failed to update user');
+    }
   };
 
   const handleCancelEdit = () => {

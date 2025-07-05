@@ -91,3 +91,18 @@ export const deleteProjectById = async (id) => {
     throw error;
   }
 };
+
+export const updateUserByAdmin = async (id, updatedData) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/api/users/admin/${id}`, updatedData, {
+      headers: {
+        ...getAuthHeader(),
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to update user ${id}:`, error.response?.status, error.message);
+    throw error;
+  }
+};
