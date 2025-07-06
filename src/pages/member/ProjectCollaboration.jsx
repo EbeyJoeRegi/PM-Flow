@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { updateTaskStatus } from '../../api/teamMemberApi';
-
+import '../../styles/ProjectCollab.css';
 export default function ProjectCollaboration() {
   const { projectId } = useParams();
   const navigate = useNavigate();
@@ -161,8 +161,8 @@ export default function ProjectCollaboration() {
         <React.Fragment key={date}>
           <div className="collab-chat-date-separator">{new Date(date).toDateString()}</div>
           {groupedMessages[date].map((msg) => (
-            <div key={msg.id} className={`collab-chat-message-wrapper ${msg.sender === 'You' ? 'collab-self' : 'collab-other'}`}>
-              <div className={`collab-chat-message ${msg.sender === 'You' ? 'collab-self' : 'collab-other'}`}>
+            <div key={msg.id} className={`collab-chat-message-wrapper ${msg.sender === 'You' ? 'collab-self' : ''}`}>
+              <div className="collab-chat-message">
                 <span className="collab-sender">{msg.sender}</span>
                 <span className="collab-text">{msg.message}</span>
                 <span className="collab-time">{msg.time}</span>
@@ -174,7 +174,6 @@ export default function ProjectCollaboration() {
     )}
   </div>
 </div>
-
 
       <div className="collab-chat-input d-flex gap-2 mt-3">
         <input
