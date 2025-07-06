@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { logoutUser } from "../redux/userSlice";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
-import { FaProjectDiagram, FaUsers, FaUserCircle } from "react-icons/fa";
+import { FaProjectDiagram, FaUsers, FaUserCircle, FaTasks } from "react-icons/fa";
 import { HiMiniUsers } from "react-icons/hi2";
 import { GiHamburgerMenu } from "react-icons/gi";
 import "../styles/Home.css";
@@ -124,7 +124,7 @@ const Home = () => {
                     to="assigned-tasks"
                     className={({ isActive }) => isActive ? "manager-active" : ""}
                   >
-                    <FaProjectDiagram /> Assigned Tasks
+                    <FaTasks />Task Assigned
                   </NavLink>
                   <NavLink
                     to="collaboration"
