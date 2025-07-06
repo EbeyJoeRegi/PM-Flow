@@ -15,7 +15,7 @@ const ManagerProjects = () => {
   const [page, setPage] = useState(1);
 
   const { token } = useSelector((state) => state.user); //id need be included
-  const managerId = "ebey";
+  const managerId = "manager";
 
   useEffect(() => {
     const fetchProjects = async () => {

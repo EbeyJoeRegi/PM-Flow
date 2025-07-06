@@ -1,0 +1,155 @@
+.collab-chat-full-page {
+  padding: 1rem;
+  max-width: 100%;
+}
+
+.collab-chat-header {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.collab-chat-container {
+  height: 250px;
+  overflow: hidden;
+}
+
+.collab-chat-box {
+  height: 100%;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  padding: 1rem;
+}
+
+.collab-chat-date-separator {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  margin: 1rem 0 0.5rem;
+}
+
+.collab-chat-message-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.collab-self {
+  justify-content: flex-end;
+}
+
+.collab-chat-message {
+  max-width: 80%;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  background-color: #e1f5fe;
+  position: relative;
+}
+
+.collab-self .collab-chat-message {
+  background-color: #d1e7dd;
+}
+
+.collab-sender {
+  display: block;
+  font-weight: bold;
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+}
+
+.collab-text {
+  font-size: 0.95rem;
+}
+
+.collab-time {
+  font-size: 0.75rem;
+  display: block;
+  text-align: right;
+  color: #777;
+  margin-top: 4px;
+}
+
+.collab-chat-input {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.collab-chat-input input {
+  flex-grow: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.collab-info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.status-group,
+.priority-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.status-group label,
+.priority-group label {
+  margin-right: 0.5rem;
+}
+
+.status-group select,
+.status-group button {
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
+@media screen and (max-width: 576px) {
+  .collab-chat-full-page {
+    padding: 0.5rem;
+  }
+
+  .collab-chat-header {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .collab-chat-container {
+    height: 200px;
+  }
+
+  .collab-chat-box {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .collab-chat-message {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .collab-chat-input {
+    flex-direction: column;
+  }
+
+  .collab-chat-input button {
+    width: 100%;
+  }
+
+  .collab-chat-message-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .collab-self .collab-chat-message {
+    align-self: flex-end;
+  }
+}

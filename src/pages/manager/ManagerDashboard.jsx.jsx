@@ -10,7 +10,7 @@ const ManagerDashboard = () => {
   const [statusSortActive, setStatusSortActive] = useState(false);
 
   const { token } = useSelector((state) => state.user); //id need to be included
-  const managerId = "ebey";
+  const managerId = "manager";
 
   useEffect(() => {
     const fetchProjects = async () => {

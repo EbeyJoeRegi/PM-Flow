@@ -13,6 +13,7 @@ const getAuthHeader = () => {
     return {};
   }
 };
+
 export const createTask = async (taskData) => {
   try {
     const response = await axios.post(`${BASE_URL}/api/tasks`, taskData, {
@@ -42,16 +43,21 @@ export const getTasksByUserId = async (userId) => {
 
 export const updateTaskStatus = async (taskId, status) => {
   try {
-    const response = await axios.put(`${BASE_URL}/api/tasks/${taskId}/status`, null, {
-      headers: getAuthHeader(),
-      params: { status }
-    });
+    const response = await axios.put(
+      `${BASE_URL}/api/tasks/${taskId}/status`,
+      null, 
+      {
+        headers: getAuthHeader(),
+        params: { status } 
+      }
+    );
     return response.data;
   } catch (error) {
     console.error(`Failed to update status for task ${taskId}:`, error.response?.status, error.message);
     throw error;
   }
 };
+
 
 export const getTaskDetailsById = async (taskId) => {
   try {

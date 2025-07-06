@@ -10,7 +10,7 @@ import { Pagination } from '../../components/Pagination';
 const ManagerProjectDetail = () => {
   const { projectName } = useParams();
   const { token } = useSelector((state) => state.user);
-  const id = "ebey"; // Temporary until dynamic manager ID used
+  const id = "manager"; // Temporary until dynamic manager ID used
   const navigate = useNavigate();
 
   const [projectDetail, setProjectDetail] = useState(null);
