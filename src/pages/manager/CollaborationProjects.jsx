@@ -8,16 +8,7 @@ const CollaborationProjects = () => {
     { id: 2, name: 'Dashboard Analytics', status: 'Completed' },
     { id: 3, name: 'New Feature Integration', status: 'Not Started' }
   ];
-
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'Completed': return 'collab-status-completed';
-      case 'In Progress': return 'collab-status-inprogress';
-      case 'Not Started': return 'collab-status-notstarted';
-      default: return '';
-    }
-  };
-
+  
   return (
     <div className="collab-projects-page">
       <h2 className="collab-header">Collaboration</h2>
@@ -29,7 +20,7 @@ const CollaborationProjects = () => {
             onClick={() => navigate(`${project.id}`)}
           >
             <span className="collab-project-name">{project.name}</span>
-            <span className={`collab-project-status ${getStatusClass(project.status)}`}>
+            <span className={`status-badges ${(project.status).toLowerCase().replace(/\s/g, '')}`}>
               {project.status}
             </span>
           </div>
