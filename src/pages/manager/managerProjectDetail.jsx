@@ -4,15 +4,14 @@ import { useSelector } from 'react-redux';
 import { formatDate, formatStatus, getBootstrapBgClass, getTaskPriorityClass } from '../../utils/Helper';
 import { MdModeEditOutline } from "react-icons/md";
 import '../../styles/managerProjectDetail.css';
-import { getManagerProjectByName, getTasksByProjectId, createTask } from '../../api/managerApi';
+import { getManagerProjectByName, getTasksByProjectId, createTask, getTeamMembersByProjectId, updateProjectStatusAndEndDate} from '../../api/managerApi';
 import { Pagination } from '../../components/Pagination';
 
 const ManagerProjectDetail = () => {
   const { projectName } = useParams();
-  const { token } = useSelector((state) => state.user);
-  const id = "manager"; // Temporary until dynamic manager ID used
+  const { id, token } = useSelector((state) => state.user);
   const navigate = useNavigate();
-
+  const [teamMembersMap, setTeamMembersMap] = useState([]);
   const [projectDetail, setProjectDetail] = useState(null);
   const [status, setStatus] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -45,7 +44,7 @@ const ManagerProjectDetail = () => {
         setStatus(formatStatus(projectData.status));
         setEndDate(projectData.endDate);
         setMembers(projectData.teamMembers);
-
+        console.log(projectData);
         const taskData = await getTasksByProjectId(projectData.id, token);
         const transformedTasks = taskData.map(task => ({
           id: task.id,
@@ -56,6 +55,9 @@ const ManagerProjectDetail = () => {
           assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`
         }));
         setTasks(transformedTasks);
+        const teamMembersResponse = await getTeamMembersByProjectId(id, projectData.id, token);
+        setTeamMembersMap(teamMembersResponse);
+        setMembers(teamMembersResponse.map(m => m.username));
       } catch (err) {
         setError(err.message || 'Failed to load project');
       } finally {
@@ -107,6 +109,12 @@ const ManagerProjectDetail = () => {
       return;
     }
 
+    const assigneeObj = teamMembersMap.find(tm => tm.username === newTask.assignee);
+    if (!assigneeObj) {
+      setTaskError('Selected assignee not found.');
+      return;
+    }
+
     try {
       const payload = {
         name: newTask.name,
@@ -114,35 +122,21 @@ const ManagerProjectDetail = () => {
         status: "NOT_STARTED",
         dueDate: newTask.dueDate,
         projectId: projectDetail.id,
-        assigneeId: 3, // hardcoded for now
+        assigneeId: assigneeObj.id,
       };
 
-      // await createTask(payload, token);
-
-      // // refresh tasks
-      // const taskData = await getTasksByProjectId(projectDetail.id, token);
-      // const transformedTasks = taskData.map(task => ({
-      //   id: task.id,
-      //   name: task.name,
-      //   dueDate: task.dueDate ? formatDate(task.dueDate.split('T')[0]) : 'N/A',
-      //   priority: task.priority,
-      //   status: task.status,
-      //   assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`
-      // }));
-      // setTasks(transformedTasks);
-
       const createdTask = await createTask(payload, token);
-        setTasks(prev => [
-          ...prev,
-          {
-            id: createdTask.id,
-            name: createdTask.name,
-            dueDate: formatDate(createdTask.dueDate),
-            priority: createdTask.priority,
-            status: formatStatus(createdTask.status),
-            assignee: `${createdTask.assigneeFirstName} ${createdTask.assigneeLastName}`
-          }
-        ]);
+      setTasks(prev => [
+        ...prev,
+        {
+          id: createdTask.id,
+          name: createdTask.name,
+          dueDate: formatDate(createdTask.dueDate),
+          priority: createdTask.priority,
+          status: formatStatus(createdTask.status),
+          assignee: `${createdTask.assigneeFirstName} ${createdTask.assigneeLastName}`
+        }
+      ]);
 
       setShowModal(false);
       setNewTask({ name: '', dueDate: '', priority: 'MEDIUM', assignee: '' });
@@ -212,20 +206,20 @@ const ManagerProjectDetail = () => {
               }}
             />
             <div className={`manager-project-checkbox-dropdown ${showDropdown ? 'open' : ''}`}>
-              <button onClick={() => setShowDropdown(!showDropdown)}>Filter Assignees</button>
-              <div className="manager-project-dropdown-content">
-                {members.map(m => (
-                  <label key={m}>
-                    <input
-                      type="checkbox"
-                      checked={selectedAssignees.includes(m)}
-                      onChange={() => toggleAssignee(m)}
-                    />
-                    {m}
-                  </label>
-                ))}
-              </div>
-            </div>
+  <button onClick={() => setShowDropdown(!showDropdown)}>Filter Assignees</button>
+  <div className="manager-project-dropdown-content">
+    {[...new Set(tasks.map(t => t.assignee))].map(assignee => (
+      <label key={assignee}>
+        <input
+          type="checkbox"
+          checked={selectedAssignees.includes(assignee)}
+          onChange={() => toggleAssignee(assignee)}
+        />
+        {assignee}
+      </label>
+    ))}
+  </div>
+</div>
             <button onClick={() => setShowModal(true)}>Create Task</button>
           </div>
         </div>
@@ -309,9 +303,9 @@ const ManagerProjectDetail = () => {
               onChange={e => setNewTask({ ...newTask, assignee: e.target.value })}
             >
               <option value="" disabled>Select Assignee</option>
-              <option value="Alice">Alice</option>
-              <option value="Bob">Bob</option>
-              <option value="Charlie">Charlie</option>
+              {teamMembersMap.map(tm => (
+                <option key={tm.id} value={tm.username}>{tm.username}</option>
+              ))}
             </select>
 
             {taskError && <div className="manager-project-error">{taskError}</div>}
@@ -342,10 +336,10 @@ const ManagerProjectDetail = () => {
               value={editedStatus}
               onChange={(e) => setEditedStatus(e.target.value)}
             >
-              <option value="Not Started">Not Started</option>
-              <option value="In Progress">In Progress</option>
-              <option value="On Hold">On Hold</option>
-              <option value="Completed">Completed</option>
+              <option value="NOT_STARTED">Not Started</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="ON_HOLD">On Hold</option>
+              <option value="COMPLETED">Completed</option>
             </select>
 
             <label>End Date</label>
@@ -359,21 +353,28 @@ const ManagerProjectDetail = () => {
 
             <div className="edit-modal-actions">
               <button
-                onClick={() => {
-                  if (
-                    editedStatus === status &&
-                    editedEndDate === endDate
-                  ) {
-                    setSaveError('No changes made.');
-                    return;
-                  }
-                  setStatus(editedStatus);
-                  setEndDate(editedEndDate);
-                  setEditPopup(false);
-                }}
-              >
-                Save
-              </button>
+  onClick={async () => {
+    try {
+      if (
+        editedStatus === status &&
+        editedEndDate === endDate
+      ) {
+        setSaveError('No changes made.');
+        return;
+      }
+
+      await updateProjectStatusAndEndDate(id, projectDetail.id, editedStatus, editedEndDate, token);
+      setStatus(editedStatus);
+      setEndDate(editedEndDate);
+      setEditPopup(false);
+    } catch (err) {
+      setSaveError(err.message || 'Failed to update project info');
+    }
+  }}
+>
+  Save
+</button>
+
               <button className="cancel-btn" onClick={() => setEditPopup(false)}>
                 Cancel
               </button>
