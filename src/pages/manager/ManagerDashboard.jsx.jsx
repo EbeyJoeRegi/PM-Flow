@@ -9,13 +9,12 @@ const ManagerDashboard = () => {
   const [statusAsc, setStatusAsc] = useState(true);
   const [statusSortActive, setStatusSortActive] = useState(false);
 
-  const { token } = useSelector((state) => state.user); //id need to be included
-  const managerId = "manager";
+  const { id, token } = useSelector((state) => state.user); 
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const data = await getManagerProjects(managerId, token);
+        const data = await getManagerProjects(id, token);
         const formatted = data.map(p => ({
           name: p.name,
           status: formatStatus(p.status),
@@ -29,7 +28,7 @@ const ManagerDashboard = () => {
     };
 
     fetchProjects();
-  }, [managerId, token]);
+  }, [id, token]);
 
   const totalProjects = projects.length;
   const defaultStatuses = ["Not Started", "In Progress", "On Hold", "Completed"];

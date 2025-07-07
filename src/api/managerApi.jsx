@@ -19,7 +19,9 @@ export const getManagerProjectByName = async (managerId, projectName, token) => 
     const response = await axios.get(
       `${BASE_URL}/api/projects/manager/${managerId}/by_name`,
       {
-        params: { name: projectName },
+        params: { name: projectName,
+          detailed: true
+         },
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -91,5 +93,45 @@ export const updateTaskById = async (taskID, TaskData, token) => {
     return response.data;
   } catch (error) {
     throw error.response?.data?.message || 'Failed to update task';
+  }
+};
+
+export const getTeamMembersByProjectId = async (managerId, projectId, token) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/api/projects/manager/${managerId}/team_members/${projectId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Failed to fetch team members' };
+  }
+};
+
+export const updateProjectStatusAndEndDate = async (managerId, projectId, status, endDate, token) => {
+  const formattedDate = new Date(endDate).toLocaleDateString('en-US'); 
+
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/api/projects/manager/${managerId}/update_status_enddate/${projectId}`,
+      {},
+      {
+        params: {
+          status: status,
+          endDate: formattedDate,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Failed to update project info' };
   }
 };

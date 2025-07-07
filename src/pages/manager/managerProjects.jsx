@@ -14,13 +14,12 @@ const ManagerProjects = () => {
   const [sortField, setSortField] = useState('');
   const [page, setPage] = useState(1);
 
-  const { token } = useSelector((state) => state.user); //id need be included
-  const managerId = "manager";
+  const { id,token } = useSelector((state) => state.user); 
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const data = await getManagerProjects(managerId, token);
+        const data = await getManagerProjects(id, token);
         const formatted = data.map(p => ({
           id: p.id,
           name: p.name,
@@ -35,7 +34,7 @@ const ManagerProjects = () => {
     };
 
     fetchProjects();
-  }, [managerId, token]);
+  }, [id, token]);
 
   const filteredProjects = useMemo(() => {
     let filtered = [...projects];
