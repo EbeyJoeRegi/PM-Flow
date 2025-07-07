@@ -18,6 +18,7 @@ export default function ProjectDetails() {
       try {
         const data = await getProjectById(id)
         console.log('Fetched project data:', data)
+        console.log('Team Members:', data.teamMembers)
         setProject(data)
         setDescription(data.description || '')
       } catch {
@@ -28,6 +29,7 @@ export default function ProjectDetails() {
     if (!state) {
       fetchProject()
     } else {
+      console.log('From state:', state.teamMembers)
       setProject(state)
       setDescription(state.description || '')
     }
@@ -95,10 +97,10 @@ export default function ProjectDetails() {
 
       <div className="mb-2">
         <strong>Team Members:</strong>
-        {teamMembers.length > 0 ? (
+        {teamMembers?.length > 0 ? (
           <ul className="ms-3">
             {teamMembers.map((member, index) => (
-              <li key={index}>{member}</li>
+              <li key={index}>{member.includes(':') ? member.split(':')[1] : member}</li>
             ))}
           </ul>
         ) : (
