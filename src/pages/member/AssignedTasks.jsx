@@ -20,14 +20,12 @@ export default function AssignedTasks() {
         const user = JSON.parse(userString);
         const userId = user?.id;
         if (!userId) return;
-
         const fetchedTasks = await getTasksByUserId(userId);
         setTasks(fetchedTasks);
       } catch (error) {
         console.error('Failed to fetch tasks:', error);
       }
     };
-
     fetchTasks();
   }, []);
 
@@ -73,9 +71,14 @@ export default function AssignedTasks() {
     return <span className={`badge bg-${variants[status] || 'dark'}`}>{status.replaceAll('_', ' ')}</span>;
   };
 
+  const getManagerName = (task) => {
+    return task.projectManagerName || `${task.assigneeFirstName || ''} ${task.assigneeLastName || ''}`.trim();
+  };
+
   const filteredTasks = tasks.filter(task =>
     task.name.toLowerCase().includes(search.toLowerCase()) ||
-    (task.project || '').toLowerCase().includes(search.toLowerCase())
+    (task.projectName || '').toLowerCase().includes(search.toLowerCase()) ||
+    getManagerName(task).toLowerCase().includes(search.toLowerCase())
   );
 
   const visibleTasks = previewOnly ? filteredTasks.slice(0, 3) : filteredTasks;
@@ -85,7 +88,6 @@ export default function AssignedTasks() {
       <header className="assigned-tasks-header d-flex justify-content-between align-items-center flex-wrap px-3 py-3 border-bottom">
         <h2 className="title m-0">MY TASKS</h2>
       </header>
-
       <main className="assigned-tasks-main p-3">
         <div className="tasks-card card p-3">
           <div className="tasks-card-header d-flex justify-content-between align-items-center mb-3">
@@ -98,7 +100,6 @@ export default function AssignedTasks() {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-
           <div className="table-responsive">
             <table className="table table-hover">
               <thead>
@@ -107,6 +108,7 @@ export default function AssignedTasks() {
                   <th onClick={() => handleSort('priority')} style={{ cursor: 'pointer' }}>Priority ⇅</th>
                   <th onClick={() => handleSort('status')} style={{ cursor: 'pointer' }}>Status ⇅</th>
                   <th>Project</th>
+                  <th>Manager</th>
                   <th onClick={() => handleSort('dueDate')} style={{ cursor: 'pointer' }}>Due Date ⇅</th>
                 </tr>
               </thead>
@@ -116,22 +118,22 @@ export default function AssignedTasks() {
                     key={index}
                     style={{ cursor: 'pointer' }}
                     onClick={() =>
-                      navigate(`/member/project/${task.projectId || task.project || 'na'}/collaboration`, {
-                        state: { taskDetails: task },
+                      navigate(`/member/project/${task.projectId || 'na'}/collaboration`, {
+                        state: { taskDetails: task }
                       })
                     }
                   >
                     <td>{task.name}</td>
                     <td>{getPriorityBadge(task.priority)}</td>
                     <td>{getStatusBadge(task.status)}</td>
-                    <td>{task.project || 'N/A'}</td>
+                    <td>{task.projectName || 'Untitled Project'}</td>
+                    <td>{getManagerName(task) || 'N/A'}</td>
                     <td>{formatDate(task.dueDate)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-
           <div className="d-flex justify-content-between mt-3 flex-wrap">
             <button
               className="btn btn-outline-secondary btn-sm"
@@ -139,11 +141,9 @@ export default function AssignedTasks() {
             >
               ← Go Back
             </button>
-
             {!previewOnly && (
               <span className="view-all-link text-muted">All Tasks Displayed</span>
             )}
-
             {previewOnly && (
               <button
                 className="btn btn-primary"

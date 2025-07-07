@@ -34,7 +34,13 @@ export const getTasksByUserId = async (userId) => {
     const response = await axios.get(`${BASE_URL}/api/tasks/user/${userId}`, {
       headers: getAuthHeader()
     });
-    return response.data;
+
+    const tasksWithManager = response.data.map(task => ({
+      ...task,
+      managerName: `${task.assigneeFirstName || ''} ${task.assigneeLastName || ''}`.trim()
+    }));
+
+    return tasksWithManager;
   } catch (error) {
     console.error(`Failed to fetch tasks for user ${userId}:`, error.response?.status, error.message);
     throw error;
