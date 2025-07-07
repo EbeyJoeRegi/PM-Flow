@@ -118,7 +118,7 @@ export default function ProjectCollaboration() {
         <div className="collab-info-panel mt-3 mt-md-0">
           <div className="d-flex flex-column flex-sm-column flex-md-row gap-3 align-items-start align-items-md-center">
 <div className="status-group">
-  <label className="fw-semibold mb-0" style={{ marginRight: '3px' }}>Status:</label>
+  <label className="fw-semibold mb-0" style={{ marginRight: '4px' }}>Status:</label>
   <span className={`badge bg-${statusColors[taskDetails.status] || 'info'} px-3 py-2`}>
     {taskDetails.status}
   </span>
@@ -151,8 +151,10 @@ export default function ProjectCollaboration() {
   )}
 </div>
 
+
+
             <div className="priority-group">
-              <label className="fw-semibold mb-0" style={{ marginRight: '3px' }}>Priority:</label>
+              <label className="fw-semibold mb-0">Priority:</label>
               <span className={`badge bg-${priorityColors[taskDetails.priority] || 'secondary'} px-3 py-2`}>
                 {taskDetails.priority || 'NA'}
               </span>
