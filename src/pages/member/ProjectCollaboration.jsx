@@ -154,7 +154,7 @@ export default function ProjectCollaboration() {
 
 
             <div className="priority-group">
-              <label className="fw-semibold mb-0">Priority:</label>
+              <label className="fw-semibold mb-0" style={{ marginRight: '3px' }}>Priority:</label>
               <span className={`badge bg-${priorityColors[taskDetails.priority] || 'secondary'} px-3 py-2`}>
                 {taskDetails.priority || 'NA'}
               </span>
