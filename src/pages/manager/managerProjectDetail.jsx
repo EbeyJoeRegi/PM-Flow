@@ -91,15 +91,17 @@ const ManagerProjectDetail = () => {
     setPage(1);
   };
 
-  useEffect(() => {
-    const closeDropdown = (e) => {
-      if (!e.target.closest('.checkbox-dropdown')) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', closeDropdown);
-    return () => document.removeEventListener('mousedown', closeDropdown);
-  }, []);
+useEffect(() => {
+  const handleClickOutside = (e) => {
+    const isDropdown = e.target.closest('.manager-project-checkbox-dropdown');
+    if (!isDropdown) {
+      setShowDropdown(false);
+    }
+  };
+
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => document.removeEventListener('mousedown', handleClickOutside);
+}, []);
 
   const filteredTasks = useMemo(() => {
     let result = [...tasks];
@@ -117,6 +119,7 @@ const ManagerProjectDetail = () => {
 
   const totalPages = Math.ceil(filteredTasks.length / perPage);
   const paginatedTasks = filteredTasks.slice((page - 1) * perPage, page * perPage);
+  const assigneeList = [...new Set(tasks.map(t => t.assignee).filter(Boolean))];
 
   const handleTaskCreate = async () => {
     if (!newTask.name || !newTask.dueDate || !newTask.priority || !newTask.assignee) {
@@ -223,20 +226,32 @@ const ManagerProjectDetail = () => {
               }}
             />
             <div className={`manager-project-checkbox-dropdown ${showDropdown ? 'open' : ''}`}>
-              <button onClick={() => setShowDropdown(!showDropdown)}>Filter Assignees</button>
-              <div className="manager-project-dropdown-content">
-                {[...new Set(tasks.map((t) => t.assignee))].map((assignee) => (
-                  <label key={assignee}>
-                    <input
-                      type="checkbox"
-                      checked={selectedAssignees.includes(assignee)}
-                      onChange={() => toggleAssignee(assignee)}
-                    />
-                    {assignee}
-                  </label>
-                ))}
-              </div>
+              <button
+                onClick={() => {
+                  if (assigneeList.length > 0) setShowDropdown(!showDropdown);
+                }}
+                disabled={assigneeList.length === 0}
+                className={assigneeList.length === 0 ? 'disabled-button' : ''}
+              >
+                Filter Assignees
+              </button>
+
+              {assigneeList.length > 0 && (
+                <div className="manager-project-dropdown-content">
+                  {assigneeList.map(assignee => (
+                    <label key={assignee}>
+                      <input
+                        type="checkbox"
+                        checked={selectedAssignees.includes(assignee)}
+                        onChange={() => toggleAssignee(assignee)}
+                      />
+                      {assignee}
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
+
             <button onClick={() => setShowModal(true)}>Create Task</button>
           </div>
         </div>
