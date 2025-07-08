@@ -28,11 +28,7 @@ const Home = () => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      if (mobile) {
-        setSidebarVisible(false);
-      } else {
-        setSidebarVisible(true);
-      }
+      setSidebarVisible(!mobile); // full by default on desktop, collapsed on mobile
     };
 
     const handleClickOutside = (event) => {
@@ -70,9 +66,7 @@ const Home = () => {
             className="hamburger-icon"
             onClick={() => setSidebarVisible(!sidebarVisible)}
           />
-          <NavLink to={basePath} className="manager-navbar-title">
-            PM Flow
-          </NavLink>
+          <NavLink to={basePath} className="manager-navbar-title">PM Flow</NavLink>
         </div>
         <div className="manager-navbar-right">
           <span className="manager-welcome">Welcome, {name}</span>
@@ -92,30 +86,30 @@ const Home = () => {
       <div className="manager-body">
         <aside
           className={`manager-sidebar ${
-            sidebarVisible ? "sidebar-open" : "sidebar-collapsed"
-          } ${isMobile ? "sidebar-mobile" : ""}`}
+            isMobile
+              ? sidebarVisible
+                ? "sidebar-open sidebar-mobile"
+                : "sidebar-collapsed sidebar-mobile"
+              : sidebarVisible
+              ? "sidebar-open"
+              : "sidebar-collapsed"
+          }`}
           ref={sidebarRef}
         >
           <ul>
             <li>
-              <NavLink to="." end className={({ isActive }) => (isActive ? "manager-active" : "")}>
+              <NavLink to="." end className={({ isActive }) => isActive ? "manager-active" : ""}>
                 <TbLayoutDashboardFilled />
                 <span>Dashboard</span>
               </NavLink>
 
               {role === "ADMIN" && (
                 <>
-                  <NavLink
-                    to="users"
-                    className={({ isActive }) => (isActive ? "manager-active" : "")}
-                  >
+                  <NavLink to="users" className={({ isActive }) => isActive ? "manager-active" : ""}>
                     <HiMiniUsers />
                     <span>Users</span>
                   </NavLink>
-                  <NavLink
-                    to="projects"
-                    className={({ isActive }) => (isActive ? "manager-active" : "")}
-                  >
+                  <NavLink to="projects" className={({ isActive }) => isActive ? "manager-active" : ""}>
                     <FaProjectDiagram />
                     <span>Projects</span>
                   </NavLink>
@@ -124,17 +118,11 @@ const Home = () => {
 
               {role === "PROJECT_MANAGER" && (
                 <>
-                  <NavLink
-                    to="projects"
-                    className={({ isActive }) => (isActive ? "manager-active" : "")}
-                  >
+                  <NavLink to="projects" className={({ isActive }) => isActive ? "manager-active" : ""}>
                     <FaProjectDiagram />
                     <span>Projects</span>
                   </NavLink>
-                  <NavLink
-                    to="collaboration"
-                    className={({ isActive }) => (isActive ? "manager-active" : "")}
-                  >
+                  <NavLink to="collaboration" className={({ isActive }) => isActive ? "manager-active" : ""}>
                     <FaUsers />
                     <span>Collaboration</span>
                   </NavLink>
@@ -143,17 +131,11 @@ const Home = () => {
 
               {role === "MEMBER" && (
                 <>
-                  <NavLink
-                    to="assigned-tasks"
-                    className={({ isActive }) => (isActive ? "manager-active" : "")}
-                  >
+                  <NavLink to="assigned-tasks" className={({ isActive }) => isActive ? "manager-active" : ""}>
                     <FaTasks />
                     <span>Task Assigned</span>
                   </NavLink>
-                  <NavLink
-                    to="collaboration"
-                    className={({ isActive }) => (isActive ? "manager-active" : "")}
-                  >
+                  <NavLink to="collaboration" className={({ isActive }) => isActive ? "manager-active" : ""}>
                     <FaUsers />
                     <span>Collaboration</span>
                   </NavLink>

@@ -112,16 +112,17 @@
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   overflow: hidden;
+  z-index: 1001;
 }
 
 /* Full sidebar */
 .manager-sidebar.sidebar-open {
-  width: 240px;
+  min-width: 240px;
 }
 
-/* Icon-only sidebar */
+/* Collapsed sidebar (icon-only) */
 .manager-sidebar.sidebar-collapsed {
-  width: 60px;
+  min-width: 60px;
 }
 
 .manager-sidebar ul {
@@ -159,14 +160,12 @@
   white-space: nowrap;
 }
 
-/* Hide text when collapsed */
 .manager-sidebar.sidebar-collapsed ul li span {
   opacity: 0;
   width: 0;
   overflow: hidden;
 }
 
-/* Center icons when collapsed */
 .manager-sidebar.sidebar-collapsed a {
   justify-content: center;
   padding: 20px 0;
@@ -180,7 +179,7 @@
   overflow-y: auto;
 }
 
-/* Hamburger icon */
+/* Hamburger */
 .hamburger-icon {
   display: block;
   color: white;
@@ -188,7 +187,7 @@
   cursor: pointer;
 }
 
-/* Overlay for mobile sidebar */
+/* Overlay for mobile */
 .sidebar-overlay {
   position: fixed;
   top: 50px;
@@ -196,26 +195,45 @@
   width: 100%;
   height: calc(100% - 50px);
   background: rgba(0, 0, 0, 0.3);
-  z-index: 999;
+  z-index: 1000;
 }
 
-/* Mobile sidebar mode */
-.manager-sidebar.sidebar-mobile {
-  position: fixed;
-  left: 0;
-  top: 50px;
-  height: calc(100% - 50px);
-  z-index: 1001;
-  transform: translateX(-100%);
-}
-
-.manager-sidebar.sidebar-mobile.sidebar-open {
-  transform: translateX(0);
-  width: 220px;
-}
-
-/* Responsive adjustments */
+/* Responsive styles */
 @media (max-width: 768px) {
+  .manager-sidebar.sidebar-mobile.sidebar-collapsed {
+    width: 60px !important;
+  }
+
+  .manager-sidebar.sidebar-mobile.sidebar-open {
+    width: 240px !important;
+    position: fixed;
+    top: 50px;
+    left: 0;
+    height: calc(100% - 50px);
+    background: linear-gradient(180deg, #a4bac3, #7fc8e7);
+  }
+
+  .manager-sidebar.sidebar-mobile.sidebar-collapsed ul li span {
+    opacity: 0 !important;
+    width: 0 !important;
+  }
+
+  .manager-sidebar.sidebar-mobile.sidebar-open ul li span {
+    opacity: 1 !important;
+    width: auto !important;
+  }
+
+  .manager-sidebar.sidebar-mobile.sidebar-collapsed a {
+    justify-content: center;
+    padding: 20px 0;
+  }
+
+  .manager-sidebar.sidebar-mobile.sidebar-open a {
+    justify-content: flex-start;
+    padding: 20px;
+    gap: 12px;
+  }
+
   .manager-navbar-title {
     font-size: 1.5rem;
   }
