@@ -1,10 +1,8 @@
-/* Global cursor default */
 .dashboard-wrapper {
   display: flex;
   flex-direction: column;
   gap: 32px;
   cursor: default;
-  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Top Section Flex */
@@ -17,102 +15,104 @@
 /* Project Overview */
 .overview-box {
   flex: 2;
-  background: #fff;
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease-in-out;
+}
+
+.overview-box:hover {
+  transform: translateY(-4px);
 }
 
 .project-count {
+  margin-top: -10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 12px;
 }
 
 .project-count .big-number {
-  font-size: 48px;
-  font-weight: bold;
-  color: #007bff;
+  font-size: 64px;
+  font-weight: 800;
+  color: #00aeff;
   margin-bottom: 8px;
+  letter-spacing: 1px;
 }
 
 .overview-box h3,
 .status-box h3 {
   margin-bottom: 16px;
+  font-weight: 600;
+  color: #333;
 }
 
 /* Project Status */
 .status-box {
   flex: 3;
-  background: #fff;
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease-in-out;
+}
+
+.status-box:hover {
+  transform: translateY(-4px);
 }
 
 .status-bar {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .status-bar label {
-  width: 100px;
+  width: 110px;
   font-weight: 500;
+  color: #444;
 }
 
 .progress-container {
   flex: 1;
-  background-color: #e0e0e0;
-  border-radius: 6px;
+  background-color: #e6e6e6;
+  border-radius: 10px;
   overflow: hidden;
-  height: 20px;
+  height: 22px;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .progress-fill {
   height: 100%;
   color: white;
   text-align: right;
-  padding-right: 6px;
+  padding-right: 10px;
   font-size: 13px;
-  line-height: 20px;
-}
-
-.progress-fill.in-progress {
-  background-color: #007bff;
-}
-
-.progress-fill.not-started {
-  background-color: #ffc107;
-}
-
-.progress-fill.on-hold {
-  background-color: #ff5722;
-}
-
-.progress-fill.completed {
-  background-color: #28a745;
+  line-height: 22px;
+  border-radius: 10px;
+  transition: width 0.4s ease;
 }
 
 .progress-fill.empty-bar {
-  background: transparent;
-  color: #999;
+  background: linear-gradient(90deg, #ccc, #eee);
+  color: #444;
   text-align: left;
-  color: #000;
-  padding-left: 6px;
+  padding-left: 10px;
+  font-style: italic;
 }
 
-/* Projects Managed Section */
+/* Bottom Section */
 .dashboard-bottom {
-  background: #fff;
+  background: #ffffff;
   padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
 /* Section Header */
@@ -131,42 +131,40 @@
 /* Table Styling */
 .projects-table {
   width: 100%;
-  min-width: 600px;
+  min-width: 650px;
   border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .projects-table th,
 .projects-table td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
+  padding: 14px 12px;
+  border-bottom: 1px solid #e2e2e2;
   text-align: center;
   cursor: default;
 }
 
 .projects-table th {
-  background-color: #f5f5f5;
+  background-color: #f1f5f9;
   font-weight: 600;
+  color: #333;
+}
+
+.projects-table tr:hover {
+  background-color: #f9fbfd;
 }
 
 /* Clickable sorting */
 .projects-table th.clickable {
   cursor: pointer;
   user-select: none;
+  transition: background-color 0.2s ease;
 }
 
 /* Sorting hover effect */
 .projects-table th.clickable:hover {
   background-color: #e9ecef;
-  transition: background-color 0.2s;
-}
-
-/* Dropdown styling (if any later) */
-.sort-dropdown {
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  cursor: pointer;
 }
 
 /* Responsive Design */
@@ -182,7 +180,7 @@
   }
 
   .project-count .big-number {
-    font-size: 36px;
+    font-size: 42px;
   }
 
   .projects-table th,

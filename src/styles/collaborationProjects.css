@@ -1,11 +1,5 @@
-/* Page Layout */
-.collab-projects-page {
-  height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  box-sizing: border-box;
-}
-
 .collab-header {
+  font-weight: bold;
   font-size: 2rem;
   margin-bottom: 1.5rem;
   color: #333;
@@ -41,25 +35,65 @@
   color: #222;
 }
 
-.collab-project-status {
-  font-size: 0.9rem;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-weight: 500;
+.collab-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
 }
 
-/* Status Colors */
-.collab-status-completed {
-  background-color: #d4edda;
-  color: #155724;
+.collab-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
-.collab-status-inprogress {
-  background-color: #cce5ff;
-  color: #004085;
+.collab-search,
+.collab-filter {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #fff;
 }
 
-.collab-status-notstarted {
-  background-color: #f8d7da;
-  color: #721c24;
+.collab-search:focus,
+.collab-filter:focus {
+  outline: none;
+  border-color: #7fc8e7;
+  box-shadow: 0 0 0 2px rgba(127, 200, 231, 0.3);
+}
+
+.no-projects-msg {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #555;
+}
+
+@media (max-width: 768px) {
+  .collab-header {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .collab-controls {
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .collab-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .collab-search,
+  .collab-filter {
+    width: 100%;
+    font-size: 0.95rem;
+  }
 }

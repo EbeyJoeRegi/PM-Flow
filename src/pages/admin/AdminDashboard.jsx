@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import '../../styles/Admin.css';
+import { getAllProjects, getProjectById, getAllUsers } from '../../api/adminApi';
 
 export default function Dashboard() {
   const [filter, setFilter] = useState('All');
   const [managerFilter, setManagerFilter] = useState('All');
+  const [managerOptions, setManagerOptions] = useState(['All']);
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 5;
-
-  const managerOptions = ['Abhishek Kumar Jah', 'Aishwarya', 'Moushmi'];
 
   const statusColors = {
     'Not Started': 'primary',
@@ -19,33 +19,37 @@ export default function Dashboard() {
     'On Hold': 'secondary'
   };
 
+  const toTitleCase = (str) =>
+    str?.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
   useEffect(() => {
-    const storedUsers = localStorage.getItem('users');
-    if (storedUsers) {
-      setUsers(JSON.parse(storedUsers));
+    async function fetchData() {
+      try {
+        const [projectList, userList] = await Promise.all([
+          getAllProjects(),
+          getAllUsers()
+        ]);
+
+        setUsers(userList);
+
+        const detailedProjects = await Promise.all(
+          projectList.map(p => getProjectById(p.id))
+        );
+
+        setProjects(detailedProjects);
+        localStorage.setItem('projects', JSON.stringify(detailedProjects));
+
+        const uniqueManagers = Array.from(
+          new Set(detailedProjects.map(p => p.managerName))
+        ).filter(Boolean);
+        setManagerOptions(['All', ...uniqueManagers]);
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+      }
     }
 
-    const storedProjects = localStorage.getItem('projects');
-    if (storedProjects) {
-      const parsedProjects = JSON.parse(storedProjects).map(p => {
-        return {
-          ...p,
-          startDate: p.startDate || new Date(p.id || Date.now()).toISOString().split('T')[0],
-          endDate: p.endDate || getRandomFutureDate(),
-        };
-      });
-
-      setProjects(parsedProjects);
-      localStorage.setItem('projects', JSON.stringify(parsedProjects));
-    }
+    fetchData();
   }, []);
-
-  const getRandomFutureDate = () => {
-    const today = new Date();
-    const randomDays = Math.floor(Math.random() * 30) + 1;
-    const futureDate = new Date(today.setDate(today.getDate() + randomDays));
-    return futureDate.toISOString().split('T')[0];
-  };
 
   const formatDate = (dateStr) => {
     if (!dateStr) return 'N/A';
@@ -54,25 +58,22 @@ export default function Dashboard() {
   };
 
   const filteredProjects = projects.filter(p => {
-    const statusMatch = filter === 'All' || p.progress === filter;
-    const managerMatch = managerFilter === 'All' || p.manager === managerFilter;
+    const statusMatch = filter === 'All' || toTitleCase(p.status?.replace(/_/g, ' ')) === filter;
+    const managerMatch = managerFilter === 'All' || p.managerName === managerFilter;
     return statusMatch && managerMatch;
   });
 
   const sortedProjects = [...filteredProjects].sort((a, b) => {
     if (!sortConfig.key) return 0;
-
     let aVal = a[sortConfig.key];
     let bVal = b[sortConfig.key];
-
     if (sortConfig.key.includes('Date')) {
       aVal = new Date(aVal);
       bVal = new Date(bVal);
     } else {
-      aVal = aVal.toLowerCase();
-      bVal = bVal.toLowerCase();
+      aVal = (aVal || '').toLowerCase();
+      bVal = (bVal || '').toLowerCase();
     }
-
     if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
     if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
     return 0;
@@ -130,7 +131,6 @@ export default function Dashboard() {
             }}
             value={managerFilter}
           >
-            <option value="All">All Managers</option>
             {managerOptions.map((mgr, idx) => (
               <option key={idx} value={mgr}>{mgr}</option>
             ))}
@@ -143,46 +143,52 @@ export default function Dashboard() {
           <thead>
             <tr>
               <th style={{ cursor: 'pointer' }} onClick={() => requestSort('name')}>
-                Name {sortConfig.key === 'name' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}
+                Name <span className="ms-1">{sortConfig.key === 'name' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</span>
               </th>
               <th>Status</th>
               <th style={{ cursor: 'pointer' }} onClick={() => requestSort('startDate')}>
-                Start Date {sortConfig.key === 'startDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}
+                Start Date <span className="ms-1">{sortConfig.key === 'startDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</span>
               </th>
               <th style={{ cursor: 'pointer' }} onClick={() => requestSort('endDate')}>
-                End Date {sortConfig.key === 'endDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}
+                End Date <span className="ms-1">{sortConfig.key === 'endDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : ''}</span>
               </th>
               <th>Project Manager</th>
             </tr>
           </thead>
           <tbody>
             {currentProjects.map((proj, index) => (
-              <tr key={proj.id || index}>
+              <tr key={proj.id || index} style={{ height: '60px' }}>
                 <td>{proj.name}</td>
                 <td>
-                  <span className={`badge bg-${statusColors[proj.progress] || 'secondary'}`}>
-                    {proj.progress}
+                  <span className={`badge bg-${statusColors[toTitleCase(proj.status?.replace(/_/g, ' '))] || 'secondary'}`}>
+                    {toTitleCase(proj.status?.replace(/_/g, ' ')) || 'N/A'}
                   </span>
                 </td>
                 <td>{formatDate(proj.startDate)}</td>
                 <td>{formatDate(proj.endDate)}</td>
-                <td>{proj.manager}</td>
+                <td>{proj.managerName || 'N/A'}</td>
               </tr>
             ))}
           </tbody>
         </table>
 
         {totalPages > 1 && (
-          <div className="d-flex justify-content-center align-items-center mt-3 gap-2 flex-wrap">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`btn ${currentPage === i + 1 ? 'btn-primary' : 'btn-outline-secondary'}`}
-              >
-                {i + 1}
-              </button>
-            ))}
+          <div className="d-flex justify-content-center align-items-center mt-4 manager-pagination gap-3 flex-wrap">
+            <button
+              className="btn btn-outline-dark"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => prev - 1)}
+            >
+              ← Prev
+            </button>
+            <span>Page {currentPage} of {totalPages}</span>
+            <button
+              className="btn btn-outline-dark"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(prev => prev + 1)}
+            >
+              Next →
+            </button>
           </div>
         )}
       </div>

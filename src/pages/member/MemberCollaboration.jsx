@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import '../../styles/MemberCollaboration.css';
+import '../../styles/projectChatPage.css';
 
 export default function MemberCollaboration() {
   const { projectId } = useParams();

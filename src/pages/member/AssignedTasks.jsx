@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/Member.css';
+import { getTasksByUserId } from '../../api/teamMemberApi';
 
 export default function AssignedTasks() {
   const location = useLocation();
@@ -13,17 +14,20 @@ export default function AssignedTasks() {
   const previewOnly = location.state?.previewOnly || false;
 
   useEffect(() => {
-    const stateTasks = location.state?.tasks;
-    if (stateTasks && stateTasks.length > 0) {
-      setTasks(stateTasks);
-      localStorage.setItem('assignedTasks', JSON.stringify(stateTasks));
-    } else {
-      const stored = localStorage.getItem('assignedTasks');
-      if (stored) {
-        setTasks(JSON.parse(stored));
+    const fetchTasks = async () => {
+      try {
+        const userString = localStorage.getItem('user');
+        const user = JSON.parse(userString);
+        const userId = user?.id;
+        if (!userId) return;
+        const fetchedTasks = await getTasksByUserId(userId);
+        setTasks(fetchedTasks);
+      } catch (error) {
+        console.error('Failed to fetch tasks:', error);
       }
-    }
-  }, [location.state]);
+    };
+    fetchTasks();
+  }, []);
 
   const handleSort = (key) => {
     const order = key === sortKey && sortOrder === 'asc' ? 'desc' : 'asc';
@@ -31,9 +35,9 @@ export default function AssignedTasks() {
     setSortOrder(order);
     const sorted = [...tasks].sort((a, b) => {
       if (key === 'dueDate') {
-        const dateA = new Date(a.dueDate);
-        const dateB = new Date(b.dueDate);
-        return order === 'asc' ? dateA - dateB : dateB - dateA;
+        return order === 'asc'
+          ? new Date(a.dueDate) - new Date(b.dueDate)
+          : new Date(b.dueDate) - new Date(a.dueDate);
       }
       if (a[key] < b[key]) return order === 'asc' ? -1 : 1;
       if (a[key] > b[key]) return order === 'asc' ? 1 : -1;
@@ -42,43 +46,60 @@ export default function AssignedTasks() {
     setTasks(sorted);
   };
 
-  const filteredTasks = tasks.filter(task =>
-    task.name.toLowerCase().includes(search.toLowerCase()) ||
-    (task.project || '').toLowerCase().includes(search.toLowerCase())
-  );
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+  };
 
-  const visibleTasks = previewOnly ? filteredTasks.slice(0, 3) : filteredTasks;
+  const getPriorityBadge = (priority) => {
+    const colors = {
+      HIGH: 'danger',
+      MEDIUM: 'warning',
+      LOW: 'success'
+    };
+    return <span className={`badge bg-${colors[priority] || 'secondary'}`}>{priority}</span>;
+  };
 
   const getStatusBadge = (status) => {
     const variants = {
-      'Not Started': 'primary',
-      'In Progress': 'warning',
-      'Completed': 'success',
-      'On Hold': 'secondary',
-      'To Do': 'primary',
+      NOT_STARTED: 'primary',
+      IN_PROGRESS: 'warning',
+      COMPLETED: 'success',
+      ON_HOLD: 'secondary',
+      TO_DO: 'info'
     };
-    return <span className={`badge bg-${variants[status] || 'info'}`}>{status}</span>;
+    return <span className={`badge bg-${variants[status] || 'dark'}`}>{status.replaceAll('_', ' ')}</span>;
   };
+
+  const getManagerName = (task) => {
+    return task.projectManagerName || `${task.assigneeFirstName || ''} ${task.assigneeLastName || ''}`.trim();
+  };
+
+  const filteredTasks = tasks.filter(task =>
+    task.name.toLowerCase().includes(search.toLowerCase()) ||
+    (task.projectName || '').toLowerCase().includes(search.toLowerCase()) ||
+    getManagerName(task).toLowerCase().includes(search.toLowerCase())
+  );
+
+  const visibleTasks = previewOnly ? filteredTasks.slice(0, 3) : filteredTasks;
 
   return (
     <div className="assigned-tasks-container">
       <header className="assigned-tasks-header d-flex justify-content-between align-items-center flex-wrap px-3 py-3 border-bottom">
         <h2 className="title m-0">MY TASKS</h2>
       </header>
-
       <main className="assigned-tasks-main p-3">
         <div className="tasks-card card p-3">
           <div className="tasks-card-header d-flex justify-content-between align-items-center mb-3">
             <input
               type="text"
               placeholder="Search tasks..."
-              className="form-control"
-              style={{ width: '550px', fontSize: '1rem' }}
+              className="form-control w-100"
+              style={{ maxWidth: '550px', fontSize: '1rem' }}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-
           <div className="table-responsive">
             <table className="table table-hover">
               <thead>
@@ -87,6 +108,7 @@ export default function AssignedTasks() {
                   <th onClick={() => handleSort('priority')} style={{ cursor: 'pointer' }}>Priority ⇅</th>
                   <th onClick={() => handleSort('status')} style={{ cursor: 'pointer' }}>Status ⇅</th>
                   <th>Project</th>
+                  <th>Manager</th>
                   <th onClick={() => handleSort('dueDate')} style={{ cursor: 'pointer' }}>Due Date ⇅</th>
                 </tr>
               </thead>
@@ -96,20 +118,22 @@ export default function AssignedTasks() {
                     key={index}
                     style={{ cursor: 'pointer' }}
                     onClick={() =>
-                      navigate(`/member/project/${task.project}/collaboration`, { state: { taskDetails: task } })
+                      navigate(`/member/project/${task.projectId || 'na'}/collaboration`, {
+                        state: { taskDetails: task }
+                      })
                     }
                   >
                     <td>{task.name}</td>
-                    <td>{task.priority}</td>
+                    <td>{getPriorityBadge(task.priority)}</td>
                     <td>{getStatusBadge(task.status)}</td>
-                    <td>{task.project || '-'}</td>
-                    <td>{task.dueDate}</td>
+                    <td>{task.projectName || 'Untitled Project'}</td>
+                    <td>{getManagerName(task) || 'N/A'}</td>
+                    <td>{formatDate(task.dueDate)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-
           <div className="d-flex justify-content-between mt-3 flex-wrap">
             <button
               className="btn btn-outline-secondary btn-sm"
@@ -117,15 +141,13 @@ export default function AssignedTasks() {
             >
               ← Go Back
             </button>
-
             {!previewOnly && (
               <span className="view-all-link text-muted">All Tasks Displayed</span>
             )}
-
             {previewOnly && (
               <button
                 className="btn btn-primary"
-                onClick={() => navigate('/assigned-tasks', { state: { tasks, previewOnly: false } })}
+                onClick={() => navigate('/assigned-tasks', { state: { previewOnly: false } })}
               >
                 View All
               </button>

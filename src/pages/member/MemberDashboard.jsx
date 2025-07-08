@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../styles/Member.css';
+import { getTasksByUserId } from '../../api/teamMemberApi';
 
 export default function MemberDashboard() {
   const navigate = useNavigate();
@@ -11,38 +12,38 @@ export default function MemberDashboard() {
 
   useEffect(() => {
     localStorage.setItem('employeeName', employeeName);
-
-    const taskData = [
-      { name: 'Task 1', priority: 'High', status: 'In Progress', dueDate: '2025-06-25', project: 'Project A' },
-      { name: 'Task 2', priority: 'Medium', status: 'Completed', dueDate: '2025-06-26', project: 'Project B' },
-      { name: 'Task 3', priority: 'Low', status: 'On Hold', dueDate: '2025-06-27', project: 'Project C' },
-      { name: 'Task 4', priority: 'High', status: 'In Progress', dueDate: '2025-06-26', project: 'Project D' }
-    ];
-
-    setTasks(taskData);
-    localStorage.setItem('tasks', JSON.stringify(taskData));
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const parseDate = (str) => new Date(str);
-
-    const upcoming = taskData
-      .filter(task => task.status === 'In Progress')
-      .map(task => {
-        const due = parseDate(task.dueDate);
-        const timeDiff = due - today;
-        const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-        return {
-          date: task.dueDate,
-          task: task.name,
-          isUrgent: daysLeft <= 3 && daysLeft >= 0,
-          daysLeft
-        };
-      })
-      .filter(item => item.isUrgent);
-
-    setDeadlines(upcoming);
+    const fetchTasks = async () => {
+      try {
+        const userString = localStorage.getItem('user');
+        const user = JSON.parse(userString);
+        const userId = user?.id;
+        if (!userId) return;
+        const taskData = await getTasksByUserId(userId);
+        setTasks(taskData);
+        localStorage.setItem('tasks', JSON.stringify(taskData));
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const upcoming = taskData
+          .filter(task => ['NOT_STARTED', 'IN_PROGRESS', 'TO_DO'].includes(task.status))
+          .map(task => {
+            const due = new Date(task.dueDate);
+            const dueDateOnly = new Date(due.getFullYear(), due.getMonth(), due.getDate());
+            const timeDiff = dueDateOnly - today;
+            const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            return {
+              date: due.toLocaleDateString('en-GB'),
+              task: task.name,
+              isUrgent: daysLeft <= 3 && daysLeft >= 0,
+              daysLeft
+            };
+          })
+          .filter(item => item.isUrgent);
+        setDeadlines(upcoming);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+    fetchTasks();
   }, []);
 
   const handleAssignedTaskClick = () => {
@@ -53,21 +54,27 @@ export default function MemberDashboard() {
   const total = tasks.length || 1;
 
   const progress = {
-    notStarted: (countByStatus('Not Started') / total) * 100,
-    inProgress: (countByStatus('In Progress') / total) * 100,
-    completed: (countByStatus('Completed') / total) * 100,
-    onHold: (countByStatus('On Hold') / total) * 100
+    notStarted: (countByStatus('NOT_STARTED') / total) * 100,
+    inProgress: (countByStatus('IN_PROGRESS') / total) * 100,
+    completed: (countByStatus('COMPLETED') / total) * 100,
+    onHold: (countByStatus('ON_HOLD') / total) * 100
   };
 
   const statusColors = {
-    'Not Started': 'primary',
-    'In Progress': 'warning',
-    'Completed': 'success',
-    'On Hold': 'secondary'
+    NOT_STARTED: 'primary',
+    IN_PROGRESS: 'warning',
+    COMPLETED: 'success',
+    ON_HOLD: 'secondary'
+  };
+
+  const priorityColors = {
+    HIGH: 'danger',
+    MEDIUM: 'warning',
+    LOW: 'success'
   };
 
   return (
-    <div className="member-dashboard-container container-fluid px-4">
+    <div className="member-dashboard-container container-fluid px-4" style={{ overflowX: 'auto', width: '100%' }}>
       <div className="row gx-4">
         <div className="col-lg-8 mb-4">
           <div className="card tasks-card p-3 h-100 d-flex flex-column">
@@ -86,13 +93,17 @@ export default function MemberDashboard() {
                   {tasks.slice(0, 3).map((task, index) => (
                     <tr key={index}>
                       <td>{task.name}</td>
-                      <td>{task.priority}</td>
                       <td>
-                        <span className={`badge bg-${statusColors[task.status]} text-white`}>
-                          {task.status}
+                        <span className={`badge bg-${priorityColors[task.priority] || 'secondary'}`}>
+                          {task.priority}
                         </span>
                       </td>
-                      <td>{task.dueDate}</td>
+                      <td>
+                        <span className={`badge bg-${statusColors[task.status] || 'secondary'} text-white`}>
+                          {task.status.replaceAll('_', ' ')}
+                        </span>
+                      </td>
+                      <td>{new Date(task.dueDate).toLocaleDateString('en-GB')}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -114,10 +125,10 @@ export default function MemberDashboard() {
               <div className="bar-on-hold" style={{ width: `${progress.onHold}%` }}></div>
             </div>
             <div className="status-legend d-flex flex-column gap-2">
-              <span><span className="legend-box bg-blue me-2"></span> Not Started</span>
-              <span><span className="legend-box bg-yellow me-2"></span> In Progress</span>
-              <span><span className="legend-box bg-green me-2"></span> Completed</span>
-              <span><span className="legend-box bg-gray me-2"></span> On Hold</span>
+              <span><span className="legend-box bg-primary me-2"></span> Not Started</span>
+              <span><span className="legend-box bg-warning me-2"></span> In Progress</span>
+              <span><span className="legend-box bg-success me-2"></span> Completed</span>
+              <span><span className="legend-box bg-secondary me-2"></span> On Hold</span>
             </div>
           </div>
         </div>

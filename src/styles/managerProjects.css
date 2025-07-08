@@ -90,35 +90,6 @@
   background-color: #f1f5f9;
 }
 
-.manager-pagination {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  font-size: 1rem;
-}
-
-.manager-pagination button {
-  padding: 0.5rem 1.2rem;
-  background-color: #007bff;
-  border: none;
-  color: white;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.manager-pagination button:disabled {
-  background-color: #a2c0e3;
-  cursor: not-allowed;
-}
-
-.manager-pagination button:not(:disabled):hover {
-  background-color: #0056b3;
-}
-
 /* Responsive styles */
 @media (max-width: 950px) {
   .manager-projects-header {
@@ -151,24 +122,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .manager-pagination {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    gap: 0.5rem;
-    width: 100%;
-  }
-
-  .manager-pagination button {
-    flex-shrink: 0;
-    padding: 0.6rem 1rem;
-    font-size: 0.95rem;
-  }
-}
-
 @media (max-width: 300px) {
   .manager-projects-filters {
     flex-direction: column;
@@ -178,16 +131,5 @@
   .manager-projects-filters select,
   .manager-projects-filters input {
     width: 100%;
-  }
-
-  .manager-pagination {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  .manager-pagination button {
-    width: 100%;
-    font-size: 1rem;
   }
 }

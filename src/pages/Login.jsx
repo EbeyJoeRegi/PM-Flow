@@ -22,7 +22,7 @@ const Login = () => {
       const name = `${firstName} ${lastName}`;
       dispatch(setUser({ id, name, role, token }));
       // localStorage.setItem("user", JSON.stringify({ id, name, role }));
-
+      
 
     if (role === "ADMIN") {
       navigate("/admin");

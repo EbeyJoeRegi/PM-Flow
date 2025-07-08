@@ -1,19 +1,15 @@
-.manager-project-container {
-  padding: 24px;
-  max-width: 1200px;
-  margin: auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f0f2f5;
-}
-
 .manager-project-details-section,
 .manager-project-task-section {
   background: #fff;
-  padding: 24px;
+  padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-bottom: 24px;
 }
+
+/* .manager-project-details-section {  //Based on the status color change
+  border-left: 6px solid #007bff;
+} */
 
 .manager-project-title-bar {
   display: flex;
@@ -36,40 +32,128 @@
 
 .manager-project-description-date {
   display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
+  flex-direction: column;
 }
 
 .manager-project-description-block {
-  flex: 2;
-  min-width: 300px;
+  flex: 1;
+  /* max-width: 110px; */
 }
 
 .manager-project-description-block p {
   line-height: 1.6;
   color: #444;
   margin-bottom: 12px;
+  text-align: justify;
 }
 
 .manager-project-description-block ul {
-  padding-left: 20px;
+  padding-left: 30px;
   margin: 0;
   list-style: disc;
   color: #555;
 }
 
+.manager-project-info-pair {
+  display: flex;
+  gap: 50px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.manager-project-team-block {
+  flex: 1;
+  min-width: 200px;
+}
+
+.status-edit-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-edit-display .edit-icon {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.edit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+.edit-modal {
+  background: #fff;
+  padding: 24px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.edit-modal label {
+  font-weight: 500;
+}
+
+.edit-modal select,
+.edit-modal input,
+.edit-modal textarea {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.edit-modal-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.edit-modal-actions .cancel-btn {
+  background: #ccc;
+  color: #000;
+}
+
+.edit-modal-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.edit-modal-actions button:not(.cancel-btn) {
+  background: #007bff;
+  color: #fff;
+}
+
 .manager-project-date-block {
   flex: 1;
-  min-width: 250px;
+  min-width: 200px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   font-weight: 500;
   color: #444;
+  text-align: left;
+  padding-right: 20px;
 }
 
 .manager-project-date-display label {
   margin-right: 8px;
+  
 }
 
 .manager-project-date-display span,
@@ -116,36 +200,67 @@
 }
 
 .manager-project-checkbox-dropdown > button {
-  padding: 8px;
-  background: #eee;
-  border: 1px solid #ccc;
+  padding: 8px 12px;
+  background: #007bff;
+  color: white;
+  border: none;
   border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.manager-project-checkbox-dropdown > button:hover {
+  background-color: #005fc3;
+}
+
+.manager-project-checkbox-dropdown > button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.manager-project-checkbox-dropdown.open > button {
+  background-color: #005fc3;
 }
 
 .manager-project-dropdown-content {
   display: none;
   position: absolute;
   background-color: #fff;
-  min-width: 180px;
+  min-width: 200px;
+  max-height: 250px;
+  overflow-y: auto;
   border: 1px solid #ccc;
   border-radius: 6px;
   z-index: 1000;
   padding: 10px;
-  top: 38px;
+  top: 42px;
   right: 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  animation: dropdownFadeIn 0.2s ease-in-out;
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .manager-project-checkbox-dropdown.open .manager-project-dropdown-content {
   display: block;
 }
 
-.manager-project-checkbox-dropdown label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 500;
+.manager-project-dropdown-content label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
   font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.manager-project-dropdown-content input[type="checkbox"] {
+  cursor: pointer;
 }
 
 .manager-project-task-header button {
@@ -158,59 +273,74 @@
   font-weight: 500;
 }
 
-.manager-project-task-table {
+/* Table Wrapper for responsiveness */
+.manager-project-task-table-wrapper {
   width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  margin-bottom: 20px;
+  overflow-x: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: #fff;
 }
 
-.manager-project-task-table th,
-.manager-project-task-table td {
-  padding: 14px;
-  border: 1px solid #ddd;
-  text-align: left;
+/* Main Table Styling */
+.manager-project-task-table {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
   font-size: 14px;
 }
 
-.manager-project-task-table th {
-  background-color: #f8f9fa;
-  font-weight: bold;
+/* Header Cells */
+.manager-project-task-table thead th {
+  background-color: #f1f5f9;
+  color: #333;
+  font-weight: 600;
+  text-align: center; 
+  padding: 12px 16px;
+  border-bottom: 2px solid #ddd;
+  white-space: nowrap;
+  position: relative;
 }
 
-.manager-project-task-table th.sortable {
+/* Sortable Column Header */
+.manager-project-task-table th.sortable:hover {
+  background-color: #e2e8f0;
   cursor: pointer;
-  user-select: none;
 }
 
+.manager-project-task-table th.sortable::after {
+  font-size: 10px;
+  margin-left: 6px;
+  color: #666;
+}
+
+/* Data Cells */
+.manager-project-task-table td {
+  padding: 12px 16px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  color: #444;
+  white-space: nowrap;
+  background-color: #fff;
+}
+
+/* Row Hover */
+.manager-project-task-row:hover {
+  background-color: #f9fafb;
+  transition: background 0.2s ease;
+}
+
+/* Clickable row cursor */
 .manager-project-task-row {
   cursor: pointer;
-  transition: background 0.2s;
 }
 
-.manager-project-task-row:hover {
-  background-color: #f1f1f1;
-}
-
-.manager-project-pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-}
-
-.manager-project-pagination button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-}
-
-.manager-project-pagination button:disabled {
-  background-color: #aaa;
-  cursor: not-allowed;
+/* No tasks row */
+.manager-project-task-table td[colspan] {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  font-style: italic;
 }
 
 .manager-project-modal-overlay {
@@ -272,27 +402,48 @@
   color: red;
   font-size: 14px;
   margin-top: -6px;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
-  .manager-project-description-date {
-    flex-direction: column;
-  }
-
   .manager-project-task-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 12px;
   }
 
   .manager-project-task-filters {
     flex-direction: column;
     width: 100%;
+    align-items: stretch;
   }
 
-  .manager-project-pagination {
-    flex-direction: column;
-    gap: 8px;
-    align-items: flex-start;
+  .manager-project-task-filters input,
+  .manager-project-checkbox-dropdown > button,
+  .manager-project-task-header button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .manager-project-checkbox-dropdown {
+    width: 100%;
+  }
+
+  .manager-project-dropdown-content {
+    width: 100%;
+    right: 0;
+    left: 0;
+    top: 42px;
+  }
+
+  .manager-project-task-filters .manager-project-dropdown-content label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .manager-project-modal,
+  .edit-modal {
+    max-width: 90%;
   }
 }
