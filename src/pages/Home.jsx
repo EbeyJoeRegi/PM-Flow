@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { logoutUser } from "../redux/userSlice";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
 import { FaProjectDiagram, FaUsers, FaUserCircle, FaTasks } from "react-icons/fa";
 import { HiMiniUsers } from "react-icons/hi2";
 import { GiHamburgerMenu } from "react-icons/gi";
 import "../styles/Home.css";
+import { handleLogout } from "../api/commonApi";
 
 const Home = () => {
-  const { name, role } = useSelector((state) => state.user);
+  const { name, role, token } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -19,10 +19,9 @@ const Home = () => {
   const dropdownRef = useRef(null);
   const sidebarRef = useRef(null);
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    navigate("/");
-  };
+const onLogoutClick = () => {
+  handleLogout(dispatch, navigate, token);
+};
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -60,7 +59,7 @@ const Home = () => {
             <FaUserCircle size={30} onClick={() => setDropdownOpen(!dropdownOpen)} />
             {dropdownOpen && (
               <div className="manager-dropdown">
-                <button onClick={handleLogout}>Logout</button>
+                <button onClick={onLogoutClick}>Logout</button>
               </div>
             )}
           </div>

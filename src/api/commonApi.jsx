@@ -1,5 +1,6 @@
 import BASE_URL from "../config"
 import axios from 'axios';
+import { logoutUser } from "../redux/userSlice";
 
 export const loginUser = async (usernameOrEmail, password) => {
   try {
@@ -31,5 +32,20 @@ export const registerUser = async ({ username, email, password, firstName, lastN
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Registration failed" };
+  }
+};
+
+export const handleLogout = async (dispatch, navigate, token) => {
+  try {
+    await axios.post(`${BASE_URL}/api/auth/logout`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error) {
+    console.warn('Logout failed on server. Proceeding with client logout. '+error);
+  } finally {
+    dispatch(logoutUser()); 
+    navigate('/'); 
   }
 };
