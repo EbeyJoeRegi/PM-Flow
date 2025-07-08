@@ -14,16 +14,27 @@ const Home = () => {
   const navigate = useNavigate();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const dropdownRef = useRef(null);
   const sidebarRef = useRef(null);
 
-const onLogoutClick = () => {
-  handleLogout(dispatch, navigate, token);
-};
+  const onLogoutClick = () => {
+    handleLogout(dispatch, navigate, token);
+  };
 
   useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setSidebarVisible(false);
+      } else {
+        setSidebarVisible(true);
+      }
+    };
+
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
@@ -33,14 +44,22 @@ const onLogoutClick = () => {
         !sidebarRef.current.contains(event.target) &&
         !event.target.closest(".hamburger-icon")
       ) {
-        setSidebarOpen(false);
+        if (isMobile) setSidebarVisible(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
-  const basePath = role === "ADMIN" ? "/admin" : role === "PROJECT_MANAGER" ? "/manager" : "/member";
+    window.addEventListener("resize", handleResize);
+    document.addEventListener("mousedown", handleClickOutside);
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMobile]);
+
+  const basePath =
+    role === "ADMIN" ? "/admin" : role === "PROJECT_MANAGER" ? "/manager" : "/member";
 
   return (
     <div className="manager-wrapper">
@@ -49,9 +68,11 @@ const onLogoutClick = () => {
           <GiHamburgerMenu
             size={24}
             className="hamburger-icon"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => setSidebarVisible(!sidebarVisible)}
           />
-          <NavLink to={basePath} className="manager-navbar-title">PM Flow</NavLink>
+          <NavLink to={basePath} className="manager-navbar-title">
+            PM Flow
+          </NavLink>
         </div>
         <div className="manager-navbar-right">
           <span className="manager-welcome">Welcome, {name}</span>
@@ -66,36 +87,37 @@ const onLogoutClick = () => {
         </div>
       </nav>
 
-      {sidebarOpen && <div className="sidebar-overlay" />}
+      {isMobile && sidebarVisible && <div className="sidebar-overlay" />}
 
       <div className="manager-body">
         <aside
-          className={`manager-sidebar ${sidebarOpen ? "sidebar-open" : ""}`}
+          className={`manager-sidebar ${
+            sidebarVisible ? "sidebar-open" : "sidebar-collapsed"
+          } ${isMobile ? "sidebar-mobile" : ""}`}
           ref={sidebarRef}
         >
           <ul>
             <li>
-              <NavLink
-                to="."
-                end
-                className={({ isActive }) => isActive ? "manager-active" : ""}
-              >
-                <TbLayoutDashboardFilled /> Dashboard
+              <NavLink to="." end className={({ isActive }) => (isActive ? "manager-active" : "")}>
+                <TbLayoutDashboardFilled />
+                <span>Dashboard</span>
               </NavLink>
 
               {role === "ADMIN" && (
                 <>
                   <NavLink
                     to="users"
-                    className={({ isActive }) => isActive ? "manager-active" : ""}
+                    className={({ isActive }) => (isActive ? "manager-active" : "")}
                   >
-                    <HiMiniUsers /> Users
+                    <HiMiniUsers />
+                    <span>Users</span>
                   </NavLink>
                   <NavLink
                     to="projects"
-                    className={({ isActive }) => isActive ? "manager-active" : ""}
+                    className={({ isActive }) => (isActive ? "manager-active" : "")}
                   >
-                    <FaProjectDiagram /> Projects
+                    <FaProjectDiagram />
+                    <span>Projects</span>
                   </NavLink>
                 </>
               )}
@@ -104,15 +126,17 @@ const onLogoutClick = () => {
                 <>
                   <NavLink
                     to="projects"
-                    className={({ isActive }) => isActive ? "manager-active" : ""}
+                    className={({ isActive }) => (isActive ? "manager-active" : "")}
                   >
-                    <FaProjectDiagram /> Projects
+                    <FaProjectDiagram />
+                    <span>Projects</span>
                   </NavLink>
                   <NavLink
                     to="collaboration"
-                    className={({ isActive }) => isActive ? "manager-active" : ""}
+                    className={({ isActive }) => (isActive ? "manager-active" : "")}
                   >
-                    <FaUsers /> Collaboration
+                    <FaUsers />
+                    <span>Collaboration</span>
                   </NavLink>
                 </>
               )}
@@ -121,15 +145,17 @@ const onLogoutClick = () => {
                 <>
                   <NavLink
                     to="assigned-tasks"
-                    className={({ isActive }) => isActive ? "manager-active" : ""}
+                    className={({ isActive }) => (isActive ? "manager-active" : "")}
                   >
-                    <FaTasks />Task Assigned
+                    <FaTasks />
+                    <span>Task Assigned</span>
                   </NavLink>
                   <NavLink
                     to="collaboration"
-                    className={({ isActive }) => isActive ? "manager-active" : ""}
+                    className={({ isActive }) => (isActive ? "manager-active" : "")}
                   >
-                    <FaUsers /> Collaboration
+                    <FaUsers />
+                    <span>Collaboration</span>
                   </NavLink>
                 </>
               )}
