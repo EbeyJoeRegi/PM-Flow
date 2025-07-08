@@ -113,7 +113,9 @@ export const getTeamMembersByProjectId = async (managerId, projectId, token) => 
 };
 
 export const updateProjectStatusAndEndDate = async (managerId, projectId, status, endDate, token) => {
-  const formattedDate = new Date(endDate).toLocaleDateString('en-US'); 
+  const dateObj = new Date(endDate);
+  const pad = (n) => (n < 10 ? '0' + n : n); // ensures 2-digit format
+  const formattedDate = `${pad(dateObj.getMonth() + 1)}/${pad(dateObj.getDate())}/${dateObj.getFullYear()}`; 
 
   try {
     const response = await axios.put(

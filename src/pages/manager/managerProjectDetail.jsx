@@ -1,16 +1,28 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { formatDate, formatStatus, getBootstrapBgClass, getTaskPriorityClass } from '../../utils/Helper';
-import { MdModeEditOutline } from "react-icons/md";
+import {
+  formatDate,
+  formatStatus,
+  getBootstrapBgClass,
+  getTaskPriorityClass,
+} from '../../utils/Helper';
+import { MdModeEditOutline } from 'react-icons/md';
 import '../../styles/managerProjectDetail.css';
-import { getManagerProjectByName, getTasksByProjectId, createTask, getTeamMembersByProjectId, updateProjectStatusAndEndDate} from '../../api/managerApi';
+import {
+  getManagerProjectByName,
+  getTasksByProjectId,
+  createTask,
+  getTeamMembersByProjectId,
+  updateProjectStatusAndEndDate,
+} from '../../api/managerApi';
 import { Pagination } from '../../components/Pagination';
 
 const ManagerProjectDetail = () => {
   const { projectName } = useParams();
   const { id, token } = useSelector((state) => state.user);
   const navigate = useNavigate();
+
   const [teamMembersMap, setTeamMembersMap] = useState([]);
   const [projectDetail, setProjectDetail] = useState(null);
   const [status, setStatus] = useState('');
@@ -24,8 +36,12 @@ const ManagerProjectDetail = () => {
   const [editedEndDate, setEditedEndDate] = useState('');
   const [saveError, setSaveError] = useState('');
 
-
-  const [newTask, setNewTask] = useState({ name: '', dueDate: '', priority: 'MEDIUM', assignee: '' });
+  const [newTask, setNewTask] = useState({
+    name: '',
+    dueDate: '',
+    priority: 'MEDIUM',
+    assignee: '',
+  });
   const [showModal, setShowModal] = useState(false);
   const [taskError, setTaskError] = useState('');
   const [searchTask, setSearchTask] = useState('');
@@ -41,23 +57,24 @@ const ManagerProjectDetail = () => {
         setLoading(true);
         const projectData = await getManagerProjectByName(id, projectName, token);
         setProjectDetail(projectData);
-        setStatus(formatStatus(projectData.status));
+        setStatus(projectData.status);
         setEndDate(projectData.endDate);
         setMembers(projectData.teamMembers);
-        console.log(projectData);
+
         const taskData = await getTasksByProjectId(projectData.id, token);
-        const transformedTasks = taskData.map(task => ({
+        const transformedTasks = taskData.map((task) => ({
           id: task.id,
           name: task.name,
           dueDate: task.dueDate ? formatDate(task.dueDate.split('T')[0]) : 'N/A',
           priority: task.priority,
-          status: formatStatus(task.status), //? capitalize(task.status.toLowerCase()) : 'N/A',
-          assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`
+          status: formatStatus(task.status),
+          assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`,
         }));
         setTasks(transformedTasks);
+
         const teamMembersResponse = await getTeamMembersByProjectId(id, projectData.id, token);
         setTeamMembersMap(teamMembersResponse);
-        setMembers(teamMembersResponse.map(m => m.username));
+        setMembers(teamMembersResponse.map((m) => m.username));
       } catch (err) {
         setError(err.message || 'Failed to load project');
       } finally {
@@ -67,11 +84,9 @@ const ManagerProjectDetail = () => {
     fetchProjectAndTasks();
   }, [id, projectName, token]);
 
-  //const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
   const toggleAssignee = (name) => {
-    setSelectedAssignees(prev =>
-      prev.includes(name) ? prev.filter(a => a !== name) : [...prev, name]
+    setSelectedAssignees((prev) =>
+      prev.includes(name) ? prev.filter((a) => a !== name) : [...prev, name]
     );
     setPage(1);
   };
@@ -88,11 +103,11 @@ const ManagerProjectDetail = () => {
 
   const filteredTasks = useMemo(() => {
     let result = [...tasks];
-    if (searchTask) result = result.filter(t => t.name.toLowerCase().includes(searchTask.toLowerCase()));
-    if (selectedAssignees.length > 0) result = result.filter(t => selectedAssignees.includes(t.assignee));
+    if (searchTask) result = result.filter((t) => t.name.toLowerCase().includes(searchTask.toLowerCase()));
+    if (selectedAssignees.length > 0) result = result.filter((t) => selectedAssignees.includes(t.assignee));
     if (sortField === 'dueDate') result.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
     else if (sortField === 'priority') {
-      const order = { High: 1, Medium: 2, Low: 3 };
+      const order = { HIGH: 1, MEDIUM: 2, LOW: 3 };
       result.sort((a, b) => order[a.priority] - order[b.priority]);
     } else if (sortField === 'status') {
       result.sort((a, b) => a.status.localeCompare(b.status));
@@ -109,7 +124,7 @@ const ManagerProjectDetail = () => {
       return;
     }
 
-    const assigneeObj = teamMembersMap.find(tm => tm.username === newTask.assignee);
+    const assigneeObj = teamMembersMap.find((tm) => tm.username === newTask.assignee);
     if (!assigneeObj) {
       setTaskError('Selected assignee not found.');
       return;
@@ -119,14 +134,14 @@ const ManagerProjectDetail = () => {
       const payload = {
         name: newTask.name,
         priority: newTask.priority,
-        status: "NOT_STARTED",
+        status: 'NOT_STARTED',
         dueDate: newTask.dueDate,
         projectId: projectDetail.id,
         assigneeId: assigneeObj.id,
       };
 
       const createdTask = await createTask(payload, token);
-      setTasks(prev => [
+      setTasks((prev) => [
         ...prev,
         {
           id: createdTask.id,
@@ -134,8 +149,8 @@ const ManagerProjectDetail = () => {
           dueDate: formatDate(createdTask.dueDate),
           priority: createdTask.priority,
           status: formatStatus(createdTask.status),
-          assignee: `${createdTask.assigneeFirstName} ${createdTask.assigneeLastName}`
-        }
+          assignee: `${createdTask.assigneeFirstName} ${createdTask.assigneeLastName}`,
+        },
       ]);
 
       setShowModal(false);
@@ -148,22 +163,24 @@ const ManagerProjectDetail = () => {
 
   if (loading) return <div className="manager-project-container"><p>Loading...</p></div>;
   if (error) return <div className="manager-project-container"><p className="error">{error}</p></div>;
-
   return (
     <div className="manager-project-container">
       <div className="manager-project-details-section">
         <div className="manager-project-title-bar">
           <h2>{projectDetail.name}</h2>
           <div className="status-edit-display">
-            <span className={`status-badges ${status.toLowerCase().replace(/\s/g, '')}`}>
-              {status}
+            <span className={`status-badges ${formatStatus(status).toLowerCase().replace(/\s/g, '')}`}>
+              {formatStatus(status)}
             </span>
-            <MdModeEditOutline className={`edit-icon icon-${status.toLowerCase().replace(/\s/g, '')}`} onClick={() => {
-              setEditPopup(true);
-              setEditedStatus(status);
-              setEditedEndDate(endDate);
-              setSaveError('');
-            }} />
+            <MdModeEditOutline
+              className={`edit-icon icon-${formatStatus(status).toLowerCase().replace(/\s/g, '')}`}
+              onClick={() => {
+                setEditPopup(true);
+                setEditedStatus(status);
+                setEditedEndDate(endDate);
+                setSaveError('');
+              }}
+            />
           </div>
         </div>
 
@@ -175,7 +192,7 @@ const ManagerProjectDetail = () => {
           <div className="manager-project-info-pair">
             <div className="manager-project-team-block">
               <p><strong>Team Members</strong></p>
-              <ul>{members.map(m => <li key={m}>{m}</li>)}</ul>
+              <ul>{members.map((m) => <li key={m}>{m}</li>)}</ul>
             </div>
 
             <div className="manager-project-date-block">
@@ -184,7 +201,7 @@ const ManagerProjectDetail = () => {
                 <span>{formatDate(projectDetail.startDate)}</span>
               </div>
               <div className="manager-project-date-display">
-                <label>Due Date &nbsp;:</label> {/*  */}
+                <label>Due Date &nbsp;:</label>
                 <span>{formatDate(endDate)}</span>
               </div>
             </div>
@@ -192,7 +209,7 @@ const ManagerProjectDetail = () => {
         </div>
       </div>
 
-
+      {/* Task Section */}
       <div className="manager-project-task-section">
         <div className="manager-project-task-header">
           <h3>Tasks</h3>
@@ -200,26 +217,26 @@ const ManagerProjectDetail = () => {
             <input
               placeholder="Search by Task Name"
               value={searchTask}
-              onChange={e => {
+              onChange={(e) => {
                 setSearchTask(e.target.value);
                 setPage(1);
               }}
             />
             <div className={`manager-project-checkbox-dropdown ${showDropdown ? 'open' : ''}`}>
-  <button onClick={() => setShowDropdown(!showDropdown)}>Filter Assignees</button>
-  <div className="manager-project-dropdown-content">
-    {[...new Set(tasks.map(t => t.assignee))].map(assignee => (
-      <label key={assignee}>
-        <input
-          type="checkbox"
-          checked={selectedAssignees.includes(assignee)}
-          onChange={() => toggleAssignee(assignee)}
-        />
-        {assignee}
-      </label>
-    ))}
-  </div>
-</div>
+              <button onClick={() => setShowDropdown(!showDropdown)}>Filter Assignees</button>
+              <div className="manager-project-dropdown-content">
+                {[...new Set(tasks.map((t) => t.assignee))].map((assignee) => (
+                  <label key={assignee}>
+                    <input
+                      type="checkbox"
+                      checked={selectedAssignees.includes(assignee)}
+                      onChange={() => toggleAssignee(assignee)}
+                    />
+                    {assignee}
+                  </label>
+                ))}
+              </div>
+            </div>
             <button onClick={() => setShowModal(true)}>Create Task</button>
           </div>
         </div>
@@ -240,19 +257,12 @@ const ManagerProjectDetail = () => {
                 {paginatedTasks.length === 0 ? (
                   <tr><td colSpan="5">No tasks found.</td></tr>
                 ) : (
-                  paginatedTasks.map(t => (
+                  paginatedTasks.map((t) => (
                     <tr key={t.id} onClick={() => navigate(`tasks/${t.id}`)} className="manager-project-task-row">
                       <td>{t.name}</td>
                       <td>{t.dueDate}</td>
-                      <td className={`fw-semibold ${getTaskPriorityClass(t.priority)}`}>
-                        {t.priority}
-                      </td>
-                      <td>
-                        <span className={`status-badge text-light ${getBootstrapBgClass(t.status)}`}>
-                          {t.status}
-                        </span>
-                      </td>
-
+                      <td className={`fw-semibold ${getTaskPriorityClass(t.priority)}`}>{t.priority}</td>
+                      <td><span className={`status-badge text-light ${getBootstrapBgClass(t.status)}`}>{t.status}</span></td>
                       <td>{t.assignee}</td>
                     </tr>
                   ))
@@ -327,6 +337,7 @@ const ManagerProjectDetail = () => {
         </div>
       )}
 
+      {/* Edit Modal */}
       {editPopup && (
         <div className="edit-modal-overlay" onClick={() => setEditPopup(false)}>
           <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
@@ -353,36 +364,30 @@ const ManagerProjectDetail = () => {
 
             <div className="edit-modal-actions">
               <button
-  onClick={async () => {
-    try {
-      if (
-        editedStatus === status &&
-        editedEndDate === endDate
-      ) {
-        setSaveError('No changes made.');
-        return;
-      }
+                onClick={async () => {
+                  try {
+                    if (editedStatus === status && editedEndDate === endDate) {
+                      setSaveError('No changes made.');
+                      return;
+                    }
 
-      await updateProjectStatusAndEndDate(id, projectDetail.id, editedStatus, editedEndDate, token);
-      setStatus(editedStatus);
-      setEndDate(editedEndDate);
-      setEditPopup(false);
-    } catch (err) {
-      setSaveError(err.message || 'Failed to update project info');
-    }
-  }}
->
-  Save
-</button>
-
-              <button className="cancel-btn" onClick={() => setEditPopup(false)}>
-                Cancel
+                    await updateProjectStatusAndEndDate(id, projectDetail.id, editedStatus, editedEndDate, token);
+                    setStatus(editedStatus);
+                    setEndDate(editedEndDate);
+                    setProjectDetail((prev) => ({ ...prev, status: editedStatus, endDate: editedEndDate }));
+                    setEditPopup(false);
+                  } catch (err) {
+                    setSaveError(err.message || 'Failed to update project info');
+                  }
+                }}
+              >
+                Save
               </button>
+              <button className="cancel-btn" onClick={() => setEditPopup(false)}>Cancel</button>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 };
