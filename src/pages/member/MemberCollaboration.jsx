@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   sendGroupMessage,
   getGroupChatSummary,
@@ -9,6 +9,7 @@ import '../../styles/projectChatPage.css';
 
 export default function MemberCollaboration() {
   const { state } = useLocation();
+  const navigate = useNavigate();
   const projectName = state?.projectName || 'Unknown Project';
   const projectStatus = state?.projectStatus || '';
 
@@ -17,6 +18,7 @@ export default function MemberCollaboration() {
   const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState('');
   const [projectId, setProjectId] = useState(null);
+  const [unassigned, setUnassigned] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user'));
   const senderId = user?.id;
@@ -26,7 +28,12 @@ export default function MemberCollaboration() {
       try {
         const tasks = await getTasksByUserId(senderId);
         const match = tasks.find(task => task.projectName === projectName);
-        if (match?.projectId) setProjectId(match.projectId);
+        if (match?.projectId) {
+          setProjectId(match.projectId);
+          setUnassigned(false);
+        } else {
+          setUnassigned(true);
+        }
       } catch (err) {
         console.error('Error resolving project ID:', err);
       }
@@ -105,12 +112,22 @@ export default function MemberCollaboration() {
   return (
     <div className="collab-chat-full-page">
       <div className="collab-chat-header d-flex justify-content-between align-items-center ps-3 pt-2 pe-3">
-        <h4 className="mb-0">{projectName}</h4>
+        <div className="d-flex align-items-center gap-3">
+          <button
+            className="btn btn-outline-secondary btn-sm"
+            onClick={() => navigate('/member/collaboration')}
+          >
+            ← Back
+          </button>
+          <h4 className="mb-0">{projectName}</h4>
+        </div>
         <span className="badge bg-info text-white">{projectStatus.replace('_', ' ')}</span>
       </div>
 
       <div className="collab-chat-box" ref={chatBoxRef}>
-        {messages.length === 0 ? (
+        {unassigned ? (
+          <div className="text-center text-danger mt-4">Unassigned task – yet to be assigned</div>
+        ) : messages.length === 0 ? (
           <div className="text-center text-muted mt-4">No chat yet.</div>
         ) : (
           Object.keys(groupedMessages).sort().map(date => (
@@ -130,16 +147,18 @@ export default function MemberCollaboration() {
         )}
       </div>
 
-      <div className="collab-chat-input">
-        <input
-          ref={inputRef}
-          value={newMsg}
-          onChange={e => setNewMsg(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
-        />
-        <button onClick={handleSend} disabled={!newMsg.trim()}>Send</button>
-      </div>
+      {!unassigned && (
+        <div className="collab-chat-input">
+          <input
+            ref={inputRef}
+            value={newMsg}
+            onChange={e => setNewMsg(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Type a message..."
+          />
+          <button onClick={handleSend} disabled={!newMsg.trim()}>Send</button>
+        </div>
+      )}
     </div>
   );
 }

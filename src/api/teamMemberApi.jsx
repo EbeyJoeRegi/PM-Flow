@@ -93,8 +93,7 @@ export const sendPrivateMessage = async (senderId, receiverId, projectId, taskId
 
 export const sendGroupMessage = async (senderId, projectId, content) => {
   const headers = getAuthHeader();
-  console.log('🧾 Sending token with request:', headers); // Debug line
-
+  
   try {
     const response = await axios.post(
       `${BASE_URL}/api/chat/group/sender/${senderId}/project/${projectId}`,
