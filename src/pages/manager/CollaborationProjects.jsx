@@ -1,37 +1,40 @@
 import { useNavigate } from 'react-router-dom';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import '../../styles/collaborationProjects.css';
 import { Pagination } from '../../components/Pagination';
+import { getManagerProjects } from '../../api/managerApi';
+import { useSelector } from 'react-redux';
+import { formatStatus } from '../../utils/Helper';
 
 const CollaborationProjects = () => {
   const navigate = useNavigate();
+  const { id, token } = useSelector((state) => state.user);
 
-  const allProjects = [
-    { id: 1, name: 'Redesign Header', status: 'In Progress' },
-    { id: 2, name: 'Dashboard Analytics', status: 'Completed' },
-    { id: 3, name: 'New Feature Integration', status: 'Not Started' },
-    { id: 4, name: 'API Improvements', status: 'In Progress' },
-    { id: 5, name: 'User Feedback System', status: 'Completed' },
-    { id: 6, name: 'Mobile Optimization', status: 'Not Started' },
-    { id: 7, name: 'Bug Fixes', status: 'Completed' },
-    { id: 8, name: 'Testing Automation', status: 'In Progress' },
-    { id: 9, name: 'Marketing Dashboard', status: 'In Progress' },
-    { id: 10, name: 'Documentation Update', status: 'Not Started' },
-    { id: 11, name: 'Security Audit', status: 'Completed' },
-    { id: 12, name: 'Dark Mode', status: 'Not Started' }
-  ];
-
+  const [allProjects, setAllProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const projects = await getManagerProjects(id, token);
+        setAllProjects(projects);
+      } catch (error) {
+        console.error("Error fetching manager projects:", error.message);
+      }
+    };
+    fetchProjects();
+  }, [id, token]);
+
   const filteredProjects = useMemo(() => {
     return allProjects.filter(project => {
       const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter ? project.status === statusFilter : true;
+      const formattedStatus = formatStatus(project.status) || project.status;
+      const matchesStatus = statusFilter ? formattedStatus === statusFilter : true;
       return matchesSearch && matchesStatus;
     });
-  }, [searchTerm, statusFilter]);
+  }, [allProjects, searchTerm, statusFilter]);
 
   const projectsPerPage = 10;
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
@@ -67,6 +70,7 @@ const CollaborationProjects = () => {
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
             <option value="Not Started">Not Started</option>
+            <option value="On Hold">On Hold</option>
           </select>
         </div>
       </div>
@@ -83,8 +87,8 @@ const CollaborationProjects = () => {
                 onClick={() => navigate(`${project.id}`)}
               >
                 <span className="collab-project-name">{project.name}</span>
-                <span className={`status-badges ${(project.status).toLowerCase().replace(/\s/g, '')}`}>
-                  {project.status}
+                <span className={`status-badges ${project.status.toLowerCase().replace(/_/g, '')}`}>
+                  {formatStatus(project.status) || project.status}
                 </span>
               </div>
             ))}
