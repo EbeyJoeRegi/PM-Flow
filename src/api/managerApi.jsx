@@ -171,3 +171,33 @@ export const sendPrivateMessage = async (senderId, receiverId, projectId, taskId
     throw error;
   }
 };
+
+export const getGroupMessages = async (projectId, token) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/chat/group/project/${projectId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Failed to fetch group messages' };
+  }
+};
+
+export const sendGroupMessage = async (senderId, projectId, content, token) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/api/chat/group/sender/${senderId}/project/${projectId}`,
+      { content },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Failed to send message' };
+  }
+};
