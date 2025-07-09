@@ -1,56 +1,69 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import {
+  sendGroupMessage,
+  getGroupChatSummary,
+  getTasksByUserId
+} from '../../api/teamMemberApi';
 import '../../styles/projectChatPage.css';
 
 export default function MemberCollaboration() {
-  const { projectId } = useParams();
+  const { state } = useLocation();
+  const projectName = state?.projectName || 'Unknown Project';
+  const projectStatus = state?.projectStatus || '';
+
   const chatBoxRef = useRef(null);
   const inputRef = useRef(null);
-
-  const storageKey = `chat_${projectId}`;
-
-  const [messages, setMessages] = useState(() => {
-    const saved = localStorage.getItem(storageKey);
-    return saved ? JSON.parse(saved) : [
-      { id: 1, sender: 'Aish', message: 'Started design phase.', date: '2025-06-22', time: '10:00 AM' },
-      { id: 2, sender: 'You', message: 'Testing collaboration chat.', date: '2025-06-23', time: '01:30 PM' }
-    ];
-  });
-
+  const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState('');
+  const [projectId, setProjectId] = useState(null);
+
+  const user = JSON.parse(localStorage.getItem('user'));
+  const senderId = user?.id;
 
   useEffect(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
+    const resolveProjectId = async () => {
+      try {
+        const tasks = await getTasksByUserId(senderId);
+        const match = tasks.find(task => task.projectName === projectName);
+        if (match?.projectId) setProjectId(match.projectId);
+      } catch (err) {
+        console.error('Error resolving project ID:', err);
+      }
+    };
+    resolveProjectId();
+  }, [projectName, senderId]);
+
+  useEffect(() => {
+    if (!projectId) return;
+    const fetchMessages = async () => {
+      try {
+        const fetched = await getGroupChatSummary(projectId);
+        setMessages(fetched);
+      } catch (err) {
+        console.error('Failed to fetch group messages', err);
+      }
+    };
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 5000);
+    return () => clearInterval(interval);
+  }, [projectId]);
+
+  useEffect(() => {
+    chatBoxRef.current?.scrollTo({ top: chatBoxRef.current.scrollHeight, behavior: 'smooth' });
     inputRef.current?.focus();
   }, [messages]);
 
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(messages));
-  }, [messages, storageKey]);
-
-  const handleSend = () => {
-    if (!newMsg.trim()) return;
-    const now = new Date();
-    const timeString = now.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    }).replace('am', 'AM').replace('pm', 'PM');
-    const newMessage = {
-      id: messages.length + 1,
-      sender: 'You',
-      message: newMsg,
-      date: now.toISOString().split('T')[0],
-      time: timeString
-    };
-    setMessages(prev => [...prev, newMessage]);
-    setNewMsg('');
+  const handleSend = async () => {
+    if (!newMsg.trim() || !projectId) return;
+    try {
+      await sendGroupMessage(senderId, projectId, newMsg);
+      const updated = await getGroupChatSummary(projectId);
+      setMessages(updated);
+      setNewMsg('');
+    } catch (err) {
+      console.error('Failed to send message', err);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -60,8 +73,9 @@ export default function MemberCollaboration() {
   const groupMessagesByDate = (msgs) => {
     const grouped = {};
     msgs.forEach(msg => {
-      if (!grouped[msg.date]) grouped[msg.date] = [];
-      grouped[msg.date].push(msg);
+      const dateOnly = msg.timestamp.split('T')[0];
+      if (!grouped[dateOnly]) grouped[dateOnly] = [];
+      grouped[dateOnly].push(msg);
     });
     return grouped;
   };
@@ -71,17 +85,30 @@ export default function MemberCollaboration() {
     const msgDate = new Date(dateStr);
     const todayMidnight = new Date(today.setHours(0, 0, 0, 0));
     const msgMidnight = new Date(msgDate.setHours(0, 0, 0, 0));
-    const diffInDays = (todayMidnight - msgMidnight) / (1000 * 60 * 60 * 24);
-    if (diffInDays === 0) return 'Today';
-    if (diffInDays === 1) return 'Yesterday';
+    const diff = (todayMidnight - msgMidnight) / (1000 * 60 * 60 * 24);
+    if (diff === 0) return 'Today';
+    if (diff === 1) return 'Yesterday';
     return msgMidnight.toDateString();
+  };
+
+  const formatTime = (isoStr) => {
+    const time = new Date(isoStr);
+    return time.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    }).replace('am', 'AM').replace('pm', 'PM');
   };
 
   const groupedMessages = groupMessagesByDate(messages);
 
   return (
     <div className="collab-chat-full-page">
-      <h2 className="collab-chat-header">Project Collaboration - ID #{projectId}</h2>
+      <div className="collab-chat-header d-flex justify-content-between align-items-center ps-3 pt-2 pe-3">
+        <h4 className="mb-0">{projectName}</h4>
+        <span className="badge bg-info text-white">{projectStatus.replace('_', ' ')}</span>
+      </div>
+
       <div className="collab-chat-box" ref={chatBoxRef}>
         {messages.length === 0 ? (
           <div className="text-center text-muted mt-4">No chat yet.</div>
@@ -89,12 +116,12 @@ export default function MemberCollaboration() {
           Object.keys(groupedMessages).sort().map(date => (
             <div key={date}>
               <div className="collab-chat-date-separator">{getDateLabel(date)}</div>
-              {groupedMessages[date].map(m => (
-                <div key={m.id} className={`collab-chat-message-wrapper ${m.sender === 'You' ? 'collab-self' : 'collab-other'}`}>
-                  <div className={`collab-chat-message ${m.sender === 'You' ? 'collab-self' : 'collab-other'}`}>
-                    <span className="collab-sender">{m.sender}</span>
-                    <span className="collab-text">{m.message}</span>
-                    <span className="collab-time">{m.time}</span>
+              {groupedMessages[date].map((m, idx) => (
+                <div key={`${date}-${idx}`} className={`collab-chat-message-wrapper ${m.senderId === senderId ? 'collab-self' : 'collab-other'}`}>
+                  <div className={`collab-chat-message ${m.senderId === senderId ? 'collab-self' : 'collab-other'}`}>
+                    <span className="collab-sender">{m.senderId === senderId ? 'You' : m.senderName}</span>
+                    <span className="collab-text">{m.content}</span>
+                    <span className="collab-time">{formatTime(m.timestamp)}</span>
                   </div>
                 </div>
               ))}
@@ -102,6 +129,7 @@ export default function MemberCollaboration() {
           ))
         )}
       </div>
+
       <div className="collab-chat-input">
         <input
           ref={inputRef}
@@ -110,7 +138,7 @@ export default function MemberCollaboration() {
           onKeyDown={handleKeyDown}
           placeholder="Type a message..."
         />
-        <button onClick={handleSend}>Send</button>
+        <button onClick={handleSend} disabled={!newMsg.trim()}>Send</button>
       </div>
     </div>
   );
