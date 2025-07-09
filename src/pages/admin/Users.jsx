@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { getAllUsers, updateUserByAdmin } from '../../api/adminApi';
 import { FaPen, FaTrash } from 'react-icons/fa';
 import '../../styles/Admin.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -37,8 +39,9 @@ export default function Users() {
       );
       setUsers(updated);
       setEditId(null);
+      toast.success('User updated successfully');
     } catch {
-      alert('Failed to update user');
+      toast.error('Failed to update user');
     }
   };
 
@@ -52,6 +55,7 @@ export default function Users() {
   const handleDelete = (id) => {
     const updated = users.filter(user => user.id !== id);
     setUsers(updated);
+    toast.success('User deleted (from UI only)');
   };
 
   const filteredUsers = users.filter(user =>
@@ -71,6 +75,7 @@ export default function Users() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+
       <div className="table-container">
         <table className="table table-bordered table-hover bg-white">
           <thead>
@@ -157,6 +162,8 @@ export default function Users() {
           </tbody>
         </table>
       </div>
+
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
 }
