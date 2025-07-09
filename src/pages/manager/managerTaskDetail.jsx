@@ -1,21 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { getTaskById, updateTaskById } from '../../api/managerApi';
+import { IoMdSend } from "react-icons/io";
+import { getTaskById, updateTaskById, fetchPrivateMessages, sendPrivateMessage } from '../../api/managerApi';
 import { getTaskPriorityClass, formatDate, formatStatus } from '../../utils/Helper';
 import '../../styles/managerTaskDetail.css';
 import { MdModeEditOutline } from "react-icons/md";
 
 const ManagerTaskDetail = () => {
   const { taskID } = useParams();
-  const { token } = useSelector((state) => state.user);
+  const { id, token } = useSelector((state) => state.user);
   const [taskDetails, setTaskDetails] = useState(null);
-  const [comments, setComments] = useState([
-    { id: 1, sender: 'Alice', message: 'Started working on wireframes.', time: '10:00 AM', date: '2025-06-21' },
-    { id: 2, sender: 'Bob', message: 'Make sure it’s mobile responsive.', time: '10:05 AM', date: '2025-06-22' },
-    { id: 3, sender: 'Alice', message: 'Sure, will update by today.', time: '10:15 AM', date: '2025-06-23' },
-    { id: 4, sender: 'You', message: 'Sure, will update by today.', time: '10:15 AM', date: '2025-03-23' }
-  ]);
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const chatBoxRef = useRef(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -34,14 +30,42 @@ const ManagerTaskDetail = () => {
           assignee: `${task.assigneeFirstName} ${task.assigneeLastName}`,
           priority: task.priority,
           dueDate: task.dueDate ? task.dueDate.split('T')[0] : 'N/A',
+          projectID: task.projectId,
+          assigneeID: task.assigneeId,
         });
       } catch (error) {
         console.error('Error fetching task:', error);
       }
     };
+    const fetchMessages = async () => {
+      if (!taskDetails) return;
 
+      try {
+        const response = await fetchPrivateMessages(
+          id,
+          taskDetails.assigneeID,
+          taskDetails.projectID,
+          taskID,
+          token
+        );
+
+        const messages = response.data.map((msg, index) => ({
+          id: index + 1,
+          sender: msg.senderName === taskDetails.assignee ? taskDetails.assignee : 'You',
+          message: msg.content,
+          time: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          date: msg.timestamp.split('T')[0],
+        }));
+
+        setComments(messages);
+      } catch (err) {
+        console.error('Failed to load messages:', err);
+      }
+    };
+
+    fetchMessages();
     fetchTask();
-  }, [taskID, token]);
+  }, [id, taskDetails, taskID, token]);
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -49,21 +73,34 @@ const ManagerTaskDetail = () => {
     }
   }, [comments]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!newComment.trim()) return;
 
-    const now = new Date();
-    const newMsg = {
-      id: comments.length + 1,
-      sender: 'You',
-      message: newComment,
-      time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      date: now.toISOString().split('T')[0],
-    };
+    try {
+      await sendPrivateMessage(
+        id,
+        taskDetails.assigneeID,
+        taskDetails.projectID,
+        taskID,
+        newComment,
+        token
+      );
+      const now = new Date();
+      const newMsg = {
+        id: comments.length + 1,
+        sender: 'You',
+        message: newComment,
+        time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        date: now.toISOString().split('T')[0],
+      };
 
-    setComments(prev => [...prev, newMsg]);
-    setNewComment('');
+      setComments((prev) => [...prev, newMsg]);
+      setNewComment('');
+    } catch (err) {
+      console.error('Failed to send message:', err);
+    }
   };
+
 
   const groupCommentsByDate = () => {
     const grouped = {};
@@ -134,33 +171,44 @@ const ManagerTaskDetail = () => {
       <div className="task-comment-container">
         <h3>Comments</h3>
         <div className="chat-box" ref={chatBoxRef}>
-          {Object.entries(groupedComments)
-            .sort((a, b) => new Date(b[1][0].date) - new Date(a[1][0].date))
-            .map(([date, msgs]) => (
-              <div key={date} className="comment-group">
-                <div className="comment-date-header">{date}</div>
-                {[...msgs]
-                  .sort((a, b) => a.time.localeCompare(b.time))
-                  .map(c => (
-                    <div key={c.id} className={`chat-message-wrapper ${c.sender === 'You' ? 'self' : 'other'}`}>
-                      <div className={`chat-message ${c.sender === 'You' ? 'self' : 'other'}`}>
-                        <span className="sender">{c.sender}</span>
-                        <span className="text">{c.message}</span>
-                        <span className="time">{c.time}</span>
-                      </div>
-                    </div>
-                  ))}
+  {comments.length === 0 ? (
+    <div className="no-messages">No messages yet. Start the conversation!</div>
+  ) : (
+    Object.entries(groupedComments)
+      .sort((a, b) => new Date(b[1][0].date) - new Date(a[1][0].date))
+      .map(([date, msgs]) => (
+        <div key={date} className="comment-group">
+          <div className="comment-date-header">{date}</div>
+          {[...msgs]
+            .sort((a, b) => a.time.localeCompare(b.time))
+            .map(c => (
+              <div key={c.id} className={`chat-message-wrapper ${c.sender === 'You' ? 'self' : 'other'}`}>
+                <div className={`chat-message ${c.sender === 'You' ? 'self' : 'other'}`}>
+                  <span className="text">{c.message}</span>
+                  <span className="time">{c.time}</span>
+                </div>
               </div>
             ))}
         </div>
-
+      ))
+  )}
+</div>
         <div className="chat-input">
           <input
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Type a message..."
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
           />
-          <button onClick={handleSend}>Send</button>
+          <button className="send-btn" onClick={handleSend}>
+            <span className="send-text">Send</span>
+            <IoMdSend className="send-icon" />
+          </button>
         </div>
       </div>
       {editModalOpen && (
