@@ -33,6 +33,11 @@ const ProjectChatPage = () => {
       }
     };
     fetchMessages();
+
+    //Call in every 5sec
+    const interval = setInterval(fetchMessages, 5000);
+    return () => clearInterval(interval);
+    
   }, [ProjectID, token]);
 
   useEffect(() => {
