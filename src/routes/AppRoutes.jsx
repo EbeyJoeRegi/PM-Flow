@@ -52,7 +52,7 @@ const AppRoutes = () => {
   <Route path="projects/:projectName/tasks/:taskID" element={<ManagerTaskDetail />} />
   <Route path="collaboration" element={<CollaborationProjects />} />
   <Route path="projects/:projectName" element={<ManagerProjectDetail />} />
-  <Route path="collaboration/:ProjectName" element={<ProjectChatPage />} />
+  <Route path="collaboration/:ProjectID" element={<ProjectChatPage />} />
 </Route>
 
 <Route

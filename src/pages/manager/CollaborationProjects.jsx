@@ -85,8 +85,8 @@ const CollaborationProjects = () => {
                 key={project.id}
                 className="collab-project-card"
                 onClick={() => { 
-                  localStorage.setItem('selectedProjectId', project.id);
-                  navigate(`${project.name}`)}
+                  localStorage.setItem('selectedProjectId', project.name);
+                  navigate(`${project.id}`)}
                 }
               >
                 <span className="collab-project-name">{project.name}</span>

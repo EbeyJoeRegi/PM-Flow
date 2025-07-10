@@ -121,7 +121,12 @@
   background-color: #0056b3;
 }
 
-
+.collab-chat-placeholder {
+  color: #888;
+  text-align: center;
+  margin-top: 2rem;
+  font-style: italic;
+}
 
 @media (max-width: 768px) {
   .collab-chat-full-page {

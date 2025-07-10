@@ -5,41 +5,64 @@ import { useSelector } from 'react-redux';
 import { getGroupMessages, sendGroupMessage } from '../../api/managerApi';
 
 const ProjectChatPage = () => {
-  const { ProjectName } = useParams();
-  const ProjectID = localStorage.getItem('selectedProjectId');
+  const { ProjectID } = useParams();
+  const ProjectName = localStorage.getItem('selectedProjectId');
   const chatBoxRef = useRef(null);
   const inputRef = useRef(null);
   const { id, name, token } = useSelector((state) => state.user);
 
   const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState('');
+  const [fetchError, setFetchError] = useState(null);
+  const intervalRef = useRef(null);
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const data = await getGroupMessages(ProjectID, token);
-        const formatted = data.map((msg, index) => {
-          const dateObj = new Date(msg.timestamp);
-          return {
-            id: index + 1,
-            sender: msg.senderName,
-            message: msg.content,
-            date: dateObj.toISOString().split('T')[0],
-            time: dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          };
-        });
-        setMessages(formatted);
-      } catch (error) {
-        console.error('Fetch error:', error.message);
+useEffect(() => {
+  const fetchMessages = async () => {
+    try {
+      const data = await getGroupMessages(ProjectID, token);
+      const formatted = data.map((msg, index) => {
+        const dateObj = new Date(msg.timestamp);
+        return {
+          id: index + 1,
+          sender: msg.senderName,
+          message: msg.content,
+          date: dateObj.toISOString().split('T')[0],
+          time: dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+      });
+      setMessages(formatted);
+      setFetchError(null);
+
+      // If previously error occurred, and stopped the interval, restarting it
+      if (!intervalRef.current) {
+        const newInterval = setInterval(fetchMessages, 5000);
+        intervalRef.current = newInterval;
       }
-    };
-    fetchMessages();
+    } catch (error) {
+      console.error('Fetch error:', error.message);
+      if (error.message.includes('Failed to fetch group messages')) {
+        setFetchError("You do not have access to this project.");
+      } else {
+        setFetchError("Something went wrong. Please try again later.");
+      }
 
-    //Call in every 5sec
-    const interval = setInterval(fetchMessages, 5000);
-    return () => clearInterval(interval);
-    
-  }, [ProjectID, token]);
+      // Clear the interval so it doesn't keep retrying
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }
+  };
+
+  fetchMessages();
+  intervalRef.current = setInterval(fetchMessages, 5000);
+
+  return () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+  };
+}, [ProjectID, token]);
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -53,7 +76,7 @@ const ProjectChatPage = () => {
   }, []);
 
   const handleSend = async () => {
-    if (!newMsg.trim()) return;
+    if (!newMsg.trim() || fetchError) return;
 
     const now = new Date();
 
@@ -102,31 +125,40 @@ const ProjectChatPage = () => {
   return (
     <div className="collab-chat-full-page">
       <h2 className="collab-chat-header">Project Chat - {ProjectName}</h2>
+
       <div className="collab-chat-box" ref={chatBoxRef}>
-        {Object.keys(groupedMessages).sort().map(date => (
-          <div key={date}>
-            <div className="collab-chat-date-separator">{getDateLabel(date)}</div>
-            {groupedMessages[date].map(m => (
-              <div key={m.id} className={`collab-chat-message-wrapper ${m.sender === name ? 'collab-self' : 'collab-other'}`}>
-                <div className={`collab-chat-message ${m.sender === name ? 'collab-self' : 'collab-other'}`}>
-                  <span className="collab-sender">{m.sender}</span>
-                  <span className="collab-text">{m.message}</span>
-                  <span className="collab-time">{m.time}</span>
+        {fetchError ? (
+          <div className="error-msg">{fetchError}</div>
+        ) : Object.keys(groupedMessages).length === 0 ? (
+          <div className="collab-chat-placeholder">No messages yet. Start the conversation!</div>
+        ) : (
+          Object.keys(groupedMessages).sort().map(date => (
+            <div key={date}>
+              <div className="collab-chat-date-separator">{getDateLabel(date)}</div>
+              {groupedMessages[date].map(m => (
+                <div key={m.id} className={`collab-chat-message-wrapper ${m.sender === name ? 'collab-self' : 'collab-other'}`}>
+                  <div className={`collab-chat-message ${m.sender === name ? 'collab-self' : 'collab-other'}`}>
+                    <span className="collab-sender">{m.sender}</span>
+                    <span className="collab-text">{m.message}</span>
+                    <span className="collab-time">{m.time}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ))}
+              ))}
+            </div>
+          ))
+        )}
       </div>
+
       <div className="collab-chat-input">
         <input
           ref={inputRef}
           value={newMsg}
           onChange={e => setNewMsg(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
+          placeholder={fetchError ? "Cannot send message" : "Type a message..."}
+          disabled={!!fetchError}
         />
-        <button onClick={handleSend}>Send</button>
+        <button onClick={handleSend} disabled={!!fetchError}>Send</button>
       </div>
     </div>
   );
