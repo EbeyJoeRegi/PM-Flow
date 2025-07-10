@@ -5,7 +5,7 @@ import {
   getGroupChatSummary,
   getTasksByUserId
 } from '../../api/teamMemberApi';
-import '../../styles/projectChatPage.css';
+import '../../styles/memberchatpage.css';
 
 export default function MemberCollaboration() {
   const { state } = useLocation();
@@ -120,24 +120,19 @@ export default function MemberCollaboration() {
 
   return (
     <div className="collab-chat-full-page">
-      <div className="collab-chat-header d-flex justify-content-between align-items-center ps-3 pt-2 pe-3">
-        <div className="d-flex align-items-center gap-3">
-          <button className="btn btn-outline-secondary btn-sm" onClick={() => navigate('/member/collaboration')}>← Back</button>
-          <div>
-            <h4 className="mb-0">{projectName}</h4>
-            <div className="text-muted" style={{ fontSize: '0.9rem' }}>{managerName && `Manager: ${managerName}`}</div>
-          </div>
-        </div>
-        <span className={`badge px-2 py-2 ${statusClass}`} style={{ fontSize: '0.9rem' }}>
+      <div className="collab-chat-header-container">
+        <button className="btn btn-outline-secondary btn-sm back-btn" onClick={() => navigate('/member/collaboration')}>
+          ← Back
+        </button>
+        <div className="collab-chat-header">Project Chat - {projectName}</div>
+        <span className={`badge ${statusClass} chat-status-badge`}>
           {projectStatus.replace('_', ' ')}
         </span>
       </div>
 
       <div className="collab-chat-box" ref={chatBoxRef}>
-        {unassigned ? (
-          <div className="text-center text-danger mt-4">Unassigned task – yet to be assigned</div>
-        ) : messages.length === 0 ? (
-          <div className="text-center text-muted mt-4">No chat yet.</div>
+        {unassigned || messages.length === 0 ? (
+          <div className="collab-chat-placeholder">No task assigned yet.</div>
         ) : (
           Object.keys(groupedMessages).sort().map(date => (
             <div key={date}>
