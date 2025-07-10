@@ -71,7 +71,14 @@ const ManagerTaskDetail = () => {
         console.error('Failed to load messages:', err);
       }
     };
-    fetchMessages();
+
+    if (taskDetails) {
+      fetchMessages(); 
+      const interval = setInterval(() => {
+        fetchMessages();
+      }, 5000);
+      return () => clearInterval(interval);
+    }
   }, [taskDetails, id, taskID, token]);
 
   useEffect(() => {
@@ -314,7 +321,7 @@ const ManagerTaskDetail = () => {
                     await deleteTaskById(taskID, token);
                     toast.success("Task deleted successfully!");
                     setConfirmDeleteOpen(false);
-                    navigate(`/manager/projects/${projectName}`); 
+                    navigate(`/manager/projects/${projectName}`);
                   } catch (err) {
                     setEditError("Failed to delete task.");
                   }
