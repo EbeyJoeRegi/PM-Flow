@@ -5,7 +5,8 @@ import { useSelector } from 'react-redux';
 import { getGroupMessages, sendGroupMessage } from '../../api/managerApi';
 
 const ProjectChatPage = () => {
-  const { ProjectID } = useParams();
+  const { ProjectName } = useParams();
+  const ProjectID = localStorage.getItem('selectedProjectId');
   const chatBoxRef = useRef(null);
   const inputRef = useRef(null);
   const { id, name, token } = useSelector((state) => state.user);
@@ -100,7 +101,7 @@ const ProjectChatPage = () => {
 
   return (
     <div className="collab-chat-full-page">
-      <h2 className="collab-chat-header">Project Chat - ID #{ProjectID}</h2>
+      <h2 className="collab-chat-header">Project Chat - {ProjectName}</h2>
       <div className="collab-chat-box" ref={chatBoxRef}>
         {Object.keys(groupedMessages).sort().map(date => (
           <div key={date}>
