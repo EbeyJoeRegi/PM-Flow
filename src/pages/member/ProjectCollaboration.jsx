@@ -6,6 +6,8 @@ import {
   updateTaskStatus,
   getTaskDetailsById
 } from '../../api/teamMemberApi';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../../styles/ProjectCollab.css';
 
 export default function ProjectCollaboration() {
@@ -48,27 +50,17 @@ export default function ProjectCollaboration() {
 
   useEffect(() => {
     if (taskDetails?.assigneeId && taskDetails?.projectManagerId && senderId) {
-      const id =
-        senderId === taskDetails.assigneeId
-          ? taskDetails.projectManagerId
-          : taskDetails.assigneeId;
+      const id = senderId === taskDetails.assigneeId ? taskDetails.projectManagerId : taskDetails.assigneeId;
       setReceiverId(id);
     }
   }, [taskDetails, senderId]);
 
   useEffect(() => {
     if (!(senderId && receiverId && projectId && taskDetails.id)) return;
-
     const fetchMessages = async () => {
-      const data = await getPrivateChatSummary(
-        senderId,
-        receiverId,
-        projectId,
-        taskDetails.id
-      );
+      const data = await getPrivateChatSummary(senderId, receiverId, projectId, taskDetails.id);
       setMessages(data);
     };
-
     fetchMessages();
     const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
@@ -81,25 +73,13 @@ export default function ProjectCollaboration() {
   }, [messages]);
 
   const handlePost = async () => {
-    if (!newComment.trim() || !(senderId && receiverId && projectId && taskDetails.id)) {
-      console.log('❌ Missing required fields to send message.', {
-        senderId,
-        receiverId,
-        projectId,
-        taskId: taskDetails.id,
-        comment: newComment
-      });
-      return;
-    }
-
+    if (!newComment.trim() || !(senderId && receiverId && projectId && taskDetails.id)) return;
     try {
       await sendPrivateMessage(senderId, receiverId, projectId, taskDetails.id, newComment.trim());
       setNewComment('');
       const data = await getPrivateChatSummary(senderId, receiverId, projectId, taskDetails.id);
       setMessages(data);
-    } catch (error) {
-      console.error('Post failed:', error.response?.data || error.message);
-    }
+    } catch {}
   };
 
   const handleStatusChange = (e) => setEditStatus(e.target.value);
@@ -109,6 +89,7 @@ export default function ProjectCollaboration() {
     await updateTaskStatus(taskDetails.id, editStatus);
     setTaskDetails({ ...taskDetails, status: editStatus });
     setEditing(false);
+    toast.success(`Status updated to ${editStatus}`, { position: 'top-right', autoClose: 2000 });
   };
 
   const groupedMessages = messages.reduce((acc, msg) => {
@@ -135,6 +116,7 @@ export default function ProjectCollaboration() {
 
   return (
     <div className="collab-chat-full-page p-4">
+      <ToastContainer />
       <div className="d-flex justify-content-between align-items-center mb-3">
         <button className="btn btn-outline-secondary btn-sm" onClick={() => navigate('/member/assigned-tasks')}>
           ← Go Back
