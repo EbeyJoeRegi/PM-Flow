@@ -15,30 +15,33 @@ export default function MemberCollaboration() {
 
   const chatBoxRef = useRef(null);
   const inputRef = useRef(null);
+
   const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState('');
   const [projectId, setProjectId] = useState(null);
+  const [managerId, setManagerId] = useState(null);
+  const [managerName, setManagerName] = useState('');
   const [unassigned, setUnassigned] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user'));
   const senderId = user?.id;
 
   useEffect(() => {
-    const resolveProjectId = async () => {
+    const fetchProjectDetails = async () => {
       try {
         const tasks = await getTasksByUserId(senderId);
-        const match = tasks.find(task => task.projectName === projectName);
-        if (match?.projectId) {
-          setProjectId(match.projectId);
+        const task = tasks.find(t => t.projectName === projectName);
+        if (task) {
+          setProjectId(task.projectId);
+          setManagerId(task.managerId);
+          setManagerName(task.managerName || '');
           setUnassigned(false);
         } else {
           setUnassigned(true);
         }
-      } catch (err) {
-        console.error('Error resolving project ID:', err);
-      }
+      } catch (err) {}
     };
-    resolveProjectId();
+    fetchProjectDetails();
   }, [projectName, senderId]);
 
   useEffect(() => {
@@ -47,9 +50,7 @@ export default function MemberCollaboration() {
       try {
         const fetched = await getGroupChatSummary(projectId);
         setMessages(fetched);
-      } catch (err) {
-        console.error('Failed to fetch group messages', err);
-      }
+      } catch (err) {}
     };
     fetchMessages();
     const interval = setInterval(fetchMessages, 5000);
@@ -68,9 +69,7 @@ export default function MemberCollaboration() {
       const updated = await getGroupChatSummary(projectId);
       setMessages(updated);
       setNewMsg('');
-    } catch (err) {
-      console.error('Failed to send message', err);
-    }
+    } catch (err) {}
   };
 
   const handleKeyDown = (e) => {
@@ -113,13 +112,11 @@ export default function MemberCollaboration() {
     <div className="collab-chat-full-page">
       <div className="collab-chat-header d-flex justify-content-between align-items-center ps-3 pt-2 pe-3">
         <div className="d-flex align-items-center gap-3">
-          <button
-            className="btn btn-outline-secondary btn-sm"
-            onClick={() => navigate('/member/collaboration')}
-          >
-            ← Back
-          </button>
-          <h4 className="mb-0">{projectName}</h4>
+          <button className="btn btn-outline-secondary btn-sm" onClick={() => navigate('/member/collaboration')}>← Back</button>
+          <div>
+            <h4 className="mb-0">{projectName}</h4>
+            <div className="text-muted" style={{ fontSize: '0.9rem' }}>{managerName && `Manager: ${managerName}`}</div>
+          </div>
         </div>
         <span className="badge bg-info text-white">{projectStatus.replace('_', ' ')}</span>
       </div>
