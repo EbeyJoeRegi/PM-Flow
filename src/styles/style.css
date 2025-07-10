@@ -46,19 +46,19 @@ body {
 }
 
 .inprogress {
-  background-color: #cce5ff;
-  color: #2163a1;
-}
-
-.onhold {
   background-color: #f6ffcc;
   color: #949d11;
 }
 
-.notstarted {
+.onhold {
   background-color: #dfdfdf;
   color: #626161;
   border: 1px solid #ced4da;
+}
+
+.notstarted {
+  background-color: #cce5ff;
+  color: #2163a1;
 }
 
 /*Edit pencil icon*/
@@ -67,15 +67,15 @@ body {
 }
 
 .icon-inprogress {
-  color: #186dc8;
+  color: #949d11;
 }
 
 .icon-onhold {
-  color: #a0ab08;
+  color: #626161;
 }
 
 .icon-notstarted {
-  color: #737373;
+  color: #2163a1;
 }
 
 /*Pagination*/
@@ -101,7 +101,7 @@ body {
 }
 
 @media (max-width: 368px) {
-    .manager-pagination {
+  .manager-pagination {
     flex-direction: column;
     gap: 10px;
     align-items: center;
@@ -109,7 +109,7 @@ body {
 
   .manager-pagination button {
     width: 100%;
-  }  
+  }
 }
 
 /*No Access - Error Message*/
