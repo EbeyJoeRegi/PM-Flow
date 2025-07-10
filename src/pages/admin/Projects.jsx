@@ -158,9 +158,9 @@ export default function Projects() {
 
   return (
     <div className="p-4 project-view">
-      <div className="d-flex justify-content-between mb-3">
-        <h4>Projects</h4>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ New Project</button>
+      <div className="d-flex justify-content-between mb-3" >
+        <h3>Projects</h3>
+        <button className="btn btn-primary" style={{ minWidth: '150px', fontSize: '18px' }} onClick={() => setShowModal(true)}>+ New Project</button>
       </div>
 
       <input
@@ -171,7 +171,7 @@ export default function Projects() {
       />
 
       {loading ? <div>Loading...</div> : (
-        <div className="project-table-scroll">
+        <div className="project-table-scroll" >
           <table className="table table-bordered bg-white project-table">
             <thead>
               <tr>
@@ -253,14 +253,15 @@ export default function Projects() {
                       <td>{proj.name}</td>
                       <td>{proj.managerName || managerOptions.find(m => String(m.id) === String(proj.managerId))?.name || 'N/A'}</td>
                       <td>
-                        <span className={`px-1 py-1 rounded text-uppercase fw-semibold ${
-                          proj.status === 'IN_PROGRESS' ? 'status-in-progress' :
-                          proj.status === 'COMPLETED' ? 'status-completed' :
-                          proj.status === 'NOT_STARTED' ? 'status-not-started' :
-                          proj.status === 'ON_HOLD' ? 'status-on-hold' : ''
-                        }`}>
-                          {proj.status?.replace('_', ' ') || 'N/A'}
-                        </span>
+<span className={`px-1 py-1 rounded text-uppercase fw-semibold status-badge ${
+  proj.status === 'IN_PROGRESS' ? 'status-in-progress' :
+  proj.status === 'COMPLETED' ? 'status-completed' :
+  proj.status === 'NOT_STARTED' ? 'status-not-started' :
+  proj.status === 'ON_HOLD' ? 'status-on-hold' : ''
+}`}>
+  {proj.status?.replace('_', ' ') || 'N/A'}
+</span>
+
                       </td>
                       <td>{formatDateDDMMYYYY(proj.endDate)}</td>
                       <td>
