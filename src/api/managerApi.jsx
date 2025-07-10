@@ -201,3 +201,11 @@ export const sendGroupMessage = async (senderId, projectId, content, token) => {
     throw error.response?.data || { message: 'Failed to send message' };
   }
 };
+
+export const deleteTaskById = async (taskId, token) => {
+  return await axios.delete(`${BASE_URL}/api/tasks/${taskId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

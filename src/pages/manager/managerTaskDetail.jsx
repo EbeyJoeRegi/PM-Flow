@@ -1,23 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { IoMdSend } from "react-icons/io";
-import { getTaskById, updateTaskById, fetchPrivateMessages, sendPrivateMessage } from '../../api/managerApi';
+import { FaRegTrashAlt } from "react-icons/fa";
+import { toast } from 'react-toastify';
+import { getTaskById, updateTaskById, fetchPrivateMessages, sendPrivateMessage, deleteTaskById } from '../../api/managerApi';
 import { getTaskPriorityClass, formatDate, formatStatus } from '../../utils/Helper';
 import '../../styles/managerTaskDetail.css';
 import { MdModeEditOutline } from "react-icons/md";
 
 const ManagerTaskDetail = () => {
-  const { taskID } = useParams();
+  const { taskID, projectName } = useParams();
+  const navigate = useNavigate();
   const { id, token } = useSelector((state) => state.user);
+
   const [taskDetails, setTaskDetails] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
-  const chatBoxRef = useRef(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editedTask, setEditedTask] = useState({});
   const [editError, setEditError] = useState('');
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
+  const chatBoxRef = useRef(null);
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -37,6 +42,10 @@ const ManagerTaskDetail = () => {
         console.error('Error fetching task:', error);
       }
     };
+    fetchTask();
+  }, [taskID, token]);
+
+  useEffect(() => {
     const fetchMessages = async () => {
       if (!taskDetails) return;
 
@@ -62,10 +71,8 @@ const ManagerTaskDetail = () => {
         console.error('Failed to load messages:', err);
       }
     };
-
     fetchMessages();
-    fetchTask();
-  }, [id, taskDetails, taskID, token]);
+  }, [taskDetails, id, taskID, token]);
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -101,7 +108,6 @@ const ManagerTaskDetail = () => {
     }
   };
 
-
   const groupCommentsByDate = () => {
     const grouped = {};
     const today = new Date().toISOString().split('T')[0];
@@ -136,7 +142,9 @@ const ManagerTaskDetail = () => {
         <div className="task-detail-header">
           <h2>{taskDetails.name}</h2>
           <div className="status-edit-display">
-            <span className={`status-badges ${taskDetails.status.toLowerCase().replace(/\s/g, '')}`}>{taskDetails.status}</span>
+            <span className={`status-badges ${taskDetails.status.toLowerCase().replace(/\s/g, '')}`}>
+              {taskDetails.status}
+            </span>
             <MdModeEditOutline
               className={`edit-icon icon-${taskDetails.status.toLowerCase().replace(/\s/g, '')}`}
               onClick={() => {
@@ -150,6 +158,11 @@ const ManagerTaskDetail = () => {
                 setEditError('');
               }}
             />
+            <FaRegTrashAlt
+              className="delete-icon"
+              onClick={() => setConfirmDeleteOpen(true)}
+              title="Delete Task"
+            />
           </div>
         </div>
 
@@ -158,7 +171,7 @@ const ManagerTaskDetail = () => {
         <div className="task-info-section">
           <div className="task-info-column">
             <p><strong>Assignee:</strong> {taskDetails.assignee}</p>
-            <p><strong>Priority:</strong> <span className={`${getTaskPriorityClass(taskDetails.priority)}`}>
+            <p><strong>Priority:</strong> <span className={getTaskPriorityClass(taskDetails.priority)}>
               {taskDetails.priority}
             </span></p>
           </div>
@@ -171,28 +184,28 @@ const ManagerTaskDetail = () => {
       <div className="task-comment-container">
         <h3>Comments</h3>
         <div className="chat-box" ref={chatBoxRef}>
-  {comments.length === 0 ? (
-    <div className="no-messages">No messages yet. Start the conversation!</div>
-  ) : (
-    Object.entries(groupedComments)
-      .sort((a, b) => new Date(b[1][0].date) - new Date(a[1][0].date))
-      .map(([date, msgs]) => (
-        <div key={date} className="comment-group">
-          <div className="comment-date-header">{date}</div>
-          {[...msgs]
-            .sort((a, b) => a.time.localeCompare(b.time))
-            .map(c => (
-              <div key={c.id} className={`chat-message-wrapper ${c.sender === 'You' ? 'self' : 'other'}`}>
-                <div className={`chat-message ${c.sender === 'You' ? 'self' : 'other'}`}>
-                  <span className="text">{c.message}</span>
-                  <span className="time">{c.time}</span>
+          {comments.length === 0 ? (
+            <div className="no-messages">No messages yet. Start the conversation!</div>
+          ) : (
+            Object.entries(groupedComments)
+              .sort((a, b) => new Date(b[1][0].date) - new Date(a[1][0].date))
+              .map(([date, msgs]) => (
+                <div key={date} className="comment-group">
+                  <div className="comment-date-header">{date}</div>
+                  {[...msgs]
+                    .sort((a, b) => a.time.localeCompare(b.time))
+                    .map(c => (
+                      <div key={c.id} className={`chat-message-wrapper ${c.sender === 'You' ? 'self' : 'other'}`}>
+                        <div className={`chat-message ${c.sender === 'You' ? 'self' : 'other'}`}>
+                          <span className="text">{c.message}</span>
+                          <span className="time">{c.time}</span>
+                        </div>
+                      </div>
+                    ))}
                 </div>
-              </div>
-            ))}
+              ))
+          )}
         </div>
-      ))
-  )}
-</div>
         <div className="chat-input">
           <input
             value={newComment}
@@ -211,6 +224,8 @@ const ManagerTaskDetail = () => {
           </button>
         </div>
       </div>
+
+      {/* Edit Modal */}
       {editModalOpen && (
         <div className="edit-modal-overlay" onClick={() => setEditModalOpen(false)}>
           <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
@@ -270,8 +285,9 @@ const ManagerTaskDetail = () => {
                       priority: editedTask.priority,
                     });
                     setEditModalOpen(false);
+                    toast.success("Task updated successfully!");
                   } catch (err) {
-                    setEditError(err);
+                    setEditError('Failed to update task.');
                   }
                 }}
               >
@@ -283,6 +299,34 @@ const ManagerTaskDetail = () => {
         </div>
       )}
 
+      {/* Delete Confirmation Modal */}
+      {confirmDeleteOpen && (
+        <div className="edit-modal-overlay" onClick={() => setConfirmDeleteOpen(false)}>
+          <div className="edit-modal" onClick={(e) => e.stopPropagation()}>
+            <h4>Confirm Deletion</h4>
+            <p>Are you sure you want to delete this task? This action cannot be undone.</p>
+            {editError && <div className="manager-project-error">{editError}</div>}
+            <div className="edit-modal-actions">
+              <button
+                className="delete-btn"
+                onClick={async () => {
+                  try {
+                    await deleteTaskById(taskID, token);
+                    toast.success("Task deleted successfully!");
+                    setConfirmDeleteOpen(false);
+                    navigate(`/manager/projects/${projectName}`); 
+                  } catch (err) {
+                    setEditError("Failed to delete task.");
+                  }
+                }}
+              >
+                Delete
+              </button>
+              <button className="cancel-btn" onClick={() => setConfirmDeleteOpen(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

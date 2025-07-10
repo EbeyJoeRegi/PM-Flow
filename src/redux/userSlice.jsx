@@ -5,23 +5,24 @@ const savedUser = localStorage.getItem("user");
 const initialState = savedUser
   ? JSON.parse(savedUser)
   : {
-      id: null,
-      name: "",
-      role: "",
-      token: ""
-    };
+    id: null,
+    name: "",
+    role: "",
+    token: ""
+  };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
     setUser: (state, action) => {
-    const newUser = { ...action.payload };
-      localStorage.setItem("user", JSON.stringify(newUser)); 
+      const newUser = { ...action.payload };
+      localStorage.setItem("user", JSON.stringify(newUser));
       return newUser;
     },
     logoutUser: () => {
       localStorage.removeItem("user");
+      localStorage.removeItem("selectedProjectId");
       return { id: null, name: "", role: "", token: "" };
     },
   },
