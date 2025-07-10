@@ -160,7 +160,12 @@ export default function Projects() {
     <div className="p-4 project-view">
       <div className="d-flex justify-content-between mb-3" >
         <h3>Projects</h3>
-        <button className="btn btn-primary" style={{ minWidth: '150px', fontSize: '18px' }} onClick={() => setShowModal(true)}>+ New Project</button>
+        <button
+  className="btn btn-primary new-project-btn"
+  onClick={() => setShowModal(true)}
+>
+  + New Project
+</button>
       </div>
 
       <input
@@ -253,7 +258,7 @@ export default function Projects() {
                       <td>{proj.name}</td>
                       <td>{proj.managerName || managerOptions.find(m => String(m.id) === String(proj.managerId))?.name || 'N/A'}</td>
                       <td>
-<span className={`px-1 py-1 rounded text-uppercase fw-semibold status-badge ${
+<span className={`stausadmin rounded text-uppercase  status-badge ${
   proj.status === 'IN_PROGRESS' ? 'status-in-progress' :
   proj.status === 'COMPLETED' ? 'status-completed' :
   proj.status === 'NOT_STARTED' ? 'status-not-started' :

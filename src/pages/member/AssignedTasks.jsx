@@ -86,7 +86,7 @@ export default function AssignedTasks() {
   return (
     <div className="assigned-tasks-container">
       <header className="assigned-tasks-header d-flex justify-content-between align-items-center flex-wrap px-3 py-3 border-bottom">
-        <h2 className="title m-0">MY TASKS</h2>
+        <h2 className="title m-0 fw-bold">MY TASKS</h2>
       </header>
       <main className="assigned-tasks-main p-3">
         <div className="tasks-card card p-3">

@@ -77,7 +77,7 @@ export default function Users() {
       </div>
 
       <div className="table-container" style={{fontSize:'18px'}}>
-        <table className="table table-bordered table-hover bg-white">
+        <table className="table table-bordered table-hover bg-white user-table">
           <thead>
             <tr>
               <th>First Name</th>
