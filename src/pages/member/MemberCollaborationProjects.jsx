@@ -44,7 +44,7 @@ export default function MemberCollaborationProjects() {
         <input
           type="text"
           className="form-control"
-          placeholder="Search project by name..."
+          placeholder="Search projects"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />

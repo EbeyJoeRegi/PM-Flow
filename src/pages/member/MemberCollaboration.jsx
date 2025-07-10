@@ -163,7 +163,7 @@ export default function MemberCollaboration() {
             value={newMsg}
             onChange={e => setNewMsg(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
+            placeholder="Type a message"
           />
           <button onClick={handleSend} disabled={!newMsg.trim()}>Send</button>
         </div>

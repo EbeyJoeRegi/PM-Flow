@@ -92,6 +92,11 @@ export default function ProjectCollaboration() {
     toast.success(`Status updated to ${editStatus}`, { position: 'top-right', autoClose: 2000 });
   };
 
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+  };
+
   const groupedMessages = messages.reduce((acc, msg) => {
     const dateKey = msg.timestamp?.split('T')[0] || 'Unknown';
     if (!acc[dateKey]) acc[dateKey] = [];
@@ -128,16 +133,16 @@ export default function ProjectCollaboration() {
         <div>
           <h4 className="mb-1">Task: {taskDetails.name}</h4>
           <p className="mb-1 text-muted">Manager: {taskDetails.projectManagerName || 'N/A'}</p>
-          <p className="mb-1 text-muted">Due Date: {taskDetails.dueDate !== 'N/A' ? new Date(taskDetails.dueDate).toLocaleDateString() : 'N/A'}</p>
+          <p className="mb-1 text-muted">Due Date: {taskDetails.dueDate !== 'N/A' ? formatDate(taskDetails.dueDate) : 'N/A'}</p>
           <p className="mb-1 text-muted"><strong>Description:</strong> {taskDetails.description}</p>
         </div>
 
         <div className="collab-info-panel mt-3 mt-md-0">
           <div className="d-flex flex-column flex-sm-column flex-md-row gap-3 align-items-start align-items-md-center">
             <div className="status-group">
-              <label className="fw-semibold mb-0">Status:</label>
+              <label className="fw-semibold mb-0" style={{ marginRight: '3px' }}>Status:</label>
               <span className={`badge bg-${statusColors[taskDetails.status] || 'info'} px-3 py-2`}>
-                {taskDetails.status}
+                {taskDetails.status.replace('_', ' ')}
               </span>
               {!editing && <button className="btn btn-sm" onClick={() => setEditing(true)}>✏️</button>}
               {editing && (
@@ -148,10 +153,11 @@ export default function ProjectCollaboration() {
                     onChange={handleStatusChange}
                     style={{ width: '130px', fontSize: '0.85rem' }}
                   >
-                    <option value="NOT_STARTED">NOT_STARTED</option>
-                    <option value="IN_PROGRESS">IN_PROGRESS</option>
-                    <option value="COMPLETED">COMPLETED</option>
-                    <option value="ON_HOLD">ON_HOLD</option>
+                    {['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD'].map((status) => (
+                      <option key={status} value={status}>
+                        {status.replace('_', ' ')}
+                      </option>
+                    ))}
                   </select>
                   <button
                     className="btn btn-sm btn-primary mt-1"
@@ -165,7 +171,7 @@ export default function ProjectCollaboration() {
             </div>
 
             <div className="priority-group">
-              <label className="fw-semibold mb-0">Priority:</label>
+              <label className="fw-semibold mb-0" style={{ marginRight: '3px' }}>Priority:</label>
               <span className={`badge bg-${priorityColors[taskDetails.priority] || 'secondary'} px-3 py-2`}>
                 {taskDetails.priority || 'NA'}
               </span>
@@ -181,7 +187,7 @@ export default function ProjectCollaboration() {
           ) : (
             sortedDates.map((date) => (
               <React.Fragment key={date}>
-                <div className="collab-chat-date-separator">{new Date(date).toDateString()}</div>
+                <div className="collab-chat-date-separator">{formatDate(date)}</div>
                 {groupedMessages[date].map((msg, index) => (
                   <div
                     key={index}
