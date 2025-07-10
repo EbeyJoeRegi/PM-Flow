@@ -26,6 +26,13 @@ export default function MemberCollaboration() {
   const user = JSON.parse(localStorage.getItem('user'));
   const senderId = user?.id;
 
+  const statusColors = {
+    'NOT_STARTED': 'bg-primary text-white',
+    'IN_PROGRESS': 'bg-warning text-white',
+    'COMPLETED': 'bg-success text-white',
+    'ON_HOLD': 'bg-secondary text-white'
+  };
+
   useEffect(() => {
     const fetchProjectDetails = async () => {
       try {
@@ -66,9 +73,11 @@ export default function MemberCollaboration() {
     if (!newMsg.trim() || !projectId) return;
     try {
       await sendGroupMessage(senderId, projectId, newMsg);
-      const updated = await getGroupChatSummary(projectId);
-      setMessages(updated);
       setNewMsg('');
+      setTimeout(async () => {
+        const updated = await getGroupChatSummary(projectId);
+        setMessages(updated);
+      }, 1000);
     } catch (err) {}
   };
 
@@ -107,6 +116,7 @@ export default function MemberCollaboration() {
   };
 
   const groupedMessages = groupMessagesByDate(messages);
+  const statusClass = statusColors[projectStatus] || 'bg-dark text-white';
 
   return (
     <div className="collab-chat-full-page">
@@ -118,7 +128,9 @@ export default function MemberCollaboration() {
             <div className="text-muted" style={{ fontSize: '0.9rem' }}>{managerName && `Manager: ${managerName}`}</div>
           </div>
         </div>
-        <span className="badge bg-info text-white">{projectStatus.replace('_', ' ')}</span>
+        <span className={`badge px-2 py-2 ${statusClass}`} style={{ fontSize: '0.9rem' }}>
+          {projectStatus.replace('_', ' ')}
+        </span>
       </div>
 
       <div className="collab-chat-box" ref={chatBoxRef}>

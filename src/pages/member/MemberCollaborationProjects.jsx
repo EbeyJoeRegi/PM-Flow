@@ -6,6 +6,7 @@ import '../../styles/collaborationProjects.css';
 export default function MemberCollaborationProjects() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -31,11 +32,26 @@ export default function MemberCollaborationProjects() {
     return statusColors[status] || 'bg-light text-dark';
   };
 
+  const filteredProjects = projects.filter(p =>
+    p.projectName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="collab-projects-page">
       <h2 className="collab-header">Collaboration</h2>
+
+      <div className="mb-3 px-2">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search project by name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       <div className="collab-project-list">
-        {projects.map((project, index) => (
+        {filteredProjects.map((project, index) => (
           <div
             key={project.projectId || `project-${index}`}
             className="collab-project-card"
