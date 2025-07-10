@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import '../../styles/Admin.css'
 import { FaPen } from 'react-icons/fa'
 import { getProjectById, updateProjectById } from '../../api/adminApi'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export default function ProjectDetails() {
   const { state } = useLocation()
@@ -17,19 +19,17 @@ export default function ProjectDetails() {
     const fetchProject = async () => {
       try {
         const data = await getProjectById(id)
-        console.log('Fetched project data:', data)
-        console.log('Team Members:', data.teamMembers)
         setProject(data)
         setDescription(data.description || '')
       } catch {
         setProject(undefined)
+        toast.error('Failed to fetch project')
       }
     }
 
     if (!state) {
       fetchProject()
     } else {
-      console.log('From state:', state.teamMembers)
       setProject(state)
       setDescription(state.description || '')
     }
@@ -40,8 +40,10 @@ export default function ProjectDetails() {
       await updateProjectById(id, { description: tempDescription })
       setDescription(tempDescription)
       setEditDesc(false)
+      toast.success('Description updated successfully')
     } catch {
       setEditDesc(false)
+      toast.error('Failed to update description')
     }
   }
 
@@ -59,12 +61,18 @@ export default function ProjectDetails() {
     return (
       <div className="p-4 text-center text-danger">
         Project not found. <button className="btn btn-link" onClick={() => navigate(-1)}>Go back</button>
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       </div>
     )
   }
 
   if (!project) {
-    return <div className="p-4">Loading project details...</div>
+    return (
+      <div className="p-4">
+        Loading project details...
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+      </div>
+    )
   }
 
   const {
@@ -88,7 +96,7 @@ export default function ProjectDetails() {
 
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 className="text-primary">{name}</h2>
-        <span className={`badge progress-${status.toLowerCase().replace(/_/g, '-')}`}>
+        <span className={`badge bg-primary text-white`}>
           {status.replace(/_/g, ' ')}
         </span>
       </div>
@@ -108,9 +116,9 @@ export default function ProjectDetails() {
         )}
       </div>
 
-      <div className="mb-2 d-flex gap-3">
-        <div><strong>Start Date:</strong> <span className="badge bg-light text-dark">{formatDashDate(startDate)}</span></div>
-        <div><strong>End Date:</strong> <span className="badge bg-light text-dark">{formatDashDate(endDate)}</span></div>
+      <div className="mb-2 d-flex gap-3 flex-wrap">
+        <div><strong>Start Date:</strong> <span className="badge bg-secondary text-white">{formatDashDate(startDate)}</span></div>
+        <div><strong>End Date:</strong> <span className="badge bg-secondary text-white">{formatDashDate(endDate)}</span></div>
       </div>
 
       <hr />
@@ -141,6 +149,8 @@ export default function ProjectDetails() {
       ) : (
         <p>{description || 'No description provided.'}</p>
       )}
+
+      <ToastContainer position="top-right" autoClose={1000} hideProgressBar />
     </div>
   )
 }

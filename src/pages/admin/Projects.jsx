@@ -11,6 +11,8 @@ import {
   deleteProjectById
 } from '../../api/adminApi';
 import { FaPen, FaTrash } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
@@ -88,9 +90,11 @@ export default function Projects() {
       setTeamSize(0);
       setTeamMembers([]);
       setShowModal(false);
+
+      toast.success('Project added successfully');
     } catch (error) {
       console.error("Failed to add project:", error);
-      alert('Failed to add project. Check console for details.');
+      toast.error('Failed to add project. Check console for details.');
     }
   };
 
@@ -133,7 +137,7 @@ export default function Projects() {
       setEditProjectId(null);
     } catch (error) {
       console.error('Error updating project:', error);
-      alert('Failed to update project.');
+      toast.error('Failed to update project.');
     }
   };
 
@@ -143,9 +147,10 @@ export default function Projects() {
     try {
       await deleteProjectById(projectId);
       setProjects(prev => prev.filter(p => p.id !== projectId));
+      toast.success('Project deleted successfully');
     } catch (error) {
       console.error('Error deleting project:', error);
-      alert('Failed to delete project.');
+      toast.error('Failed to delete project.');
     }
   };
 
@@ -153,9 +158,14 @@ export default function Projects() {
 
   return (
     <div className="p-4 project-view">
-      <div className="d-flex justify-content-between mb-3">
-        <h4>Projects</h4>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ New Project</button>
+      <div className="d-flex justify-content-between mb-3" >
+        <h3>Projects</h3>
+        <button
+  className="btn btn-primary new-project-btn"
+  onClick={() => setShowModal(true)}
+>
+  + New Project
+</button>
       </div>
 
       <input
@@ -166,7 +176,7 @@ export default function Projects() {
       />
 
       {loading ? <div>Loading...</div> : (
-        <div className="project-table-scroll">
+        <div className="project-table-scroll" >
           <table className="table table-bordered bg-white project-table">
             <thead>
               <tr>
@@ -248,14 +258,15 @@ export default function Projects() {
                       <td>{proj.name}</td>
                       <td>{proj.managerName || managerOptions.find(m => String(m.id) === String(proj.managerId))?.name || 'N/A'}</td>
                       <td>
-                        <span className={`px-1 py-1 rounded text-uppercase fw-semibold ${
-                          proj.status === 'IN_PROGRESS' ? 'status-in-progress' :
-                          proj.status === 'COMPLETED' ? 'status-completed' :
-                          proj.status === 'NOT_STARTED' ? 'status-not-started' :
-                          proj.status === 'ON_HOLD' ? 'status-on-hold' : ''
-                        }`}>
-                          {proj.status?.replace('_', ' ') || 'N/A'}
-                        </span>
+<span className={`stausadmin rounded text-uppercase  status-badge ${
+  proj.status === 'IN_PROGRESS' ? 'status-in-progress' :
+  proj.status === 'COMPLETED' ? 'status-completed' :
+  proj.status === 'NOT_STARTED' ? 'status-not-started' :
+  proj.status === 'ON_HOLD' ? 'status-on-hold' : ''
+}`}>
+  {proj.status?.replace('_', ' ') || 'N/A'}
+</span>
+
                       </td>
                       <td>{formatDateDDMMYYYY(proj.endDate)}</td>
                       <td>
@@ -310,21 +321,20 @@ export default function Projects() {
               ))}
             </select>
 
-        <input
-  type="number"
-  className="form-control mb-2"
-  placeholder="Team Size"
-  min={0}
-  max={memberOptions.length}
-  value={teamSize}
-  onChange={e => {
-    let val = parseInt(e.target.value) || 0;
-    if (val > memberOptions.length) val = memberOptions.length;
-    setTeamSize(val);
-    setTeamMembers(Array(val).fill(''));
-  }}
-/>
-
+            <input
+              type="number"
+              className="form-control mb-2"
+              placeholder="Team Size"
+              min={0}
+              max={memberOptions.length}
+              value={teamSize}
+              onChange={e => {
+                let val = parseInt(e.target.value) || 0;
+                if (val > memberOptions.length) val = memberOptions.length;
+                setTeamSize(val);
+                setTeamMembers(Array(val).fill(''));
+              }}
+            />
 
             {teamMembers.map((val, i) => {
               const alreadySelected = teamMembers.filter((_, idx) => idx !== i);
@@ -361,6 +371,8 @@ export default function Projects() {
           </div>
         </div>
       )}
+
+      <ToastContainer position="top-right" autoClose={1000} hideProgressBar />
     </div>
   );
 }

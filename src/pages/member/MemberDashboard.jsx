@@ -31,7 +31,7 @@ export default function MemberDashboard() {
             const timeDiff = dueDateOnly - today;
             const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
             return {
-              date: due.toLocaleDateString('en-GB'),
+              date: due.toLocaleDateString('en-GB').replaceAll('/', '-'),
               task: task.name,
               isUrgent: daysLeft <= 3 && daysLeft >= 0,
               daysLeft
@@ -103,7 +103,7 @@ export default function MemberDashboard() {
                           {task.status.replaceAll('_', ' ')}
                         </span>
                       </td>
-                      <td>{new Date(task.dueDate).toLocaleDateString('en-GB')}</td>
+                      <td>{new Date(task.dueDate).toLocaleDateString('en-GB').replaceAll('/', '-')}</td>
                     </tr>
                   ))}
                 </tbody>

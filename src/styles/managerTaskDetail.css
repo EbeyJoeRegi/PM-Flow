@@ -67,7 +67,7 @@
   display: flex;
   flex-direction: column-reverse;
   gap: 12px;
-  box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Date Header */
@@ -97,7 +97,7 @@
 .chat-message {
   display: flex;
   flex-direction: column;
-  min-width: 30%;
+  min-width: 100px;
   max-width: 75%;
   margin: 6px 0;
   padding: 10px 14px;
@@ -136,17 +136,22 @@
 .chat-input {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
 .chat-input input {
   flex: 1;
+  width: 100%;
   padding: 10px 14px;
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 14px;
 }
 
-.chat-input button {
+.send-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 10px 16px;
   background-color: #007bff;
   border: none;
@@ -156,8 +161,29 @@
   cursor: pointer;
 }
 
-.chat-input button:hover {
+.send-btn:hover {
   background-color: #0056b3;
+}
+
+.send-icon {
+  display: none;
+}
+
+.send-text {
+  display: inline;
+}
+
+.no-messages {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.delete-icon {
+  font-size: 20px;
+  color: #e74c3c;
+  cursor: pointer;
 }
 
 /* Responsive Layout */
@@ -176,5 +202,20 @@
   .chat-box {
     max-height: 350px;
   }
+}
 
+@media (max-width: 468px) {
+
+  .send-btn {
+    justify-content: center;
+  }
+
+  .send-icon {
+    display: inline;
+    font-size: 1.3rem;
+  }
+
+  .send-text {
+    display: none;
+  }
 }

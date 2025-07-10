@@ -48,7 +48,7 @@ export default function AssignedTasks() {
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
-    return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+    return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
   };
 
   const getPriorityBadge = (priority) => {
@@ -86,14 +86,14 @@ export default function AssignedTasks() {
   return (
     <div className="assigned-tasks-container">
       <header className="assigned-tasks-header d-flex justify-content-between align-items-center flex-wrap px-3 py-3 border-bottom">
-        <h2 className="title m-0">MY TASKS</h2>
+        <h2 className="title m-0 fw-bold">MY TASKS</h2>
       </header>
       <main className="assigned-tasks-main p-3">
         <div className="tasks-card card p-3">
           <div className="tasks-card-header d-flex justify-content-between align-items-center mb-3">
             <input
               type="text"
-              placeholder="Search tasks..."
+              placeholder="Search tasks"
               className="form-control w-100"
               style={{ maxWidth: '550px', fontSize: '1rem' }}
               value={search}

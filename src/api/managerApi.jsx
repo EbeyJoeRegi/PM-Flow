@@ -137,3 +137,75 @@ export const updateProjectStatusAndEndDate = async (managerId, projectId, status
     throw error.response?.data || { message: 'Failed to update project info' };
   }
 };
+
+export const fetchPrivateMessages = async (senderId, receiverId, projectId, taskId, token) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/api/chat/private/sender/${senderId}/receiver/${receiverId}/project/${projectId}/task/${taskId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error('Error fetching private messages:', error);
+    throw error;
+  }
+};
+
+export const sendPrivateMessage = async (senderId, receiverId, projectId, taskId, content, token) => {
+  try {
+    await axios.post(
+      `${BASE_URL}/api/chat/private/sender/${senderId}/receiver/${receiverId}/project/${projectId}/task/${taskId}`,
+      { content },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error('Error sending message:', error);
+    throw error;
+  }
+};
+
+export const getGroupMessages = async (projectId, token) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/chat/group/project/${projectId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Failed to fetch group messages' };
+  }
+};
+
+export const sendGroupMessage = async (senderId, projectId, content, token) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/api/chat/group/sender/${senderId}/project/${projectId}`,
+      { content },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Failed to send message' };
+  }
+};
+
+export const deleteTaskById = async (taskId, token) => {
+  return await axios.delete(`${BASE_URL}/api/tasks/${taskId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
