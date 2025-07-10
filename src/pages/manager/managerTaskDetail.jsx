@@ -134,7 +134,7 @@ const ManagerTaskDetail = () => {
 
   const groupedComments = groupCommentsByDate();
 
-  if (!taskDetails) return <div className="task-detail-page">Loading...</div>;
+  if (!taskDetails) return <div className="error-msg">You do not have access to this task.</div>;
 
   return (
     <div className="task-detail-page">
