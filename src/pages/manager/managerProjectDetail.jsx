@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import {
   formatDate,
@@ -155,7 +156,7 @@ useEffect(() => {
           assignee: `${createdTask.assigneeFirstName} ${createdTask.assigneeLastName}`,
         },
       ]);
-
+      toast.success("Task created successfully!");
       setShowModal(false);
       setNewTask({ name: '', dueDate: '', priority: 'MEDIUM', assignee: '' });
       setTaskError('');
@@ -291,6 +292,7 @@ useEffect(() => {
         )}
       </div>
 
+      {/*Create new task*/}
       {showModal && (
         <div
           className="manager-project-modal-overlay"
@@ -387,6 +389,7 @@ useEffect(() => {
                     }
 
                     await updateProjectStatusAndEndDate(id, projectDetail.id, editedStatus, editedEndDate, token);
+                    toast.success("Project Info updated successfully!");
                     setStatus(editedStatus);
                     setEndDate(editedEndDate);
                     setProjectDetail((prev) => ({ ...prev, status: editedStatus, endDate: editedEndDate }));
