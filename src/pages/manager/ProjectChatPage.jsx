@@ -33,7 +33,7 @@ useEffect(() => {
       setMessages(formatted);
       setFetchError(null);
 
-      // If previously error occurred, and stopped the interval, restarting it
+      
       if (!intervalRef.current) {
         const newInterval = setInterval(fetchMessages, 5000);
         intervalRef.current = newInterval;
@@ -46,7 +46,7 @@ useEffect(() => {
         setFetchError("Something went wrong. Please try again later.");
       }
 
-      // Clear the interval so it doesn't keep retrying
+      
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
