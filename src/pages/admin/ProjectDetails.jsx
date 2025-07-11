@@ -122,8 +122,6 @@ export default function ProjectDetails() {
     <div><strong>End Date:</strong> <span className="badge bg-secondary text-white">{formatDashDate(endDate)}</span></div>
   </div>
 </div>
-
-
 </div>
 
 
