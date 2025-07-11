@@ -257,17 +257,17 @@ export default function Projects() {
                     <>
                       <td>{proj.name}</td>
                       <td>{proj.managerName || managerOptions.find(m => String(m.id) === String(proj.managerId))?.name || 'N/A'}</td>
-                      <td>
-<span className={`stausadmin rounded text-uppercase  status-badge ${
-  proj.status === 'IN_PROGRESS' ? 'status-in-progress' :
-  proj.status === 'COMPLETED' ? 'status-completed' :
-  proj.status === 'NOT_STARTED' ? 'status-not-started' :
-  proj.status === 'ON_HOLD' ? 'status-on-hold' : ''
-}`}>
-  {proj.status?.replace('_', ' ') || 'N/A'}
-</span>
+                      <td className="status-cell">
+  <span className={`stausadmin rounded text-uppercase status-badge ${
+    proj.status === 'IN_PROGRESS' ? 'status-in-progress' :
+    proj.status === 'COMPLETED' ? 'status-completed' :
+    proj.status === 'NOT_STARTED' ? 'status-not-started' :
+    proj.status === 'ON_HOLD' ? 'status-on-hold' : ''
+  }`}>
+    {proj.status?.replace('_', ' ') || 'N/A'}
+  </span>
+</td>
 
-                      </td>
                       <td>{formatDateDDMMYYYY(proj.endDate)}</td>
                       <td>
                         <button
