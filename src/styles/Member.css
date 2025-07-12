@@ -7,19 +7,32 @@
 
 html, body {
   height: 100%;
-  overflow-x: hidden;
+  overflow-x: auto;
   background: linear-gradient(to right, #c2e9fb, #a1c4fd);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* APP-WIDE LAYOUT */
 #root, .App {
   width: 100%;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* CONTAINER FOR DASHBOARD PAGES */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none; 
+}
+.member-dashboard-container {
+  max-height: 100vh;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.member-dashboard-container::-webkit-scrollbar {
+  display: none;
+}
+
+
 .member-dashboard-container {
   width: 100%;
   min-height: 100vh;

@@ -96,12 +96,14 @@ export default function Dashboard() {
     <div className="dashboard-page">
       <div className="overview-cards">
         <div className="card">
-          <h5>Total Users</h5>
-          <p>{users.length}</p>
+          <h4>Total Users</h4>
+          <p className="highlighter">{users.length}</p>
+
         </div>
         <div className="card">
-          <h5>Active Projects</h5>
-          <p>{projects.length}</p>
+          <h4>Active Projects</h4>
+          <p className="highlighter">{projects.length}</p>
+
         </div>
       </div>
 

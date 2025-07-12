@@ -16,6 +16,21 @@ thead th{
   min-width: 150px;
   font-size: 18px;
 }
+.project-table td.status-cell,
+.project-table th.status-cell {
+  width: 180px;
+  text-align: center;
+}
+.status-badge {
+  white-space: nowrap;
+  display: inline-block;
+  padding: 6px 12px;
+  font-weight: 600;
+  min-width: 120px;
+  text-align: center;
+  border-radius: 20px;
+}
+
 .stausadmin{
   font-size: 18px;
 }
@@ -141,8 +156,8 @@ table {
   justify-content: center;
 }
 
-.overview-cards .highlight {
-  font-size: 28px;
+.overview-cards .highlighter {
+  font-size: 36px;
   font-weight: bold;
   color: #4f46e5;
 }
@@ -412,8 +427,15 @@ table {
 }
 
 .project-details {
-  font-size: 18px;
+  width: 100%;
+  max-width: 100%;
 }
+@media (max-width: 768px) {
+  .project-details {
+    padding: 1rem;
+  }
+}
+
 
 .project-details .badge.bg-primary {
   font-size: 16px;

@@ -126,7 +126,10 @@ export default function ProjectCollaboration() {
         <button className="btn btn-outline-secondary btn-sm" onClick={() => navigate('/member/assigned-tasks')}>
           ← Go Back
         </button>
-        <h3 className="collab-chat-header mb-0">{taskDetails.projectName || 'NA'}</h3>
+        <div className="ms-auto">
+    <h3 className="collab-chat-header mb-0 fs-4 fw-bold">{taskDetails.projectName || 'NA'}</h3>
+  </div>
+
       </div>
 
       <div className="mb-4 d-flex justify-content-between align-items-center flex-wrap">
@@ -134,7 +137,10 @@ export default function ProjectCollaboration() {
           <h4 className="mb-1">Task: {taskDetails.name}</h4>
           <p className="mb-1 text-muted">Manager: {taskDetails.projectManagerName || 'N/A'}</p>
           <p className="mb-1 text-muted">Due Date: {taskDetails.dueDate !== 'N/A' ? formatDate(taskDetails.dueDate) : 'N/A'}</p>
-          <p className="mb-1 text-muted"><strong>Description:</strong> {taskDetails.description}</p>
+          <p className="mb-1 text-muted text-justify" style={{ textAlign: 'justify' }}>
+          <strong>Description:</strong> {taskDetails.description}
+</p>
+
         </div>
 
         <div className="collab-info-panel mt-3 mt-md-0">
@@ -172,9 +178,10 @@ export default function ProjectCollaboration() {
 
             <div className="priority-group">
               <label className="fw-semibold mb-0" style={{ marginRight: '3px' }}>Priority:</label>
-              <span className={`badge bg-${priorityColors[taskDetails.priority] || 'secondary'} px-3 py-2`}>
+              <span className={`fw-semibold ${'text-' + (priorityColors[taskDetails.priority] || 'secondary')}`}>
                 {taskDetails.priority || 'NA'}
               </span>
+
             </div>
           </div>
         </div>

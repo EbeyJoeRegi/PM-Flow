@@ -11,6 +11,8 @@ export default function AssignedTasks() {
   const [search, setSearch] = useState('');
   const [sortKey, setSortKey] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 8;
   const previewOnly = location.state?.previewOnly || false;
 
   useEffect(() => {
@@ -22,9 +24,7 @@ export default function AssignedTasks() {
         if (!userId) return;
         const fetchedTasks = await getTasksByUserId(userId);
         setTasks(fetchedTasks);
-      } catch (error) {
-        console.error('Failed to fetch tasks:', error);
-      }
+      } catch (error) {}
     };
     fetchTasks();
   }, []);
@@ -33,6 +33,7 @@ export default function AssignedTasks() {
     const order = key === sortKey && sortOrder === 'asc' ? 'desc' : 'asc';
     setSortKey(key);
     setSortOrder(order);
+    setCurrentPage(1);
     const sorted = [...tasks].sort((a, b) => {
       if (key === 'dueDate') {
         return order === 'asc'
@@ -51,13 +52,13 @@ export default function AssignedTasks() {
     return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
   };
 
-  const getPriorityBadge = (priority) => {
+  const getPriorityLabel = (priority) => {
     const colors = {
-      HIGH: 'danger',
-      MEDIUM: 'warning',
-      LOW: 'success'
+      HIGH: 'text-danger',
+      MEDIUM: 'text-warning',
+      LOW: 'text-success'
     };
-    return <span className={`badge bg-${colors[priority] || 'secondary'}`}>{priority}</span>;
+    return <span className={`${colors[priority] || 'text-secondary'} fw-semibold`}>{priority}</span>;
   };
 
   const getStatusBadge = (status) => {
@@ -81,25 +82,33 @@ export default function AssignedTasks() {
     getManagerName(task).toLowerCase().includes(search.toLowerCase())
   );
 
-  const visibleTasks = previewOnly ? filteredTasks.slice(0, 3) : filteredTasks;
+  const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
+  const startIndex = (currentPage - 1) * tasksPerPage;
+  const endIndex = startIndex + tasksPerPage;
+  const visibleTasks = previewOnly
+    ? filteredTasks.slice(0, 3)
+    : filteredTasks.slice(startIndex, endIndex);
 
   return (
     <div className="assigned-tasks-container">
-      <header className="assigned-tasks-header d-flex justify-content-between align-items-center flex-wrap px-3 py-3 border-bottom">
-        <h2 className="title m-0 fw-bold">MY TASKS</h2>
+      <header className="assigned-tasks-header px-3 py-3">
+        <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
+          <h2 className="title m-0">MY TASKS</h2>
+          <input
+            type="text"
+            placeholder="Search tasks"
+            className="form-control"
+            style={{ maxWidth: '400px', fontSize: '1rem' }}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
       </header>
       <main className="assigned-tasks-main p-3">
         <div className="tasks-card card p-3">
-          <div className="tasks-card-header d-flex justify-content-between align-items-center mb-3">
-            <input
-              type="text"
-              placeholder="Search tasks"
-              className="form-control w-100"
-              style={{ maxWidth: '550px', fontSize: '1rem' }}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
           <div className="table-responsive">
             <table className="table table-hover">
               <thead>
@@ -116,7 +125,7 @@ export default function AssignedTasks() {
                 {visibleTasks.map((task, index) => (
                   <tr
                     key={index}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer', height: '60px' }}
                     onClick={() =>
                       navigate(`/member/project/${task.projectId || 'na'}/collaboration`, {
                         state: { taskDetails: task }
@@ -124,7 +133,7 @@ export default function AssignedTasks() {
                     }
                   >
                     <td>{task.name}</td>
-                    <td>{getPriorityBadge(task.priority)}</td>
+                    <td>{getPriorityLabel(task.priority)}</td>
                     <td>{getStatusBadge(task.status)}</td>
                     <td>{task.projectName || 'Untitled Project'}</td>
                     <td>{getManagerName(task) || 'N/A'}</td>
@@ -134,6 +143,27 @@ export default function AssignedTasks() {
               </tbody>
             </table>
           </div>
+
+          {!previewOnly && totalPages > 1 && (
+            <div className="d-flex justify-content-center align-items-center mt-4 gap-3 flex-wrap">
+              <button
+                className="btn btn-outline-dark"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => prev - 1)}
+              >
+                ← Prev
+              </button>
+              <span>Page {currentPage} of {totalPages}</span>
+              <button
+                className="btn btn-outline-dark"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+              >
+                Next →
+              </button>
+            </div>
+          )}
+
           <div className="d-flex justify-content-between mt-3 flex-wrap">
             <button
               className="btn btn-outline-secondary btn-sm"

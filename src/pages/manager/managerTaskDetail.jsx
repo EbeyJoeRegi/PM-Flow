@@ -73,7 +73,7 @@ const ManagerTaskDetail = () => {
     };
 
     if (taskDetails) {
-      fetchMessages(); 
+      fetchMessages();
       const interval = setInterval(() => {
         fetchMessages();
       }, 5000);

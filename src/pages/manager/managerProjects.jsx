@@ -14,7 +14,7 @@ const ManagerProjects = () => {
   const [sortField, setSortField] = useState('');
   const [page, setPage] = useState(1);
 
-  const { id,token } = useSelector((state) => state.user); 
+  const { id, token } = useSelector((state) => state.user);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -71,6 +71,12 @@ const ManagerProjects = () => {
       <div className="manager-projects-header">
         <h2>Projects Management</h2>
         <div className="manager-projects-filters">
+          <input
+            type="text"
+            placeholder="Search by project name"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
           <select onChange={(e) => setStatusFilter(e.target.value)} value={statusFilter}>
             <option value="">All</option>
             <option value="In Progress">In Progress</option>
@@ -78,12 +84,6 @@ const ManagerProjects = () => {
             <option value="On Hold">On Hold</option>
             <option value="Completed">Completed</option>
           </select>
-          <input
-            type="text"
-            placeholder="Search by project name"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
         </div>
       </div>
 
@@ -118,9 +118,9 @@ const ManagerProjects = () => {
           </tbody>
         </table>
       </div>
-        {totalPages > 1 && (
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-        )}
+      {totalPages > 1 && (
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      )}
     </div>
   );
 };

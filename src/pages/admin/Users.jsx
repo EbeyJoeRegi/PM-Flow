@@ -63,6 +63,13 @@ export default function Users() {
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const formatRole = (role) => {
+    if (role === 'ADMIN') return 'ADMIN';
+    if (role === 'PROJECT_MANAGER') return 'MANAGER';
+    if (role === 'MEMBER') return 'MEMBER';
+    return role;
+  };
+
   return (
     <div className="user-management">
       <div className="header d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -76,7 +83,7 @@ export default function Users() {
         />
       </div>
 
-      <div className="table-container" style={{fontSize:'18px'}}>
+      <div className="table-container" style={{ fontSize: '18px' }}>
         <table className="table table-bordered table-hover bg-white user-table">
           <thead>
             <tr>
@@ -127,7 +134,7 @@ export default function Users() {
                       <option value="MEMBER">Member</option>
                     </select>
                   ) : (
-                    user.role
+                    formatRole(user.role)
                   )}
                 </td>
                 <td>
