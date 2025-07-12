@@ -9,7 +9,7 @@ const ManagerDashboard = () => {
   const [statusAsc, setStatusAsc] = useState(true);
   const [statusSortActive, setStatusSortActive] = useState(false);
 
-  const { id, token } = useSelector((state) => state.user); 
+  const { id, token } = useSelector((state) => state.user);
 
   useEffect(() => {
     const fetchProjects = async () => {
