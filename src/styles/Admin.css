@@ -528,3 +528,79 @@ table {
 .stausadmin {
   font-size: 18px;
 }
+
+.team-size-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.team-size-control label {
+  margin-bottom: 0;
+  margin-right: 0.5rem;
+  white-space: nowrap;
+}
+
+.team-size-control .team-size-input-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.team-size-control .team-size-number {
+  width: 45px;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 2px 6px;
+}
+
+.team-size-control .team-size-btn {
+  padding: 1px 6px;
+  font-size: 0.8rem;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+@media (max-width: 576px) {
+  .team-size-control {
+    flex-direction: row;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+
+  .team-size-number {
+    width: 40px;
+    font-size: 0.75rem;
+    padding: 2px 4px;
+  }
+
+  .team-size-btn {
+    padding: 1px 4px;
+    font-size: 0.75rem;
+  }
+}
+@media (max-width: 768px) {
+  .date-badge-small {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
+}
+
+@media (max-width: 576px) {
+  .date-badge-small {
+    font-size: 11px;
+    padding: 2px 5px;
+  }
+}
+.date-badge-small {
+  font-size: 13px;
+  padding: 4px 8px;
+  font-weight: 500;
+  background-color: #6c757d;
+  color: #fff;
+  border-radius: 4px;
+  white-space: nowrap;
+}

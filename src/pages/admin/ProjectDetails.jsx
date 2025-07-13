@@ -118,8 +118,8 @@ export default function ProjectDetails() {
   </div>
   <div className="d-flex flex-column justify-content-start" style={{ minWidth: '250px' }}>
   <div className="d-flex gap-3">
-    <div><strong>Start Date:</strong> <span className="badge bg-secondary text-white">{formatDashDate(startDate)}</span></div>
-    <div><strong>End Date:</strong> <span className="badge bg-secondary text-white">{formatDashDate(endDate)}</span></div>
+    <div><strong>Start Date:</strong> <span className=" bg-secondary text-white date-badge-small">{formatDashDate(startDate)}</span></div>
+    <div><strong>End Date:</strong> <span className=" bg-secondary text-white date-badge-small">{formatDashDate(endDate)}</span></div>
   </div>
 </div>
 </div>

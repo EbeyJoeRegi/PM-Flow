@@ -6,8 +6,10 @@ const getAuthHeader = () => {
   if (!userString) return {};
   try {
     const user = JSON.parse(userString);
+    const token = user.token || '';
+  
     return {
-      Authorization: `Bearer ${user.token || ''}`
+      Authorization: `Bearer ${token}`
     };
   } catch {
     return {};
@@ -22,6 +24,18 @@ export const getAllProjects = async () => {
     return response.data;
   } catch (error) {
     console.error('Failed to get projects:', error.response?.status, error.message);
+    throw error;
+  }
+};
+
+export const getProjectById = async (id) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/projects/${id}`, {
+      headers: getAuthHeader()
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to get project ${id}:`, error.response?.status, error.message);
     throw error;
   }
 };
@@ -56,6 +70,22 @@ export const updateProjectById = async (id, updatedFields) => {
   }
 };
 
+export const deleteProjectById = async (id) => {
+  const headers = getAuthHeader();
+  console.log(" Deleting project ID:", id);
+  console.log("Headers sent:", headers);
+
+  try {
+    const response = await axios.delete(`${BASE_URL}/api/projects/${id}`, {
+      headers
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to delete project ${id}:`, error.response?.status, error.message);
+    throw error;
+  }
+};
+
 export const getAllUsers = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/api/users`, {
@@ -64,30 +94,6 @@ export const getAllUsers = async () => {
     return response.data;
   } catch (error) {
     console.error('Failed to get users:', error.response?.status, error.message);
-    throw error;
-  }
-};
-
-export const getProjectById = async (id) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/api/projects/${id}`, {
-      headers: getAuthHeader()
-    });
-    return response.data;
-  } catch (error) {
-    console.error(`Failed to get project ${id}:`, error.response?.status, error.message);
-    throw error;
-  }
-};
-
-export const deleteProjectById = async (id) => {
-  try {
-    const response = await axios.delete(`${BASE_URL}/api/projects/${id}`, {
-      headers: getAuthHeader()
-    });
-    return response.data;
-  } catch (error) {
-    console.error(`Failed to delete project ${id}:`, error.response?.status, error.message);
     throw error;
   }
 };
