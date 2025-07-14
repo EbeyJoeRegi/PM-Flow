@@ -27,7 +27,7 @@ export default function MemberDashboard() {
         today.setHours(0, 0, 0, 0)
 
         const upcoming = taskData
-          .filter(task => ['NOT_STARTED', 'IN_PROGRESS', 'TO_DO'].includes(task.status))
+          .filter(task => ['NOT_STARTED', 'IN_PROGRESS', 'ON_HOLD'].includes(task.status))
           .map(task => {
             const due = new Date(task.dueDate)
             const dueDateOnly = new Date(due.getFullYear(), due.getMonth(), due.getDate())
@@ -96,12 +96,12 @@ export default function MemberDashboard() {
                   <tr key={index}>
                     <td>{task.name}</td>
                     <td>
-                      <span className={priorityColors[task.priority] || 'text-secondary'}>
+                      <span className={`fw-semibold ${priorityColors[task.priority]}`}>
                         {task.priority}
                       </span>
                     </td>
                     <td>
-                      <span className={`badge bg-${statusColors[task.status] || 'secondary'} text-white`}>
+                      <span className={`status-badge bg-${statusColors[task.status]} text-light`}>
                         {task.status.replaceAll('_', ' ')}
                       </span>
                     </td>

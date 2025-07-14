@@ -21,19 +21,7 @@ thead th{
   width: 180px;
   text-align: center;
 }
-.status-badge {
-  white-space: nowrap;
-  display: inline-block;
-  padding: 6px 12px;
-  font-weight: 600;
-  min-width: 120px;
-  text-align: center;
-  border-radius: 20px;
-}
 
-.stausadmin{
-  font-size: 18px;
-}
 .project-table thead th {
   padding: 18px 12px;
   font-size: 18px;
@@ -505,10 +493,6 @@ table {
     padding: 6px 10px;
     font-weight: 600;
   }
-  .stausadmin{
-    font-size: 2rem;
-    padding: 8px 12px;
-  }
 }
 @media (max-width: 768px) {
   .new-project-btn {
@@ -524,9 +508,6 @@ table {
     font-size: 14px;
     padding: 5px 10px;
   }
-}
-.stausadmin {
-  font-size: 18px;
 }
 
 .team-size-control {

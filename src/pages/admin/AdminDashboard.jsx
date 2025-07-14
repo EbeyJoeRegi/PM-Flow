@@ -142,37 +142,37 @@ export default function Dashboard() {
 
       <div className="project-table mt-3">
         <table className="table table-bordered table-hover">
-<thead>
-  <tr>
-    <th style={{ cursor: 'pointer' }} onClick={() => requestSort('name')}>
-      Name
-      <span className="sort-icon">
-        {sortConfig.key === 'name' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}
-      </span>
-    </th>
-    <th>Status</th>
-    <th style={{ cursor: 'pointer' }} onClick={() => requestSort('startDate')}>
-      Start Date
-      <span className="sort-icon">
-        {sortConfig.key === 'startDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}
-      </span>
-    </th>
-    <th style={{ cursor: 'pointer' }} onClick={() => requestSort('endDate')}>
-      End Date
-      <span className="sort-icon">
-        {sortConfig.key === 'endDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}
-      </span>
-    </th>
-    <th>Project Manager</th>
-  </tr>
-</thead>
+          <thead>
+            <tr>
+              <th style={{ cursor: 'pointer' }} onClick={() => requestSort('name')}>
+                Name
+                <span className="sort-icon">
+                  {sortConfig.key === 'name' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}
+                </span>
+              </th>
+              <th>Status</th>
+              <th style={{ cursor: 'pointer' }} onClick={() => requestSort('startDate')}>
+                Start Date
+                <span className="sort-icon">
+                  {sortConfig.key === 'startDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}
+                </span>
+              </th>
+              <th style={{ cursor: 'pointer' }} onClick={() => requestSort('endDate')}>
+                End Date
+                <span className="sort-icon">
+                  {sortConfig.key === 'endDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}
+                </span>
+              </th>
+              <th>Project Manager</th>
+            </tr>
+          </thead>
 
           <tbody>
             {currentProjects.map((proj, index) => (
               <tr key={proj.id || index} style={{ height: '60px' }}>
                 <td>{proj.name}</td>
-                <td className='stausadmin'>
-                  <span className={`badge bg-${statusColors[toTitleCase(proj.status?.replace(/_/g, ' '))] || 'secondary'}`}>
+                <td>
+                  <span className={`status-badge bg-${statusColors[toTitleCase(proj.status?.replace(/_/g, ' '))] || 'secondary'} text-light`}>
                     {toTitleCase(proj.status?.replace(/_/g, ' ')) || 'N/A'}
                   </span>
                 </td>

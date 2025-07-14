@@ -13,6 +13,7 @@ import {
 import { FaPen, FaTrash } from 'react-icons/fa'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { formatStatus, getBootstrapBgClass } from '../../utils/Helper'
 
 export default function Projects() {
   const [projects, setProjects] = useState([])
@@ -38,7 +39,7 @@ export default function Projects() {
         setMemberOptions(members.map(u => ({ id: String(u.id), name: `${u.firstName} ${u.lastName}`.trim() })))
         const detailedProjects = await Promise.all(projectList.map(p => getProjectById(p.id)))
         setProjects(detailedProjects || [])
-      } catch {}
+      } catch { }
       finally {
         setLoading(false)
       }
@@ -142,17 +143,19 @@ export default function Projects() {
 
   return (
     <div className="p-4 project-view">
-      <div className="d-flex justify-content-between mb-3">
-        <h3>Projects</h3>
-        <button className="btn btn-primary new-project-btn" onClick={() => setShowModal(true)}>+ New Project</button>
+      <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h3 className="mb-0">Projects</h3>
+        <div className="d-flex flex-grow-1 justify-content-end align-items-center gap-2">
+          <input
+            className="form-control search-input"
+            style={{ maxWidth: '250px' }}
+            placeholder="Search"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+          <button className="btn btn-primary new-project-btn" onClick={() => setShowModal(true)}>+ New Project</button>
+        </div>
       </div>
-
-      <input
-        className="form-control mb-3 search-input"
-        placeholder="Search"
-        value={searchTerm}
-        onChange={e => setSearchTerm(e.target.value)}
-      />
 
       {loading ? <div>Loading...</div> : (
         <div className="project-table-scroll">
@@ -203,7 +206,7 @@ export default function Projects() {
                       <td>{proj.name}</td>
                       <td>{proj.managerName || managerOptions.find(m => String(m.id) === String(proj.managerId))?.name || 'N/A'}</td>
                       <td className="status-cell">
-                        <span className={`stausadmin rounded text-uppercase status-badge ${proj.status === 'IN_PROGRESS' ? 'status-in-progress' : proj.status === 'COMPLETED' ? 'status-completed' : proj.status === 'NOT_STARTED' ? 'status-not-started' : proj.status === 'ON_HOLD' ? 'status-on-hold' : ''}`}>{proj.status?.replace('_', ' ') || 'N/A'}</span>
+                        <span className={`status-badge ${getBootstrapBgClass(formatStatus(proj.status))}`}>{proj.status?.replace('_', ' ') || 'N/A'}</span>
                       </td>
                       <td>{formatDateDDMMYYYY(proj.endDate)}</td>
                       <td>

@@ -92,17 +92,17 @@ const ManagerProjectDetail = () => {
     setPage(1);
   };
 
-useEffect(() => {
-  const handleClickOutside = (e) => {
-    const isDropdown = e.target.closest('.manager-project-checkbox-dropdown');
-    if (!isDropdown) {
-      setShowDropdown(false);
-    }
-  };
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const isDropdown = e.target.closest('.manager-project-checkbox-dropdown');
+      if (!isDropdown) {
+        setShowDropdown(false);
+      }
+    };
 
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => document.removeEventListener('mousedown', handleClickOutside);
-}, []);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const filteredTasks = useMemo(() => {
     let result = [...tasks];
@@ -263,9 +263,9 @@ useEffect(() => {
               <thead>
                 <tr>
                   <th>Task Name</th>
-                  <th onClick={() => setSortField('dueDate')} className="sortable">Due Date</th>
-                  <th onClick={() => setSortField('priority')} className="sortable">Priority</th>
-                  <th onClick={() => setSortField('status')} className="sortable">Status</th>
+                  <th onClick={() => setSortField('dueDate')} className="sortable">Due Date ⬍</th>
+                  <th onClick={() => setSortField('priority')} className="sortable">Priority ⬍</th>
+                  <th onClick={() => setSortField('status')} className="sortable">Status ⬍</th>
                   <th>Assignee</th>
                 </tr>
               </thead>
