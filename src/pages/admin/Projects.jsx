@@ -59,14 +59,25 @@ export default function Projects() {
   }
 
   const handleAddProject = async () => {
-    if (!newProject.name || !newProject.manager) return
+    if (!newProject.name || !newProject.manager) {
+      toast.error('Project name and manager are required')
+      return
+    }
+
+    const selectedTeamMembers = teamMembers.filter(id => id !== '')
+    if (selectedTeamMembers.length === 0) {
+      toast.error('At least one team member must be selected')
+      return
+    }
+
     const payload = {
       name: newProject.name,
       description: 'N/A',
       managerId: Number(newProject.manager),
-      teamMemberIds: teamMembers.filter(id => id !== '').map(id => Number(id)),
+      teamMemberIds: selectedTeamMembers.map(id => Number(id)),
       endDate: formatDateMMDDYYYY(newProject.endDate)
     }
+
     try {
       const added = await createProject(payload)
       const managerName = managerOptions.find(m => String(m.id) === String(added.managerId))?.name || 'N/A'
@@ -217,43 +228,25 @@ export default function Projects() {
               <option value="">Select Manager</option>
               {managerOptions.map(({ id, name }) => (<option key={id} value={id}>{name}</option>))}
             </select>
-<div className="mb-3 d-flex align-items-center justify-content-between">
-  <label className="me-2 fw-semibold" style={{ whiteSpace: 'nowrap' }}>Team Size:</label>
-  <div className="d-flex align-items-center" style={{ gap: '6px' }}>
-    <input
-      type="text"
-      className="form-control form-control-sm text-center"
-      style={{ width: '60px' }}
-      value={teamSize}
-      readOnly
-    />
-    <button
-      className="btn btn-sm btn-outline-secondary px-2 py-0"
-      onClick={() => {
-        if (teamSize < memberOptions.length) {
-          const newSize = teamSize + 1
-          setTeamSize(newSize)
-          setTeamMembers(prev => [...prev, ''])
-        }
-      }}
-    >
-      +
-    </button>
-    <button
-      className="btn btn-sm btn-outline-secondary px-2 py-0"
-      onClick={() => {
-        if (teamSize > 0) {
-          const newSize = teamSize - 1
-          setTeamSize(newSize)
-          setTeamMembers(prev => prev.slice(0, newSize))
-        }
-      }}
-    >
-      −
-    </button>
-  </div>
-</div>
 
+            <div className="mb-3 d-flex align-items-center justify-content-between">
+              <label className="me-2 fw-semibold" style={{ whiteSpace: 'nowrap' }}>Team Size:</label>
+              <div className="d-flex align-items-center" style={{ gap: '6px' }}>
+                <input type="text" className="form-control form-control-sm text-center" style={{ width: '60px' }} value={teamSize} readOnly />
+                <button className="btn btn-sm btn-outline-secondary px-2 py-0" onClick={() => {
+                  if (teamSize < memberOptions.length) {
+                    setTeamSize(prev => prev + 1)
+                    setTeamMembers(prev => [...prev, ''])
+                  }
+                }}>+</button>
+                <button className="btn btn-sm btn-outline-secondary px-2 py-0" onClick={() => {
+                  if (teamSize > 0) {
+                    setTeamSize(prev => prev - 1)
+                    setTeamMembers(prev => prev.slice(0, -1))
+                  }
+                }}>−</button>
+              </div>
+            </div>
 
             {teamMembers.map((val, i) => {
               const alreadySelected = teamMembers.filter((_, idx) => idx !== i)
@@ -269,10 +262,17 @@ export default function Projects() {
                 </select>
               )
             })}
+
             <input type="date" className="form-control mb-3" value={newProject.endDate} onChange={e => setNewProject({ ...newProject, endDate: e.target.value })} />
             <div className="d-flex justify-content-end">
               <button className="btn btn-secondary me-2" onClick={() => setShowModal(false)}>Cancel</button>
-              <button className="btn btn-success" onClick={handleAddProject}>Add</button>
+              <button
+                className="btn btn-success"
+                disabled={!newProject.name || !newProject.manager || teamMembers.filter(id => id !== '').length === 0}
+                onClick={handleAddProject}
+              >
+                Add
+              </button>
             </div>
           </div>
         </div>
