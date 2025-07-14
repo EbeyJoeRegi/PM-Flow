@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useMemo, useEffect } from 'react';
-import '../../styles/collaborationProjects.css';
-import { Pagination } from '../../components/Pagination';
-import { getManagerProjects } from '../../api/managerApi';
+import '../styles/collaborationProjects.css';
+import { Pagination } from '../components/Pagination';
+import { getProjects } from '../api/commonApi';
 import { useSelector } from 'react-redux';
-import { formatStatus } from '../../utils/Helper';
+import { formatStatus } from '../utils/Helper';
 
 const CollaborationProjects = () => {
   const navigate = useNavigate();
-  const { id, token } = useSelector((state) => state.user);
+  const { token } = useSelector((state) => state.user);
 
   const [allProjects, setAllProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,18 +18,18 @@ const CollaborationProjects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projects = await getManagerProjects(id, token);
+        const projects = await getProjects(token);
         setAllProjects(projects);
       } catch (error) {
         console.error("Error fetching manager projects:", error.message);
       }
     };
     fetchProjects();
-  }, [id, token]);
+  }, [token]);
 
   const filteredProjects = useMemo(() => {
     return allProjects.filter(project => {
-      const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = project.projectName.toLowerCase().includes(searchTerm.toLowerCase());
       const formattedStatus = formatStatus(project.status) || project.status;
       const matchesStatus = statusFilter ? formattedStatus === statusFilter : true;
       return matchesSearch && matchesStatus;
@@ -82,14 +82,19 @@ const CollaborationProjects = () => {
           <div className="collab-project-list">
             {currentProjects.map(project => (
               <div
-                key={project.id}
+                key={project.projectId}
                 className="collab-project-card"
-                onClick={() => { 
-                  localStorage.setItem('selectedProjectId', project.name);
-                  navigate(`${project.id}`)}
+                onClick={() => {
+                  localStorage.setItem('selectedProjectId', JSON.stringify({
+                    projectName: project.projectName,
+                    status: project.status
+                  }));
+
+                  navigate(`${project.projectId}`)
+                }
                 }
               >
-                <span className="collab-project-name">{project.name}</span>
+                <span className="collab-project-name">{project.projectName}</span>
                 <span className={`status-badges ${project.status.toLowerCase().replace(/_/g, '')}`}>
                   {formatStatus(project.status) || project.status}
                 </span>

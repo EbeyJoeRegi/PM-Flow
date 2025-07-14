@@ -1,68 +1,70 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import '../../styles/projectChatPage.css';
+import '../styles/projectChatPage.css';
 import { useSelector } from 'react-redux';
-import { getGroupMessages, sendGroupMessage } from '../../api/managerApi';
+import { getGroupMessages, sendGroupMessage } from '../api/managerApi';
+import { useNavigate } from 'react-router-dom';
+import { getBootstrapBgClass, formatStatus } from '../utils/Helper';
 
 const ProjectChatPage = () => {
   const { ProjectID } = useParams();
-  const ProjectName = localStorage.getItem('selectedProjectId');
+  const Project = JSON.parse(localStorage.getItem('selectedProjectId'));
   const chatBoxRef = useRef(null);
   const inputRef = useRef(null);
-  const { id, name, token } = useSelector((state) => state.user);
-
+  const { id, name, token, role } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState('');
   const [fetchError, setFetchError] = useState(null);
   const intervalRef = useRef(null);
 
-useEffect(() => {
-  const fetchMessages = async () => {
-    try {
-      const data = await getGroupMessages(ProjectID, token);
-      const formatted = data.map((msg, index) => {
-        const dateObj = new Date(msg.timestamp);
-        return {
-          id: index + 1,
-          sender: msg.senderName,
-          message: msg.content,
-          date: dateObj.toISOString().split('T')[0],
-          time: dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
-      });
-      setMessages(formatted);
-      setFetchError(null);
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const data = await getGroupMessages(ProjectID, token);
+        const formatted = data.map((msg, index) => {
+          const dateObj = new Date(msg.timestamp);
+          return {
+            id: index + 1,
+            sender: msg.senderName,
+            message: msg.content,
+            date: dateObj.toISOString().split('T')[0],
+            time: dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          };
+        });
+        setMessages(formatted);
+        setFetchError(null);
 
-      
-      if (!intervalRef.current) {
-        const newInterval = setInterval(fetchMessages, 5000);
-        intervalRef.current = newInterval;
-      }
-    } catch (error) {
-      console.error('Fetch error:', error.message);
-      if (error.message.includes('Failed to fetch group messages')) {
-        setFetchError("You do not have access to this project.");
-      } else {
-        setFetchError("Something went wrong. Please try again later.");
-      }
 
-      
+        if (!intervalRef.current) {
+          const newInterval = setInterval(fetchMessages, 5000);
+          intervalRef.current = newInterval;
+        }
+      } catch (error) {
+        console.error('Fetch error:', error.message);
+        if (error.message.includes('Failed to fetch group messages')) {
+          setFetchError("You do not have access to this project.");
+        } else {
+          setFetchError("Something went wrong. Please try again later.");
+        }
+
+
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      }
+    };
+
+    fetchMessages();
+    intervalRef.current = setInterval(fetchMessages, 5000);
+
+    return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
-        intervalRef.current = null;
       }
-    }
-  };
-
-  fetchMessages();
-  intervalRef.current = setInterval(fetchMessages, 5000);
-
-  return () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-  };
-}, [ProjectID, token]);
+    };
+  }, [ProjectID, token]);
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -74,6 +76,11 @@ useEffect(() => {
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  if(role === "PROJECT_MANAGER")
+    var srole="manager";
+  else
+    var srole="member";
 
   const handleSend = async () => {
     if (!newMsg.trim() || fetchError) return;
@@ -124,8 +131,15 @@ useEffect(() => {
 
   return (
     <div className="collab-chat-full-page">
-      <h2 className="collab-chat-header">Project Chat - {ProjectName}</h2>
-
+      <div className="collab-chat-header-container">
+        <button className="btn btn-outline-secondary btn-sm back-btn" onClick={() => navigate(`/${srole}/collaboration`)}>
+          ← Back
+        </button>
+        <div className="collab-chat-header">Project Chat - {Project.projectName}</div>
+        <span className={`status-badge ${getBootstrapBgClass(formatStatus(Project.status))}`}>
+          {Project.status.replace('_', ' ')}
+        </span>
+      </div>
       <div className="collab-chat-box" ref={chatBoxRef}>
         {fetchError ? (
           <div className="error-msg">{fetchError}</div>
