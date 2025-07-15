@@ -262,7 +262,17 @@ PM-Flow/
 -  Project & User Management
 
 ## Screenshots
-<img width="1600" height="899" alt="login" src="https://github.com/user-attachments/assets/7a4ac0c8-5fe9-4f26-a862-480769a43f89" />
+###  Login Page
+<img width="1600" height="600" alt="login" src="https://github.com/user-attachments/assets/7a4ac0c8-5fe9-4f26-a862-480769a43f89" />
+
+###  Admin Dashboard
+<img width="1600" height="850" alt="admin" src="https://github.com/user-attachments/assets/0c29c846-7cf9-457c-922c-2ff08d292d05" />
+
+###  Manager Dashboard
+<img width="1600" height="845" alt="manager" src="https://github.com/user-attachments/assets/b01e2b3b-9e8d-467c-bd30-71c57b470b15" />
+
+###  Member Dashboard
+<img width="1600" height="850" alt="member" src="https://github.com/user-attachments/assets/02a26cc8-bcd9-4455-991c-87bb80d1a546" />
 
 
 ## Database Design
