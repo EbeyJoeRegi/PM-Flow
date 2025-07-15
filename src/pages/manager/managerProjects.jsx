@@ -93,8 +93,8 @@ const ManagerProjects = () => {
             <tr>
               <th>Name</th>
               <th>Status</th>
-              <th onClick={() => setSortField('start')} className="manager-sortable">Start Date ⬍</th>
-              <th onClick={() => setSortField('end')} className="manager-sortable">Due Date ⬍</th>
+              <th onClick={() => setSortField('start')} className="manager-sortable">Start Date ⇅</th>
+              <th onClick={() => setSortField('end')} className="manager-sortable">Due Date ⇅</th>
             </tr>
           </thead>
           <tbody>

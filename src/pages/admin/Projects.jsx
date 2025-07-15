@@ -11,8 +11,8 @@ import {
   deleteProjectById
 } from '../../api/adminApi'
 import { FaPen, FaTrash } from 'react-icons/fa'
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { toast } from 'react-toastify'
+import { Pagination } from '../../components/Pagination';
 import { formatStatus, getBootstrapBgClass, capitalizeFirstLetter } from '../../utils/Helper'
 
 export default function Projects() {
@@ -28,6 +28,8 @@ export default function Projects() {
   const [editProjectId, setEditProjectId] = useState(null)
   const [editedProject, setEditedProject] = useState({ name: '', managerId: '', endDate: '' })
   const navigate = useNavigate()
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 10;
 
   useEffect(() => {
     async function fetchData() {
@@ -140,11 +142,14 @@ export default function Projects() {
     }
   }
 
-  const filtered = projects.filter(p => p.name?.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filtered = projects.filter(p => p.name?.toLowerCase().includes(searchTerm.toLowerCase()));
+  const totalPages = Math.ceil(filtered.length / rowsPerPage);
+  const paginatedProjects = filtered.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+
 
   return (
     <div className="p-4 project-view">
-      <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+      <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <h3 className="mb-0">Projects</h3>
         <div className="d-flex flex-grow-1 justify-content-end align-items-center gap-2">
           <input
@@ -152,7 +157,10 @@ export default function Projects() {
             style={{ maxWidth: '250px' }}
             placeholder="Search"
             value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
+            onChange={e => {
+              setSearchTerm(e.target.value);
+              setPage(1);
+            }}
           />
           <button className="btn btn-primary new-project-btn" onClick={() => setShowModal(true)}>+ New Project</button>
         </div>
@@ -160,7 +168,7 @@ export default function Projects() {
 
       {loading ? <div>Loading...</div> : (
         <div className="project-table-scroll">
-          <table className="table table-bordered bg-white project-table">
+          <table className="table mb-0 rounded-4 overflow-hidden bg-white project-table">
             <thead>
               <tr>
                 <th>Name</th>
@@ -171,7 +179,7 @@ export default function Projects() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(proj => (
+              {paginatedProjects.map(proj => (
                 <tr
                   key={proj.id}
                   onClick={(e) => {
@@ -220,6 +228,11 @@ export default function Projects() {
               ))}
             </tbody>
           </table>
+          {filtered.length > rowsPerPage && (
+            <div>
+              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+            </div>
+          )}
         </div>
       )}
 

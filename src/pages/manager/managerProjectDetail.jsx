@@ -270,9 +270,9 @@ const ManagerProjectDetail = () => {
               <thead>
                 <tr>
                   <th>Task Name</th>
-                  <th onClick={() => setSortField('dueDate')} className="sortable">Due Date ⬍</th>
-                  <th onClick={() => setSortField('priority')} className="sortable">Priority ⬍</th>
-                  <th onClick={() => setSortField('status')} className="sortable">Status ⬍</th>
+                  <th onClick={() => setSortField('dueDate')} className="sortable">Due Date ⇅</th>
+                  <th onClick={() => setSortField('priority')} className="sortable">Priority ⇅</th>
+                  <th onClick={() => setSortField('status')} className="sortable">Status ⇅</th>
                   <th>Assignee</th>
                 </tr>
               </thead>

@@ -142,27 +142,18 @@ export default function Dashboard() {
       </div>
 
       <div className="project-table mt-3">
-        <table className="table table-bordered table-hover">
+        <table className="table table-hover">
           <thead>
             <tr>
               <th style={{ cursor: 'pointer' }} onClick={() => requestSort('name')}>
-                Name
-                <span className="sort-icon">
-                  {sortConfig.key === 'name' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}
-                </span>
+                Name ⇅
               </th>
               <th>Status</th>
               <th style={{ cursor: 'pointer' }} onClick={() => requestSort('startDate')}>
-                Start Date
-                <span className="sort-icon">
-                  {sortConfig.key === 'startDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}
-                </span>
+                Start Date ⇅
               </th>
               <th style={{ cursor: 'pointer' }} onClick={() => requestSort('endDate')}>
-                End Date
-                <span className="sort-icon">
-                  {sortConfig.key === 'endDate' ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '↕'}
-                </span>
+                End Date ⇅
               </th>
               <th>Project Manager</th>
             </tr>
