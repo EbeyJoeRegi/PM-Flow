@@ -24,7 +24,7 @@ export default function AssignedTasks() {
         if (!userId) return;
         const fetchedTasks = await getTasksByUserId(userId);
         setTasks(fetchedTasks);
-      } catch (error) {}
+      } catch (error) { }
     };
     fetchTasks();
   }, []);
@@ -98,7 +98,7 @@ export default function AssignedTasks() {
             type="text"
             placeholder="Search tasks"
             className="form-control"
-            style={{ maxWidth: '400px', fontSize: '1rem' }}
+            style={{ maxWidth: '400px', fontSize: '1.2rem' }}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -107,10 +107,10 @@ export default function AssignedTasks() {
           />
         </div>
       </header>
-      <main className="assigned-tasks-main p-3">
-        <div className="tasks-card card p-3">
+      <main className="assigned-tasks-main">
+        <div className="p-3">
           <div className="table-responsive">
-            <table className="table table-hover">
+            <table className="table table-hover mb-0 rounded-4 overflow-hidden">
               <thead>
                 <tr>
                   <th>Task</th>
@@ -122,24 +122,34 @@ export default function AssignedTasks() {
                 </tr>
               </thead>
               <tbody>
-                {visibleTasks.map((task, index) => (
-                  <tr
-                    key={index}
-                    style={{ cursor: 'pointer', height: '60px' }}
-                    onClick={() =>
-                      navigate(`/member/project/${task.projectId || 'na'}/collaboration`, {
-                        state: { taskDetails: task }
-                      })
-                    }
-                  >
-                    <td>{task.name}</td>
-                    <td>{getPriorityLabel(task.priority)}</td>
-                    <td>{getStatusBadge(task.status)}</td>
-                    <td>{task.projectName || 'Untitled Project'}</td>
-                    <td>{getManagerName(task) || 'N/A'}</td>
-                    <td>{formatDate(task.dueDate)}</td>
+                {visibleTasks.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center text-muted py-4">
+                      {search
+                        ? 'No tasks match your search.'
+                        : 'No assigned tasks available.'}
+                    </td>
                   </tr>
-                ))}
+                ) : (
+                  visibleTasks.map((task, index) => (
+                    <tr
+                      key={index}
+                      style={{ cursor: 'pointer', height: '60px' }}
+                      onClick={() =>
+                        navigate(`/member/project/${task.projectId || 'na'}/collaboration`, {
+                          state: { taskDetails: task }
+                        })
+                      }
+                    >
+                      <td>{task.name}</td>
+                      <td>{getPriorityLabel(task.priority)}</td>
+                      <td>{getStatusBadge(task.status)}</td>
+                      <td>{task.projectName || 'Untitled Project'}</td>
+                      <td>{getManagerName(task) || 'N/A'}</td>
+                      <td>{formatDate(task.dueDate)}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

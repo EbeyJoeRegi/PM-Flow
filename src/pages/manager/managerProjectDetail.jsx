@@ -18,6 +18,7 @@ import {
   updateProjectStatusAndEndDate,
 } from '../../api/managerApi';
 import { Pagination } from '../../components/Pagination';
+import { capitalizeFirstLetter } from '../../utils/Helper'
 
 const ManagerProjectDetail = () => {
   const { projectName } = useParams();
@@ -60,8 +61,7 @@ const ManagerProjectDetail = () => {
         setProjectDetail(projectData);
         setStatus(projectData.status);
         setEndDate(projectData.endDate);
-        setMembers(projectData.teamMembers);
-
+        // setMembers(projectData.teamMembers);
         const taskData = await getTasksByProjectId(projectData.id, token);
         const transformedTasks = taskData.map((task) => ({
           id: task.id,
@@ -92,17 +92,17 @@ const ManagerProjectDetail = () => {
     setPage(1);
   };
 
-useEffect(() => {
-  const handleClickOutside = (e) => {
-    const isDropdown = e.target.closest('.manager-project-checkbox-dropdown');
-    if (!isDropdown) {
-      setShowDropdown(false);
-    }
-  };
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      const isDropdown = e.target.closest('.manager-project-checkbox-dropdown');
+      if (!isDropdown) {
+        setShowDropdown(false);
+      }
+    };
 
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => document.removeEventListener('mousedown', handleClickOutside);
-}, []);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const filteredTasks = useMemo(() => {
     let result = [...tasks];
@@ -196,9 +196,16 @@ useEffect(() => {
           <div className="manager-project-info-pair">
             <div className="manager-project-team-block">
               <p><strong>Team Members</strong></p>
-              <ul>{members.map((m) => <li key={m}>{m}</li>)}</ul>
+              {members.length > 0 ? (
+                <ul>
+                  {members.map((m) => (
+                    <li key={m}>{capitalizeFirstLetter(m)}</li>
+                  ))}
+                </ul>
+              ) : (
+                'N/A'
+              )}
             </div>
-
             <div className="manager-project-date-block">
               <div className="manager-project-date-display">
                 <label>Start Date :</label>
@@ -263,9 +270,9 @@ useEffect(() => {
               <thead>
                 <tr>
                   <th>Task Name</th>
-                  <th onClick={() => setSortField('dueDate')} className="sortable">Due Date</th>
-                  <th onClick={() => setSortField('priority')} className="sortable">Priority</th>
-                  <th onClick={() => setSortField('status')} className="sortable">Status</th>
+                  <th onClick={() => setSortField('dueDate')} className="sortable">Due Date ⇅</th>
+                  <th onClick={() => setSortField('priority')} className="sortable">Priority ⇅</th>
+                  <th onClick={() => setSortField('status')} className="sortable">Status ⇅</th>
                   <th>Assignee</th>
                 </tr>
               </thead>

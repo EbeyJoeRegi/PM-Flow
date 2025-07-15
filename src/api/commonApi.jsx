@@ -49,3 +49,16 @@ export const handleLogout = async (dispatch, navigate, token) => {
     navigate('/'); 
   }
 };
+
+export const getProjects = async (token) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/chat/assigned_projects`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to fetch manager projects" };
+  }
+};

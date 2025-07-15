@@ -4,6 +4,7 @@ import { FaPen, FaTrash } from 'react-icons/fa';
 import '../../styles/Admin.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Pagination } from '../../components/Pagination'; // Update path if needed
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -12,6 +13,8 @@ export default function Users() {
   const [lastName, setLastName] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 10;
 
   useEffect(() => {
     getAllUsers()
@@ -63,6 +66,9 @@ export default function Users() {
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const paginatedUsers = filteredUsers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
+
   const formatRole = (role) => {
     if (role === 'ADMIN') return 'ADMIN';
     if (role === 'PROJECT_MANAGER') return 'MANAGER';
@@ -79,12 +85,15 @@ export default function Users() {
           className="form-control search-input"
           placeholder="Search users..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setPage(1); // reset page on search
+          }}
         />
       </div>
 
       <div className="table-container" style={{ fontSize: '18px' }}>
-        <table className="table table-bordered table-hover bg-white user-table">
+        <table className="table table-hover mb-0 rounded-4 overflow-hidden bg-white user-table">
           <thead>
             <tr>
               <th>First Name</th>
@@ -95,7 +104,7 @@ export default function Users() {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map(user => (
+            {paginatedUsers.map(user => (
               <tr key={user.id}>
                 <td>
                   {editId === user.id ? (
@@ -169,6 +178,14 @@ export default function Users() {
           </tbody>
         </table>
       </div>
+      
+      {filteredUsers.length > rowsPerPage && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+      )}
 
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>

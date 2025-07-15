@@ -2,6 +2,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import '../../styles/Admin.css'
 import { FaPen } from 'react-icons/fa'
+import { capitalizeFirstLetter } from '../../utils/Helper'
 import { getProjectById, updateProjectById } from '../../api/adminApi'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -91,7 +92,7 @@ export default function ProjectDetails() {
   }
 
   return (
-    <div className="project-details p-4 shadow rounded bg-white" style={{ maxWidth: '97%', margin: '20px auto' }}>
+    <div className="project-details p-4 rounded bg-white">
       <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}>← Back</button>
 
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -101,31 +102,34 @@ export default function ProjectDetails() {
         </span>
       </div>
 
-      <div className="mb-2"><strong>Manager:</strong> {managerName}</div>
-
-     <div className="d-flex justify-content-between align-items-start flex-wrap mb-3">
-  <div className="flex-grow-1">
-    <strong>Team Members:</strong>
-    {teamMembers?.length > 0 ? (
-      <ul className="ms-3 mb-0">
-        {teamMembers.map((member, index) => (
-          <li key={index}>{member.includes(':') ? member.split(':')[1] : member}</li>
-        ))}
-      </ul>
-    ) : (
-      <span> N/A</span>
-    )}
-  </div>
-  <div className="d-flex flex-column justify-content-start" style={{ minWidth: '250px' }}>
-  <div className="d-flex gap-3">
-    <div><strong>Start Date:</strong> <span className="badge bg-secondary text-white">{formatDashDate(startDate)}</span></div>
-    <div><strong>End Date:</strong> <span className="badge bg-secondary text-white">{formatDashDate(endDate)}</span></div>
-  </div>
-</div>
+      <div className="mb-2">
+  <strong>Manager:</strong> {capitalizeFirstLetter(managerName)}
 </div>
 
 
+      <div className="d-flex justify-content-between align-items-start flex-wrap mb-3">
+        <div className="flex-grow-1">
+          <strong>Team Members:</strong>
+          {teamMembers?.length > 0 ? (
+            <ul className="ms-3 mb-0">
+              {teamMembers.map((member, index) => (
+                <li key={index}>{capitalizeFirstLetter(member.includes(':') ? member.split(':')[1] : member)}</li>
+              ))}
+            </ul>
+          ) : (
+            <span> N/A</span>
+          )}
+        </div>
+        <div className="d-flex flex-column justify-content-start" style={{ minWidth: '250px' }}>
+          <div className="mb-2">
+            <strong>Start Date :</strong> <span>{formatDashDate(startDate)}</span>
+          </div>
+          <div>
+            <strong>End Date &nbsp; : </strong> <span>{formatDashDate(endDate)}</span>
+          </div>
+        </div>
 
+      </div>
 
       <hr />
       <div className="d-flex justify-content-between align-items-center">

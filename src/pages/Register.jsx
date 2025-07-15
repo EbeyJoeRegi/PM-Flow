@@ -38,6 +38,7 @@ const handleSubmit = async (e) => {
 
     if (!validateEmail(email)) {
       setError("Invalid Email address.");
+      console.log("Email Should end with @incture.com")
       return;
     }
 

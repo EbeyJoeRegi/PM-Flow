@@ -58,22 +58,22 @@ const Home = () => {
     role === "ADMIN" ? "/admin" : role === "PROJECT_MANAGER" ? "/manager" : "/member";
 
   return (
-    <div className="manager-wrapper">
-      <nav className="manager-navbar">
-        <div className="manager-navbar-left">
+    <div className="home-wrapper">
+      <nav className="home-navbar">
+        <div className="home-navbar-left">
           <GiHamburgerMenu
             size={24}
             className="hamburger-icon"
             onClick={() => setSidebarVisible(!sidebarVisible)}
           />
-          <NavLink to={basePath} className="manager-navbar-title">PM Flow</NavLink>
+          <NavLink to={basePath} className="home-navbar-title">PM Flow</NavLink>
         </div>
-        <div className="manager-navbar-right">
-          <span className="manager-welcome">Welcome, {name}</span>
-          <div className="manager-profile" ref={dropdownRef}>
+        <div className="home-navbar-right">
+          <span className="home-welcome">Welcome, {name}</span>
+          <div className="home-profile" ref={dropdownRef}>
             <FaUserCircle size={30} onClick={() => setDropdownOpen(!dropdownOpen)} />
             {dropdownOpen && (
-              <div className="manager-dropdown">
+              <div className="home-dropdown">
                 <button onClick={onLogoutClick}>Logout</button>
               </div>
             )}
@@ -83,33 +83,32 @@ const Home = () => {
 
       {isMobile && sidebarVisible && <div className="sidebar-overlay" />}
 
-      <div className="manager-body">
+      <div className="home-body">
         <aside
-          className={`manager-sidebar ${
-            isMobile
+          className={`home-sidebar ${isMobile
               ? sidebarVisible
                 ? "sidebar-open sidebar-mobile"
                 : "sidebar-collapsed sidebar-mobile"
               : sidebarVisible
-              ? "sidebar-open"
-              : "sidebar-collapsed"
-          }`}
+                ? "sidebar-open"
+                : "sidebar-collapsed"
+            }`}
           ref={sidebarRef}
         >
           <ul>
             <li>
-              <NavLink to="." end className={({ isActive }) => isActive ? "manager-active" : ""}>
+              <NavLink to="." end className={({ isActive }) => isActive ? "home-active" : ""}>
                 <TbLayoutDashboardFilled />
                 <span>Dashboard</span>
               </NavLink>
 
               {role === "ADMIN" && (
                 <>
-                  <NavLink to="users" className={({ isActive }) => isActive ? "manager-active" : ""}>
+                  <NavLink to="users" className={({ isActive }) => isActive ? "home-active" : ""}>
                     <HiMiniUsers />
                     <span>Users</span>
                   </NavLink>
-                  <NavLink to="projects" className={({ isActive }) => isActive ? "manager-active" : ""}>
+                  <NavLink to="projects" className={({ isActive }) => isActive ? "home-active" : ""}>
                     <FaProjectDiagram />
                     <span>Projects</span>
                   </NavLink>
@@ -118,11 +117,11 @@ const Home = () => {
 
               {role === "PROJECT_MANAGER" && (
                 <>
-                  <NavLink to="projects" className={({ isActive }) => isActive ? "manager-active" : ""}>
+                  <NavLink to="projects" className={({ isActive }) => isActive ? "home-active" : ""}>
                     <FaProjectDiagram />
                     <span>Projects</span>
                   </NavLink>
-                  <NavLink to="collaboration" className={({ isActive }) => isActive ? "manager-active" : ""}>
+                  <NavLink to="collaboration" className={({ isActive }) => isActive ? "home-active" : ""}>
                     <FaUsers />
                     <span>Collaboration</span>
                   </NavLink>
@@ -131,11 +130,11 @@ const Home = () => {
 
               {role === "MEMBER" && (
                 <>
-                  <NavLink to="assigned-tasks" className={({ isActive }) => isActive ? "manager-active" : ""}>
+                  <NavLink to="assigned-tasks" className={({ isActive }) => isActive ? "home-active" : ""}>
                     <FaTasks />
                     <span>Task Assigned</span>
                   </NavLink>
-                  <NavLink to="collaboration" className={({ isActive }) => isActive ? "manager-active" : ""}>
+                  <NavLink to="collaboration" className={({ isActive }) => isActive ? "home-active" : ""}>
                     <FaUsers />
                     <span>Collaboration</span>
                   </NavLink>
@@ -145,7 +144,7 @@ const Home = () => {
           </ul>
         </aside>
 
-        <main className="manager-main">
+        <main className="home-main">
           <Outlet />
         </main>
       </div>

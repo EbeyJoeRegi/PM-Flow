@@ -136,7 +136,7 @@ const ManagerDashboard = () => {
             <thead>
               <tr>
                 <th>Project</th>
-                <th onClick={handleStatusSort} className="clickable">Status ⬍</th>
+                <th onClick={handleStatusSort} className="clickable">Status ⇅</th>
                 <th>Start Date</th>
                 <th onClick={handleEndDateSort} className="clickable">Due Date</th>
               </tr>
