@@ -260,7 +260,10 @@ PM-Flow/
 -  Project Progress Overview
 -  Real-time Collaboration Chat
 -  Project & User Management
-  
+
+## Screenshots
+<img src="https://raw.githubusercontent.com/username/repo/main/Frontend/public/assets/login.png" alt="PM Flow Login Screen" width="600"/>
+
 ## Database Design
 
 1.USERS
