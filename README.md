@@ -34,11 +34,17 @@ VITE_API_BASE_URL=http://localhost:8080/api
 
 ## 5.Start MySQL Server
 cd C:\MySQL\bin <br>
+
 .\mysqld --defaults-file="C:\MySQL\my.ini" --console <br>
+
 Login to MySQL CLI in a new terminal:<br>
+
 cd C:\MySQL\bin<br>
+
 .\mysql -u root -p<br>
+
 You’ll be prompted to enter the MySQL root password.<br>
+
 Then create the database:<br>
 CREATE DATABASE pmflow;<br>
 
