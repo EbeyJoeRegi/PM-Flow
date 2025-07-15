@@ -97,7 +97,7 @@ export const BASE_URL = "http://localhost:8080/api";
 8.MySQL
 
 ## Folder Structure
-<details>
+
 <summary><strong>Project Folder Structure</strong> (click to expand)</summary>
 
 ```bash
@@ -243,7 +243,7 @@ PM-Flow/
 │       │   └── style.css
 │       └── utils/
 │           └── Helper.js
-</details>
+
 ```
 
 ## Features
