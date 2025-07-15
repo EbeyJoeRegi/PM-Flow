@@ -13,7 +13,7 @@ import {
 import { FaPen, FaTrash } from 'react-icons/fa'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { formatStatus, getBootstrapBgClass } from '../../utils/Helper'
+import { formatStatus, getBootstrapBgClass, capitalizeFirstLetter } from '../../utils/Helper'
 
 export default function Projects() {
   const [projects, setProjects] = useState([])
@@ -124,6 +124,7 @@ export default function Projects() {
           : p
       ))
       setEditProjectId(null)
+      toast.success('Project updated successfully')
     } catch {
       toast.error('Failed to update project')
     }
@@ -204,7 +205,7 @@ export default function Projects() {
                   ) : (
                     <>
                       <td>{proj.name}</td>
-                      <td>{proj.managerName || managerOptions.find(m => String(m.id) === String(proj.managerId))?.name || 'N/A'}</td>
+                      <td>{capitalizeFirstLetter(proj.managerName || managerOptions.find(m => String(m.id) === String(proj.managerId))?.name || 'N/A')}</td>
                       <td className="status-cell">
                         <span className={`status-badge ${getBootstrapBgClass(formatStatus(proj.status))}`}>{proj.status?.replace('_', ' ') || 'N/A'}</span>
                       </td>
@@ -280,8 +281,6 @@ export default function Projects() {
           </div>
         </div>
       )}
-
-      <ToastContainer position="top-right" autoClose={1000} hideProgressBar />
     </div>
   )
 }

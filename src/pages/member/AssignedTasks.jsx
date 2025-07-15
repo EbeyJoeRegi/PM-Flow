@@ -98,7 +98,7 @@ export default function AssignedTasks() {
             type="text"
             placeholder="Search tasks"
             className="form-control"
-            style={{ maxWidth: '400px', fontSize: '1rem' }}
+            style={{ maxWidth: '400px', fontSize: '1.2rem' }}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);

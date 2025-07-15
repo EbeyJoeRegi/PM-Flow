@@ -128,8 +128,7 @@ export default function MemberDashboard() {
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius={70}
-                label
+                outerRadius={100}
               >
                 {pieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -141,7 +140,7 @@ export default function MemberDashboard() {
           <div className="mt-3 d-flex flex-column align-items-start px-2">
             {pieData.map((entry, index) => (
               <div key={index} className="d-flex justify-content-between w-100 mb-1">
-                <span style={{ color: entry.color }}>{entry.name}</span>
+                <span className="fw-semibold" style={{ color: entry.color }}>{entry.name}</span>
                 <span className="fw-bold">{entry.value}</span>
               </div>
             ))}

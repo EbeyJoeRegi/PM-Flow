@@ -8,7 +8,9 @@ import {
 } from '../../api/teamMemberApi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { MdEdit } from "react-icons/md";
 import '../../styles/ProjectCollab.css';
+import { formatStatus } from '../../utils/Helper';
 
 export default function ProjectCollaboration() {
   const { projectId, taskId } = useParams();
@@ -79,7 +81,7 @@ export default function ProjectCollaboration() {
       setNewComment('');
       const data = await getPrivateChatSummary(senderId, receiverId, projectId, taskDetails.id);
       setMessages(data);
-    } catch {}
+    } catch { }
   };
 
   const handleStatusChange = (e) => setEditStatus(e.target.value);
@@ -127,66 +129,73 @@ export default function ProjectCollaboration() {
           ← Go Back
         </button>
         <div className="ms-auto">
-    <h3 className="collab-chat-header mb-0 fs-4 fw-bold">{taskDetails.projectName || 'NA'}</h3>
-  </div>
+          <h3 className="collab-chat-header mb-0 fs-4 fw-bold">{taskDetails.projectName || 'NA'}</h3>
+        </div>
 
       </div>
 
-      <div className="mb-4 d-flex justify-content-between align-items-center flex-wrap">
-        <div>
-          <h4 className="mb-1">Task: {taskDetails.name}</h4>
+      <div className="mb-4 d-flex justify-content-between align-items-start flex-wrap">
+        <div className="me-3" style={{ maxWidth: '60%' }}>
+          <h4 className="mb-2">{taskDetails.name}</h4>
           <p className="mb-1 text-muted">Manager: {taskDetails.projectManagerName || 'N/A'}</p>
           <p className="mb-1 text-muted">Due Date: {taskDetails.dueDate !== 'N/A' ? formatDate(taskDetails.dueDate) : 'N/A'}</p>
-          <p className="mb-1 text-muted text-justify" style={{ textAlign: 'justify' }}>
-          <strong>Description:</strong> {taskDetails.description}
-</p>
-
         </div>
 
-        <div className="collab-info-panel mt-3 mt-md-0">
-          <div className="d-flex flex-column flex-sm-column flex-md-row gap-3 align-items-start align-items-md-center">
-            <div className="status-group">
-              <label className="fw-semibold mb-0" style={{ marginRight: '3px' }}>Status:</label>
-              <span className={`badge bg-${statusColors[taskDetails.status] || 'info'} px-3 py-2`}>
-                {taskDetails.status.replace('_', ' ')}
-              </span>
-              {!editing && <button className="btn btn-sm" onClick={() => setEditing(true)}>✏️</button>}
-              {editing && (
-                <div className="mt-2">
-                  <select
-                    className="form-select form-select-sm border border-primary"
-                    value={editStatus}
-                    onChange={handleStatusChange}
-                    style={{ width: '130px', fontSize: '0.85rem' }}
-                  >
-                    {['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD'].map((status) => (
-                      <option key={status} value={status}>
-                        {status.replace('_', ' ')}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    className="btn btn-sm btn-primary mt-1"
-                    onClick={handleSaveStatus}
-                    style={{ fontSize: '0.85rem' }}
-                  >
-                    Save
-                  </button>
-                </div>
-              )}
-            </div>
+        <div className="d-flex flex-column align-items-end text-end" style={{ minWidth: '160px' }}>
+          <div className="status-group mb-2">
+            <label className="fw-semibold me-2"></label>
+            <span className={`badge bg-${statusColors[taskDetails.status] || 'info'} px-3 py-2`}>
+              {taskDetails.status.replace('_', ' ')}
+            </span>
+            {!editing && (
+              <button
+                className="btn btn-sm ms-1"
+                onClick={() => setEditing(true)}
+              >
+                <MdEdit
+                  size={25}
+                  className={`edit-icon icon-${formatStatus(taskDetails.status)
+                    .toLowerCase()
+                    .replace(/\s/g, '')}`}
+                />
+              </button>
+            )}
+            {editing && (
+              <div className="mt-2">
+                <select
+                  className="form-select form-select-sm border border-primary"
+                  value={editStatus}
+                  onChange={handleStatusChange}
+                  style={{ width: '130px', fontSize: '0.85rem' }}
+                >
+                  {['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD'].map((status) => (
+                    <option key={status} value={status}>
+                      {status.replace('_', ' ')}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  className="btn btn-sm btn-primary mt-1"
+                  onClick={handleSaveStatus}
+                  style={{ fontSize: '0.85rem' }}
+                >
+                  Save
+                </button>
+              </div>
+            )}
+          </div>
 
-            <div className="priority-group">
-              <label className="fw-semibold mb-0" style={{ marginRight: '3px' }}>Priority:</label>
-              <span className={`fw-semibold ${'text-' + (priorityColors[taskDetails.priority] || 'secondary')}`}>
-                {taskDetails.priority || 'NA'}
-              </span>
-
-            </div>
+          <div className="priority-group">
+            <label className="fw-semibold me-2">Priority:</label>
+            <span className={`fw-semibold text-${priorityColors[taskDetails.priority] || 'secondary'}`}>
+              {taskDetails.priority || 'NA'}
+            </span>
           </div>
         </div>
+        <p className="mb-1 text-muted text-justify" style={{ textAlign: 'justify' }}>
+          <strong>Description:</strong> {taskDetails.description}
+        </p>
       </div>
-
       <div className="collab-chat-container">
         <div className="collab-chat-box" ref={chatBoxRef}>
           {messages.length === 0 ? (
@@ -196,16 +205,24 @@ export default function ProjectCollaboration() {
               <React.Fragment key={date}>
                 <div className="collab-chat-date-separator">{formatDate(date)}</div>
                 {groupedMessages[date].map((msg, index) => (
-                  <div
-                    key={index}
-                    className={`collab-chat-message-wrapper ${msg.senderId === senderId ? 'collab-self' : ''}`}
-                  >
-                    <div className="collab-chat-message">
-                      <span className="collab-sender">
+                  <div className={`collab-chat-message-wrapper ${msg.senderId === senderId ? 'collab-self' : ''}`}>
+                    <div
+                      className="collab-chat-message"
+                      style={{
+                        backgroundColor: msg.senderId === senderId ? '#c7ecdaff' : '#cbd0d6ff',
+                        border: '1px solid #ccc',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        maxWidth: '60%',
+                        minWidth: '10%',
+                        alignSelf: msg.senderId === senderId ? 'flex-end' : 'flex-start'
+                      }}
+                    >
+                      <span className="collab-sender fw-bold d-block mb-1">
                         {msg.senderId === senderId ? 'You' : msg.senderName || 'Manager'}
                       </span>
-                      <span className="collab-text">{msg.content}</span>
-                      <span className="collab-time">
+                      <span className="collab-text d-block">{msg.content}</span>
+                      <span className="collab-time d-block text-muted small mt-1" style={{ fontSize: '0.75rem' }}>
                         {new Date(msg.timestamp).toLocaleTimeString([], {
                           hour: '2-digit',
                           minute: '2-digit',

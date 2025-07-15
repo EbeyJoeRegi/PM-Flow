@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../../styles/Admin.css';
 import { getAllProjects, getProjectById, getAllUsers } from '../../api/adminApi';
+import { capitalizeFirstLetter } from '../../utils/Helper'
 
 export default function Dashboard() {
   const [filter, setFilter] = useState('All');
@@ -178,7 +179,7 @@ export default function Dashboard() {
                 </td>
                 <td>{formatDate(proj.startDate)}</td>
                 <td>{formatDate(proj.endDate)}</td>
-                <td>{proj.managerName || 'N/A'}</td>
+                <td>{capitalizeFirstLetter(proj.managerName || 'N/A')}</td>
               </tr>
             ))}
           </tbody>
