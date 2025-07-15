@@ -262,7 +262,8 @@ PM-Flow/
 -  Project & User Management
 
 ## Screenshots
-<img src="https://raw.githubusercontent.com/username/repo/main/Frontend/public/assets/login.png" alt="PM Flow Login Screen" width="600"/>
+<img width="1600" height="899" alt="login" src="https://github.com/user-attachments/assets/7a4ac0c8-5fe9-4f26-a862-480769a43f89" />
+
 
 ## Database Design
 
