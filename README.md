@@ -28,8 +28,9 @@ A role-based project management system with Admin, Manager, and Employee dashboa
 - Form validations for login, registration, and task updates
   
 ## Setup Instructions:
-Follow these steps to set up and run the project locally:
 ---
+Follow these steps to set up and run the project locally:
+
 
 ## 1. Clone the Repository
 
