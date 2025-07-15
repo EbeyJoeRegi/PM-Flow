@@ -77,5 +77,4 @@ export const BASE_URL = "http://localhost:8080/api";
 -  Real-time Collaboration Chat
 -  Project & User Management
 
-##  Folder Structure (Frontend)
 
