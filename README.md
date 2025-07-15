@@ -1,6 +1,6 @@
 #  PM Flow – Project Management Workflow Application
 
-A role-based project management system with Admin, Manager, and Employee dashboards.Built using React.js, Vite, Bootstrap, React Router DOM, Spring Boot, and MySQL.
+PM-Flow is a modern, web-based application designed to help teams efficiently manage and track their projects from inception to completion. It will provide functionalities for task management, team collaboration, progress monitoring, and reporting, all in real-time. This project will expose students to various real-world scenarios, including concurrent user interactions, data persistence, secure authentication, and a responsive user interface.
 
 
 ## Project Requirements
@@ -19,24 +19,23 @@ A role-based project management system with Admin, Manager, and Employee dashboa
 
 - Role-based login and dashboard navigation (Admin, Manager, Employee)
 - Interactive UI using React.js, Vite, and Bootstrap 5
-- Routing and navigation with React Router DOM
 - Reusable components for Projects, Tasks, Users, and Chat
 - Real-time-like UI feedback with Toastify (e.g., task updates)
 - Dynamic filtering and sorting of Projects/Tasks
-- Seamless integration with Spring Boot API using Axios/Fetch
+- Seamless integration with Spring Boot API using Axios
 - Protected routes and conditional rendering based on roles
 - Form validations for login, registration, and task updates
 
 ## Prerequisites
-| Tool                                                                                 | Description                                     |
-| ------------------------------------------------------------------------------------ | ----------------------------------------------- |
-| [Node.js](https://nodejs.org/)                                                       | JavaScript runtime for frontend (React + Vite)  |
-| [npm](https://www.npmjs.com/)                                                        | Package manager (comes with Node.js)            |
-| [Java JDK 17+](https://www.oracle.com/java/technologies/javase-jdk17-downloads.html) | Required for Spring Boot backend                |
-| [MySQL Server](https://dev.mysql.com/downloads/mysql/)                               | Relational database for backend storage         |
-| [Git](https://git-scm.com/downloads)                                                 | Version control for cloning the repository      |
-| [Visual Studio Code](https://code.visualstudio.com/)                                 | Code editor with terminal and extension support |
-| [Spring Tool Suite / IntelliJ / Eclipse](https://spring.io/tools)                    | IDE for managing Spring Boot backend            |
+| Tool                                                                                   | Description                                                                 |
+|----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| [Node.js](https://nodejs.org/)                                                         | JavaScript runtime environment required to run and build the React + Vite frontend. |
+| [npm](https://www.npmjs.com/)                                                          | Node package manager used to install frontend dependencies like React, Axios, Redux, etc. |
+| [Java JDK 17+](https://www.oracle.com/java/technologies/javase-jdk17-downloads.html)   | Required to compile and run the Spring Boot backend services.              |
+| [MySQL Server](https://dev.mysql.com/downloads/mysql/)                                 | Relational database used for storing users, projects, tasks, and chat data. |
+| [Git](https://git-scm.com/downloads)                                                   | Version control system used to clone, track, and manage the project repository. |
+| [Visual Studio Code](https://code.visualstudio.com/)                                   | Code editor for writing frontend code (React), supports terminal and extensions. |
+| [Spring Tool Suite](https://spring.io/tools)                      | IDE used for developing and managing the Spring Boot backend (Java + Maven). |
 
 ## Setup Instructions:
 
@@ -46,61 +45,62 @@ Follow these steps to set up and run the project locally:
 ## 1. Clone the Repository
 ```bash
 git clone https://github.com/EbeyJoeRegi/PM-Flow
-
+```
+```bash
 cd PM-Flow
-
+```
+## 2. Set Up the Frontend
+```bash
 cd Frontend
 ```
-## 2. Install Dependencies
-   
-Make sure you have Node.js installed.
+  Install Dependencies
 ```bash
 npm install
 ```
-## 3. Start the Development Server
+Start the Development Server
    ```bash
 npm run dev
 ```
 This will start the app on http://localhost:5173 by default.
 
-## 4. Environment Variables
+## 3. Environment Variables
    
-If needed, create a .env file at the root:
-
+create a .env file at the root
+```bash
 VITE_API_BASE_URL=http://localhost:8080/api
-
-## 5.Start MySQL Server
-```bash
-cd C:\MySQL\bin
-
-.\mysqld --defaults-file="C:\MySQL\my.ini" --console 
 ```
-Login to MySQL CLI in a new terminal:<br>
-```bash
-cd C:\MySQL\bin
 
-.\mysql -u root -p
-```
-Then create the database:
+## 4. Open the Backend in Eclipse 
+Go to File → Import → Existing Maven Project
+
+Select the Backend folder inside the PM-Flow project
+
+## 5.Create MySQL Database
+Open the MySQL terminal or MySQL Workbench and run:
 ```bash
 CREATE DATABASE pmflow;
 ```
-## 6. Run Spring Boot Backend
-Import the Project in Your IDE<br>
-File → Import → Existing Maven Projects → Select PM-flow → Select Backend → Finish
+## 6. Configure application.properties
+File location: src/main/resources/application.properties
 
-File → Open → Select PM-flow → Select Backend 
+Update it with your MySQL credentials:
+```bash
+spring.datasource.url=jdbc:mysql://localhost:3306/pmflow
+spring.datasource.username=your_mysql_username
+spring.datasource.password=your_mysql_password
+```
 
-Run the Spring Boot Application<br>
-Locate PmflowBackendApplication.java, then:<br>
-Right-click → Run as → Spring Boot App
+## 7. Run the Backend Application
+In Eclipse:
 
-The backend will start at:<br>
-http://localhost:8080<br>
+Right-click on PmflowApplication.java
 
-## 7. Frontend–Backend Connection
-Ensure the frontend is configured to point to the backend API using the correct base URL.<br>
-export const BASE_URL = "http://localhost:8080/api";
+Choose: Run As → Spring Boot Application
+
+Console output should include:
+Started PmflowApplication in ... seconds
+
+Backend will be available at: http://localhost:8080
 
 
 ## Folder Structure
@@ -108,148 +108,164 @@ export const BASE_URL = "http://localhost:8080/api";
 <summary><strong>Project Folder Structure</strong> (click to expand)</summary>
 
 ```bash
-PM-Flow/
+├── Logo.png
+│ │ └── PM Flow.png
+│ │
+│ └── src/
+│ ├── App.jsx
+│ ├── config.jsx
+│ ├── main.jsx
+│ │
+│ ├── api/
+│ │ ├── adminApi.jsx
+│ │ ├── commonApi.jsx
+│ │ ├── managerApi.jsx
+│ │ └── teamMemberApi.jsx
+│ │
+│ ├── components/
+│ │ └── Pagination.jsx
+│ │
+│ ├── pages/
+│ │ ├── CollaborationProjects.jsx
+│ │ ├── Home.jsx
+│ │ ├── Login.jsx
+│ │ ├── NotFound.jsx
+│ │ ├── ProjectChatPage.jsx
+│ │ ├── Register.jsx
+│ │ │
+│ │ ├── admin/
+│ │ │ ├── AdminDashboard.jsx
+│ │ │ ├── ProjectDetails.jsx
+│ │ │ ├── Projects.jsx
+│ │ │ └── Users.jsx
+│ │ │
+│ │ ├── manager/
+│ │ │ ├── ManagerDashboard.jsx
+│ │ │ ├── managerProjectDetail.jsx
+│ │ │ ├── managerProjects.jsx
+│ │ │ └── managerTaskDetail.jsx
+│ │ │
+│ │ └── member/
+│ │ ├── AssignedTasks.jsx
+│ │ ├── MemberDashboard.jsx
+│ │ └── ProjectCollaboration.jsx
+│ │
+│ ├── redux/
+│ │ ├── store.jsx
+│ │ └── userSlice.jsx
+│ │
+│ ├── routes/
+│ │ ├── AppRoutes.jsx
+│ │ └── ProtectedRoute.jsx
+│ │
+│ ├── styles/
+│ │ ├── Admin.css
+│ │ ├── collaborationProjects.css
+│ │ ├── Home.css
+│ │ ├── login.css
+│ │ ├── managerDashboard.css
+│ │ ├── managerProjectDetail.css
+│ │ ├── managerProjects.css
+│ │ ├── managerTaskDetail.css
+│ │ ├── Member.css
+│ │ ├── notfound.css
+│ │ ├── projectChatPage.css
+│ │ ├── ProjectCollab.css
+│ │ ├── Register.css
+│ │ └── style.css
+│ │
+│ └── utils/
+│ └── Helper.js
+│
 ├── Backend/
-│   ├── .classpath
-│   ├── .factorypath
-│   ├── .gitattributes
-│   ├── .gitignore
-│   ├── .project
-│   ├── mvnw
-│   ├── mvnw.cmd
-│   ├── pom.xml
-│   ├── .mvn/
-│   │   └── wrapper/
-│   │       └── maven-wrapper.properties
-│   ├── .settings/
-│   │   ├── org.eclipse.core.resources.prefs
-│   │   ├── org.eclipse.jdt.apt.core.prefs
-│   │   ├── org.eclipse.jdt.core.prefs
-│   │   ├── org.eclipse.m2e.core.prefs
-│   │   └── org.springframework.ide.eclipse.prefs
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/example/pmflow/
-│   │   │   │   ├── PmflowApplication.java
-│   │   │   │   ├── controller/
-│   │   │   │   │   ├── AuthController.java
-│   │   │   │   │   ├── ChatController.java
-│   │   │   │   │   ├── ProjectController.java
-│   │   │   │   │   ├── TaskController.java
-│   │   │   │   │   └── UserController.java
-│   │   │   │   ├── dto/
-│   │   │   │   │   ├── *.java (All request/response DTOs)
-│   │   │   │   ├── entity/
-│   │   │   │   │   ├── ChatMessage.java
-│   │   │   │   │   ├── Project.java
-│   │   │   │   │   ├── ProjectStatus.java
-│   │   │   │   │   ├── Role.java
-│   │   │   │   │   ├── Task.java
-│   │   │   │   │   └── User.java
-│   │   │   │   ├── enums/
-│   │   │   │   │   ├── TaskPriority.java
-│   │   │   │   │   └── TaskStatus.java
-│   │   │   │   ├── repository/
-│   │   │   │   │   ├── ChatMessageRepository.java
-│   │   │   │   │   ├── ChatProjectRepository.java
-│   │   │   │   │   ├── ProjectRepository.java
-│   │   │   │   │   ├── RoleRepository.java
-│   │   │   │   │   ├── TaskRepository.java
-│   │   │   │   │   └── UserRepository.java
-│   │   │   │   ├── security/
-│   │   │   │   │   ├── JwtAuthFilter.java
-│   │   │   │   │   ├── JwtService.java
-│   │   │   │   │   ├── SecurityConfig.java
-│   │   │   │   │   └── TokenBlacklistService.java
-│   │   │   │   └── service/
-│   │   │   │       ├── AuthService.java
-│   │   │   │       ├── ChatService.java
-│   │   │   │       ├── ProjectService.java
-│   │   │   │       ├── TaskService.java
-│   │   │   │       ├── UserDetailsServiceImpl.java
-│   │   │   │       └── UserService.java
-│   │   └── resources/
-│   │       └── application.properties
-│   └── test/java/com/example/pmflow/
-│       └── PmflowApplicationTests.java
-│   └── target/
-│       ├── classes/
-│       ├── generated-sources/
-│       ├── generated-test-sources/
-│       ├── test-classes/
-│       └── META-INF/
-├── Frontend/
-│   ├── .env
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── README.md
-│   ├── vite.config.js
-│   ├── node_modules/
-│   ├── public/
-│   │   └── logo/
-│   │       ├── Logo.png
-│   │       └── PM Flow.png
-│   └── src/
-│       ├── App.jsx
-│       ├── config.jsx
-│       ├── main.jsx
-│       ├── api/
-│       │   ├── adminApi.jsx
-│       │   ├── commonApi.jsx
-│       │   ├── managerApi.jsx
-│       │   └── teamMemberApi.jsx
-│       ├── components/
-│       │   └── Pagination.jsx
-│       ├── pages/
-│       │   ├── Home.jsx
-│       │   ├── Login.jsx
-│       │   ├── NotFound.jsx
-│       │   ├── Register.jsx
-│       │   ├── admin/
-│       │   │   ├── AdminDashboard.jsx
-│       │   │   ├── ProjectDetails.jsx
-│       │   │   ├── Projects.jsx
-│       │   │   └── Users.jsx
-│       │   ├── manager/
-│       │   │   ├── CollaborationProjects.jsx
-│       │   │   ├── ManagerDashboard.jsx
-│       │   │   ├── managerProjectDetail.jsx
-│       │   │   ├── managerProjects.jsx
-│       │   │   ├── managerTaskDetail.jsx
-│       │   │   └── ProjectChatPage.jsx
-│       │   └── member/
-│       │       ├── AssignedTasks.jsx
-│       │       ├── MemberCollaboration.jsx
-│       │       ├── MemberCollaborationProjects.jsx
-│       │       ├── MemberDashboard.jsx
-│       │       ├── MemberLayout.jsx
-│       │       └── ProjectCollaboration.jsx
-│       ├── redux/
-│       │   ├── store.jsx
-│       │   └── userSlice.jsx
-│       ├── routes/
-│       │   ├── AppRoutes.jsx
-│       │   └── ProtectedRoute.jsx
-│       ├── styles/
-│       │   ├── Admin.css
-│       │   ├── collaborationProjects.css
-│       │   ├── Home.css
-│       │   ├── login.css
-│       │   ├── managerDashboard.css
-│       │   ├── managerProjectDetail.css
-│       │   ├── managerProjects.css
-│       │   ├── managerTaskDetail.css
-│       │   ├── Member.css
-│       │   ├── memberchatpage.css
-│       │   ├── notfound.css
-│       │   ├── projectChatPage.css
-│       │   ├── ProjectCollab.css
-│       │   ├── Register.css
-│       │   └── style.css
-│       └── utils/
-│           └── Helper.js
+│ ├── pom.xml
+│ ├── mvnw
+│ ├── mvnw.cmd
+│ ├── HELP.md
+│ └── target/
+│ ├── src/
+│ │ ├── main/
+│ │ │ ├── java/
+│ │ │ │ └── com/example/pmflow/
+│ │ │ │ ├── PmflowApplication.java
+│ │ │ │ │
+│ │ │ │ ├── controller/
+│ │ │ │ │ ├── AuthController.java
+│ │ │ │ │ ├── ChatController.java
+│ │ │ │ │ ├── ProjectController.java
+│ │ │ │ │ ├── TaskController.java
+│ │ │ │ │ └── UserController.java
+│ │ │ │ │
+│ │ │ │ ├── dto/
+│ │ │ │ │ ├── AdminUpdateTaskRequest.java
+│ │ │ │ │ ├── AdminUpdateUserRequest.java
+│ │ │ │ │ ├── AuthRequest.java
+│ │ │ │ │ ├── AuthResponse.java
+│ │ │ │ │ ├── ChatRequestDTO.java
+│ │ │ │ │ ├── ChatResponseDTO.java
+│ │ │ │ │ ├── ChatSummaryDTO.java
+│ │ │ │ │ ├── MemberProjectDTO.java
+│ │ │ │ │ ├── ProjectCreateRequestDTO.java
+│ │ │ │ │ ├── ProjectDetailDTO.java
+│ │ │ │ │ ├── ProjectSummaryDTO.java
+│ │ │ │ │ ├── ProjectUpdateRequestDTO.java
+│ │ │ │ │ ├── RegisterRequest.java
+│ │ │ │ │ ├── StatusEndDateUpdateDTO.java
+│ │ │ │ │ ├── TaskRequest.java
+│ │ │ │ │ ├── TaskResponse.java
+│ │ │ │ │ ├── TeamMemberDTO.java
+│ │ │ │ │ ├── UpdateTaskRequest.java
+│ │ │ │ │ └── UserDTO.java
+│ │ │ │ │
+│ │ │ │ ├── entity/
+│ │ │ │ │ ├── ChatMessage.java
+│ │ │ │ │ ├── Project.java
+│ │ │ │ │ ├── ProjectStatus.java
+│ │ │ │ │ ├── Role.java
+│ │ │ │ │ ├── Task.java
+│ │ │ │ │ └── User.java
+│ │ │ │ │
+│ │ │ │ ├── enums/
+│ │ │ │ │ ├── TaskPriority.java
+│ │ │ │ │ └── TaskStatus.java
+│ │ │ │ │
+│ │ │ │ ├── repository/
+│ │ │ │ │ ├── ChatMessageRepository.java
+│ │ │ │ │ ├── ChatProjectRepository.java
+│ │ │ │ │ ├── ProjectRepository.java
+│ │ │ │ │ ├── RoleRepository.java
+│ │ │ │ │ ├── TaskRepository.java
+│ │ │ │ │ └── UserRepository.java
+│ │ │ │ │
+│ │ │ │ ├── security/
+│ │ │ │ │ ├── JwtAuthFilter.java
+│ │ │ │ │ ├── JwtService.java
+│ │ │ │ │ ├── SecurityConfig.java
+│ │ │ │ │ └── TokenBlacklistService.java
+│ │ │ │ │
+│ │ │ │ └── service/
+│ │ │ │ ├── AuthService.java
+│ │ │ │ ├── ChatService.java
+│ │ │ │ ├── ProjectService.java
+│ │ │ │ ├── TaskService.java
+│ │ │ │ ├── UserDetailsServiceImpl.java
+│ │ │ │ └── UserService.java
+│ │ │ │
+│ │ │ └── resources/
+│ │ │ ├── static/
+│ │ │ ├── templates/
+│ │ │ └── application.properties
+│ │
+│ └── test/
+│ └── java/
+│ └── com/example/pmflow/
+│ ├── PmflowApplicationTests.java
+│ └── controller/
+│ ├── AuthControllerTest.java
+│ ├── ChatControllerTest.java
+│ ├── ProjectControllerTest.java
+│ ├── TaskControllerTest.java
+│ └── UserControllerTest.java
 
 ```
 
@@ -263,16 +279,16 @@ PM-Flow/
 
 ## Screenshots
 ###  Login Page
-<img width="1600" height="600" alt="login" src="https://github.com/user-attachments/assets/7a4ac0c8-5fe9-4f26-a862-480769a43f89" />
+<img width="1600" height="600" alt="login" src="Screenshots\Login.png" />
 
 ###  Admin Dashboard
-<img width="1600" height="600" alt="admin" src="https://github.com/user-attachments/assets/5ba56135-c0c1-4fa2-b1e9-ce02d93b8b3a" />
+<img width="1600" height="600" alt="admin" src="Screenshots\Admin\DashBoard.png" />
 
 ###  Manager Dashboard
-<img width="1600" height="845" alt="manager" src="https://github.com/user-attachments/assets/b01e2b3b-9e8d-467c-bd30-71c57b470b15" />
+<img width="1600" height="845" alt="manager" src="Screenshots\Manager\Dashboard.png" />
 
 ###  Member Dashboard
-<img width="1600" height="600" alt="member" src="https://github.com/user-attachments/assets/bc9c8693-f593-4211-8017-97c6289cbc0f" />
+<img width="1600" height="600" alt="member" src="Screenshots\Member\Dashboard.png" />
 
 ## Database Design
 
@@ -331,18 +347,10 @@ PM-Flow/
 - JUnit tests using @WebMvcTest and MockMvc
 - Postman used for endpoint testing
 
-## Chat Module API Endpoints
-| **Method** | **Endpoint**                                                             | **Access**      | **Description**        |
-| ---------- | ------------------------------------------------------------------------ | --------------- | ---------------------- |
-| POST       | `/api/chat/private/sender/{sid}/receiver/{rid}/project/{pid}/task/{tid}` | Sender/Receiver | Send private message   |
-| POST       | `/api/chat/group/sender/{sid}/project/{pid}`                             | Project Users   | Send group message     |
-| GET        | `/api/chat/private/sender/{sid}/receiver/{rid}/project/{pid}/task/{tid}` | Sender/Receiver | Fetch private messages |
-| GET        | `/api/chat/group/project/{pid}`                                          | Project Users   | Get group chat         |
-| GET        | `/api/chat/assigned-projects`                                            | Authenticated   | Get assigned projects  |
-
 ## Future Scope
 - Add WebSocket (STOMP) for real-time messaging
 - Email/notification integration
 - Drag-and-drop UI for task reordering and project management
 - Accessibility improvements for keyboard navigation and screen readers
+- Dark Mode Support - Dark/light theme toggle for better accessibility and user preference.
 
