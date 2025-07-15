@@ -1,9 +1,9 @@
-PM Flow – Project Management Workflow Application
+#  PM Flow – Project Management Workflow Application
 
 A role-based project management system with Admin, Manager, and Employee dashboards.
 Built using React.js, Vite, Bootstrap, and React Router DOM.
 
-Setup Instructions:
+##Setup Instructions:
 Follow these steps to set up and run the project locally:
 
 1. Clone the Repository
@@ -32,18 +32,20 @@ If needed, create a .env file at the root:
 
 VITE_API_BASE_URL=http://localhost:8080/api
 
-Tech Stack
-
-1.React.js
-
-2.Vite
-
-3.Bootstrap 5
-
-4.React Router DOM
-
-5.React Icons
-
+Tech Stack<br>
+1.React.js<br>
+2.Vite<br>
+3.Bootstrap 5<br>
+4.React Router DOM<br>
+5.React Icons<br>
 6.Toastify
+
+## Features
+
+-  Role-based Authentication (Admin, Manager, Employee)
+-  Task Assignment and Filtering
+-  Project Progress Overview
+-  Real-time Collaboration Chat
+-  Project & User Management
 
 
