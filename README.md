@@ -96,6 +96,76 @@ export const BASE_URL = "http://localhost:8080/api";
 7.Spring Boot<br>
 8.MySQL
 
+## Folder Structure
+PM-Flow/
+├── Backend/
+│   ├── .classpath
+│   ├── .factorypath
+│   ├── .gitattributes
+│   ├── .gitignore
+│   ├── .project
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   ├── pom.xml
+│   ├── .mvn/
+│   │   └── wrapper/
+│   │       └── maven-wrapper.properties
+│   ├── .settings/
+│   │   ├── org.eclipse.core.resources.prefs
+│   │   ├── org.eclipse.jdt.apt.core.prefs
+│   │   ├── org.eclipse.jdt.core.prefs
+│   │   ├── org.eclipse.m2e.core.prefs
+│   │   └── org.springframework.ide.eclipse.prefs
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/example/pmflow/
+│   │   │   │   ├── PmflowApplication.java
+│   │   │   │   ├── controller/
+│   │   │   │   ├── dto/
+│   │   │   │   ├── entity/
+│   │   │   │   ├── enums/
+│   │   │   │   ├── repository/
+│   │   │   │   ├── security/
+│   │   │   │   └── service/
+│   │   │   └── resources/
+│   │   │       └── application.properties
+│   │   └── test/java/com/example/pmflow/
+│   │       └── PmflowApplicationTests.java
+│   └── target/
+│       ├── classes/
+│       ├── generated-sources/
+│       ├── generated-test-sources/
+│       ├── test-classes/
+│       └── META-INF/
+
+├── Frontend/
+│   ├── .env
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── README.md
+│   ├── vite.config.js
+│   ├── node_modules/
+│   ├── public/
+│   │   └── logo/
+│   │       ├── Logo.png
+│   │       └── PM Flow.png
+│   └── src/
+│       ├── App.jsx
+│       ├── config.jsx
+│       ├── main.jsx
+│       ├── api/
+│       ├── components/
+│       ├── pages/
+│       │   ├── admin/
+│       │   ├── manager/
+│       │   └── member/
+│       ├── redux/
+│       ├── routes/
+│       ├── styles/
+│       └── utils/
+
 ## Features
 
 -  Role-based Authentication (Admin, Manager, Employee)
