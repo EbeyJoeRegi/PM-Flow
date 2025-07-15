@@ -97,6 +97,7 @@ export const BASE_URL = "http://localhost:8080/api";
 8.MySQL
 
 ## Folder Structure
+Project Folder Structure
 PM-Flow/
 ├── Backend/
 │   ├── .classpath
@@ -118,26 +119,76 @@ PM-Flow/
 │   │   └── org.springframework.ide.eclipse.prefs
 │   ├── src/
 │   │   ├── main/
-│   │   │   ├── java/com/example/pmflow/
-│   │   │   │   ├── PmflowApplication.java
-│   │   │   │   ├── controller/
-│   │   │   │   ├── dto/
-│   │   │   │   ├── entity/
-│   │   │   │   ├── enums/
-│   │   │   │   ├── repository/
-│   │   │   │   ├── security/
-│   │   │   │   └── service/
+│   │   │   ├── java/
+│   │   │   │   └── com/example/pmflow/
+│   │   │   │       ├── PmflowApplication.java
+│   │   │   │       ├── controller/
+│   │   │   │       │   ├── AuthController.java
+│   │   │   │       │   ├── ChatController.java
+│   │   │   │       │   ├── ProjectController.java
+│   │   │   │       │   ├── TaskController.java
+│   │   │   │       │   └── UserController.java
+│   │   │   │       ├── dto/
+│   │   │   │       │   ├── AdminUpdateTaskRequest.java
+│   │   │   │       │   ├── AdminUpdateUserRequest.java
+│   │   │   │       │   ├── AuthRequest.java
+│   │   │   │       │   ├── AuthResponse.java
+│   │   │   │       │   ├── ChatRequestDTO.java
+│   │   │   │       │   ├── ChatResponseDTO.java
+│   │   │   │       │   ├── ChatSummaryDTO.java
+│   │   │   │       │   ├── MemberProjectDTO.java
+│   │   │   │       │   ├── ProjectCreateRequestDTO.java
+│   │   │   │       │   ├── ProjectDetailDTO.java
+│   │   │   │       │   ├── ProjectSummaryDTO.java
+│   │   │   │       │   ├── ProjectUpdateRequestDTO.java
+│   │   │   │       │   ├── RegisterRequest.java
+│   │   │   │       │   ├── StatusEndDateUpdateDTO.java
+│   │   │   │       │   ├── TaskRequest.java
+│   │   │   │       │   ├── TaskResponse.java
+│   │   │   │       │   ├── TeamMemberDTO.java
+│   │   │   │       │   ├── UpdateTaskRequest.java
+│   │   │   │       │   └── UserDTO.java
+│   │   │   │       ├── entity/
+│   │   │   │       │   ├── ChatMessage.java
+│   │   │   │       │   ├── Project.java
+│   │   │   │       │   ├── ProjectStatus.java
+│   │   │   │       │   ├── Role.java
+│   │   │   │       │   ├── Task.java
+│   │   │   │       │   └── User.java
+│   │   │   │       ├── enums/
+│   │   │   │       │   ├── TaskPriority.java
+│   │   │   │       │   └── TaskStatus.java
+│   │   │   │       ├── repository/
+│   │   │   │       │   ├── ChatMessageRepository.java
+│   │   │   │       │   ├── ChatProjectRepository.java
+│   │   │   │       │   ├── ProjectRepository.java
+│   │   │   │       │   ├── RoleRepository.java
+│   │   │   │       │   ├── TaskRepository.java
+│   │   │   │       │   └── UserRepository.java
+│   │   │   │       ├── security/
+│   │   │   │       │   ├── JwtAuthFilter.java
+│   │   │   │       │   ├── JwtService.java
+│   │   │   │       │   ├── SecurityConfig.java
+│   │   │   │       │   └── TokenBlacklistService.java
+│   │   │   │       └── service/
+│   │   │   │           ├── AuthService.java
+│   │   │   │           ├── ChatService.java
+│   │   │   │           ├── ProjectService.java
+│   │   │   │           ├── TaskService.java
+│   │   │   │           ├── UserDetailsServiceImpl.java
+│   │   │   │           └── UserService.java
 │   │   │   └── resources/
 │   │   │       └── application.properties
-│   │   └── test/java/com/example/pmflow/
-│   │       └── PmflowApplicationTests.java
+│   │   └── test/
+│   │       └── java/com/example/pmflow/
+│   │           └── PmflowApplicationTests.java
 │   └── target/
 │       ├── classes/
 │       ├── generated-sources/
 │       ├── generated-test-sources/
 │       ├── test-classes/
 │       └── META-INF/
-
+│
 ├── Frontend/
 │   ├── .env
 │   ├── eslint.config.js
@@ -156,15 +207,60 @@ PM-Flow/
 │       ├── config.jsx
 │       ├── main.jsx
 │       ├── api/
+│       │   ├── adminApi.jsx
+│       │   ├── commonApi.jsx
+│       │   ├── managerApi.jsx
+│       │   └── teamMemberApi.jsx
 │       ├── components/
+│       │   └── Pagination.jsx
 │       ├── pages/
+│       │   ├── Home.jsx
+│       │   ├── Login.jsx
+│       │   ├── NotFound.jsx
+│       │   ├── Register.jsx
 │       │   ├── admin/
+│       │   │   ├── AdminDashboard.jsx
+│       │   │   ├── ProjectDetails.jsx
+│       │   │   ├── Projects.jsx
+│       │   │   └── Users.jsx
 │       │   ├── manager/
+│       │   │   ├── CollaborationProjects.jsx
+│       │   │   ├── ManagerDashboard.jsx
+│       │   │   ├── managerProjectDetail.jsx
+│       │   │   ├── managerProjects.jsx
+│       │   │   ├── managerTaskDetail.jsx
+│       │   │   └── ProjectChatPage.jsx
 │       │   └── member/
+│       │       ├── AssignedTasks.jsx
+│       │       ├── MemberCollaboration.jsx
+│       │       ├── MemberCollaborationProjects.jsx
+│       │       ├── MemberDashboard.jsx
+│       │       ├── MemberLayout.jsx
+│       │       └── ProjectCollaboration.jsx
 │       ├── redux/
+│       │   ├── store.jsx
+│       │   └── userSlice.jsx
 │       ├── routes/
+│       │   ├── AppRoutes.jsx
+│       │   └── ProtectedRoute.jsx
 │       ├── styles/
+│       │   ├── Admin.css
+│       │   ├── collaborationProjects.css
+│       │   ├── Home.css
+│       │   ├── login.css
+│       │   ├── managerDashboard.css
+│       │   ├── managerProjectDetail.css
+│       │   ├── managerProjects.css
+│       │   ├── managerTaskDetail.css
+│       │   ├── Member.css
+│       │   ├── memberchatpage.css
+│       │   ├── notfound.css
+│       │   ├── projectChatPage.css
+│       │   ├── ProjectCollab.css
+│       │   ├── Register.css
+│       │   └── style.css
 │       └── utils/
+│           └── Helper.js
 
 ## Features
 
