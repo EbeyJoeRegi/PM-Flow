@@ -139,6 +139,10 @@ export default function ProjectCollaboration() {
           <h4 className="mb-2">{taskDetails.name}</h4>
           <p className="mb-1 text-muted">Manager: {taskDetails.projectManagerName || 'N/A'}</p>
           <p className="mb-1 text-muted">Due Date: {taskDetails.dueDate !== 'N/A' ? formatDate(taskDetails.dueDate) : 'N/A'}</p>
+          
+        <p className="mb-1 text-muted text-justify" style={{ textAlign: 'justify' }}>
+          <strong>Description:</strong> {taskDetails.description}
+        </p>
         </div>
 
         <div className="d-flex flex-column align-items-end text-end" style={{ minWidth: '160px' }}>
@@ -192,9 +196,6 @@ export default function ProjectCollaboration() {
             </span>
           </div>
         </div>
-        <p className="mb-1 text-muted text-justify" style={{ textAlign: 'justify' }}>
-          <strong>Description:</strong> {taskDetails.description}
-        </p>
       </div>
       <div className="collab-chat-container">
         <div className="collab-chat-box" ref={chatBoxRef}>
