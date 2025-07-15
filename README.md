@@ -97,7 +97,9 @@ export const BASE_URL = "http://localhost:8080/api";
 8.MySQL
 
 ## Folder Structure
-<details> <summary><strong> Project Folder Structure</strong> (click to expand)</summary>
+<details>
+<summary><strong>Project Folder Structure</strong> (click to expand)</summary>
+
 ```bash
 PM-Flow/
 ├── Backend/
@@ -169,7 +171,6 @@ PM-Flow/
 │       ├── generated-test-sources/
 │       ├── test-classes/
 │       └── META-INF/
-
 ├── Frontend/
 │   ├── .env
 │   ├── eslint.config.js
@@ -244,6 +245,7 @@ PM-Flow/
 │           └── Helper.js
 </details>
 ```
+
 ## Features
 
 -  Role-based Authentication (Admin, Manager, Employee)
