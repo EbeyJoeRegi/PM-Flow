@@ -33,6 +33,7 @@ If needed, create a .env file at the root:
 VITE_API_BASE_URL=http://localhost:8080/api
 
 Tech Stack
+
 1.React.js
 
 2.Vite
