@@ -33,21 +33,23 @@ Follow these steps to set up and run the project locally:
 
 
 ## 1. Clone the Repository
+```bash
+git clone https://github.com/EbeyJoeRegi/PM-Flow
 
-git clone https://github.com/EbeyJoeRegi/PM-Flow<br>
-cd PM-Flow<br>
-cd Frontend<br>
+cd PM-Flow
 
+cd Frontend
+```
 ## 2. Install Dependencies
    
 Make sure you have Node.js installed.
-
+```bash
 npm install
-
+```
 ## 3. Start the Development Server
-   
+   ```bash
 npm run dev
-
+```
 This will start the app on http://localhost:5173 by default.
 
 ## 4. Environment Variables
@@ -57,18 +59,21 @@ If needed, create a .env file at the root:
 VITE_API_BASE_URL=http://localhost:8080/api
 
 ## 5.Start MySQL Server
+```bash
+cd C:\MySQL\bin
 
-cd C:\MySQL\bin <br>
-.\mysqld --defaults-file="C:\MySQL\my.ini" --console <br>
-
+.\mysqld --defaults-file="C:\MySQL\my.ini" --console 
+```
 Login to MySQL CLI in a new terminal:<br>
+```bash
+cd C:\MySQL\bin
 
-cd C:\MySQL\bin<br>
-.\mysql -u root -p<br>
-
-Then create the database:<br>
-CREATE DATABASE pmflow;<br>
-
+.\mysql -u root -p
+```
+Then create the database:
+```bash
+CREATE DATABASE pmflow;
+```
 ## 6. Run Spring Boot Backend
 Import the Project in Your IDE<br>
 File → Import → Existing Maven Projects → Select PM-flow → Select Backend → Finish
