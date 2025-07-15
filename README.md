@@ -98,6 +98,7 @@ export const BASE_URL = "http://localhost:8080/api";
 
 ## Folder Structure
 <details> <summary><strong> Project Folder Structure</strong> (click to expand)</summary>
+```
 PM-Flow/
 ├── Backend/
 │   ├── .classpath
