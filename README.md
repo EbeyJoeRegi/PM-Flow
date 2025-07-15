@@ -26,7 +26,18 @@ A role-based project management system with Admin, Manager, and Employee dashboa
 - Seamless integration with Spring Boot API using Axios/Fetch
 - Protected routes and conditional rendering based on roles
 - Form validations for login, registration, and task updates
-  
+
+## Prerequisites
+| Tool                                                                                 | Description                                     |
+| ------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| [Node.js](https://nodejs.org/)                                                       | JavaScript runtime for frontend (React + Vite)  |
+| [npm](https://www.npmjs.com/)                                                        | Package manager (comes with Node.js)            |
+| [Java JDK 17+](https://www.oracle.com/java/technologies/javase-jdk17-downloads.html) | Required for Spring Boot backend                |
+| [MySQL Server](https://dev.mysql.com/downloads/mysql/)                               | Relational database for backend storage         |
+| [Git](https://git-scm.com/downloads)                                                 | Version control for cloning the repository      |
+| [Visual Studio Code](https://code.visualstudio.com/)                                 | Code editor with terminal and extension support |
+| [Spring Tool Suite / IntelliJ / Eclipse](https://spring.io/tools)                    | IDE for managing Spring Boot backend            |
+
 ## Setup Instructions:
 
 Follow these steps to set up and run the project locally:
@@ -91,15 +102,6 @@ http://localhost:8080<br>
 Ensure the frontend is configured to point to the backend API using the correct base URL.<br>
 export const BASE_URL = "http://localhost:8080/api";
 
-## Tech Stack<br>
-1.React.js<br>
-2.Vite<br>
-3.Bootstrap 5<br>
-4.React Router DOM<br>
-5.React Icons<br>
-6.Toastify<br>
-7.Spring Boot<br>
-8.MySQL
 
 ## Folder Structure
 
