@@ -97,7 +97,7 @@ export const BASE_URL = "http://localhost:8080/api";
 8.MySQL
 
 ## Folder Structure
-<summary><strong> Project Folder Structure</strong></summary>
+<details> <summary><strong> Project Folder Structure</strong> (click to expand)</summary>
 PM-Flow/
 ├── Backend/
 │   ├── .classpath
@@ -241,6 +241,7 @@ PM-Flow/
 │       │   └── style.css
 │       └── utils/
 │           └── Helper.js
+</details>
 
 ## Features
 
