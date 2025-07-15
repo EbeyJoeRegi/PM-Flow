@@ -97,7 +97,7 @@ export const BASE_URL = "http://localhost:8080/api";
 8.MySQL
 
 ## Folder Structure
-Project Folder Structure
+<details> <summary><strong> Project Folder Structure</strong></summary>
 PM-Flow/
 ├── Backend/
 │   ├── .classpath
@@ -177,11 +177,11 @@ PM-Flow/
 │   │   │   │           ├── TaskService.java
 │   │   │   │           ├── UserDetailsServiceImpl.java
 │   │   │   │           └── UserService.java
-│   │   │   └── resources/
-│   │   │       └── application.properties
-│   │   └── test/
-│   │       └── java/com/example/pmflow/
-│   │           └── PmflowApplicationTests.java
+│   │   └── resources/
+│   │       └── application.properties
+│   └── test/
+│       └── java/com/example/pmflow/
+│           └── PmflowApplicationTests.java
 │   └── target/
 │       ├── classes/
 │       ├── generated-sources/
@@ -261,6 +261,7 @@ PM-Flow/
 │       │   └── style.css
 │       └── utils/
 │           └── Helper.js
+</details>
 
 ## Features
 
