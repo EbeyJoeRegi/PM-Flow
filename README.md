@@ -80,6 +80,12 @@ Open the MySQL terminal or MySQL Workbench and run:
 ```bash
 CREATE DATABASE pmflow;
 ```
+```bash
+USE pmflow;
+```
+```bash
+INSERT INTO user (email, first_name, last_name, password_hash, role, username) VALUES ('admin@incture.com', 'Admin', 'PM FLOW', '$2a$10$2e55q3vpUrxSzTjZIXdwp.c9UaTlut6lZiSctLbhDsyCia.NwAibi', 'ADMIN', 'admin');
+```
 ## 6. Configure application.properties
 File location: src/main/resources/application.properties
 
@@ -101,6 +107,13 @@ Console output should include:
 Started PmflowApplication in ... seconds
 
 Backend will be available at: http://localhost:8080
+
+### NOTE : 
+The Manager role is not available by default. An Admin must promote a member to the Manager role.<br>
+
+Default Admin Credentials:<br>
+-	Email: admin@incture.com<br>
+-	Password: PASS@word123<br>
 
 
 ## Folder Structure
